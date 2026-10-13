@@ -176,3 +176,39 @@ button,input{font:inherit;color:inherit}
 .doc p,.doc li{color:var(--muted)}
 .doc a{color:var(--accent)}
 .doc code,.hint code{font-family:var(--mono);font-size:.9em}
+
+/* ---------- 가이드 글 ---------- */
+.guide{max-width:760px}
+.guide .crumb{margin:0 0 6px;font-size:13px}
+.guide .crumb a{color:var(--muted);text-decoration:none}
+.guide .crumb a:hover{color:var(--fg)}
+.guide .lead{font-size:16.5px;color:var(--fg);line-height:1.7}
+.guide h2{margin:36px 0 10px;font-size:20px;letter-spacing:-.01em;text-wrap:balance}
+.guide h3{margin:22px 0 6px;font-size:16px}
+.guide p,.guide li{line-height:1.75}
+.guide ul,.guide ol:not(.gsteps){padding-left:1.3em;display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.guide strong{color:var(--fg);font-weight:600}
+.mbox{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:14px 18px;margin:12px 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow-x:auto;max-width:100%}
+.mline{font-family:var(--mono);font-size:14.5px;color:var(--fg);white-space:nowrap;font-variant-numeric:tabular-nums}
+.mbox .op{font-family:var(--mono);font-size:20px;color:var(--faint)}
+.gsteps{list-style:none;margin:16px 0;padding:0;display:flex;flex-direction:column;gap:18px}
+.gsteps .mbox{margin:0}
+.gsteps .st{color:var(--muted)}
+.tbl{overflow-x:auto;margin:14px 0}
+.gtable{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
+.gtable th,.gtable td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+.gtable th{background:var(--sunk);color:var(--fg);font-weight:600}
+.gtable td{color:var(--muted)}
+.cta-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;margin:40px 0 8px;padding:20px 22px;background:var(--accent-soft);border-radius:14px}
+.cta-box div{display:flex;flex-direction:column;gap:2px;min-width:0}
+.cta-box b{font-size:16px;color:var(--fg)}
+.cta-box span{font-size:14px;color:var(--muted)}
+.doc a.cta{display:inline-flex;align-items:center;min-height:46px;padding:0 20px;border-radius:12px;background:var(--accent);color:var(--accent-fg);text-decoration:none;font-weight:600;font-size:15px}
+.doc a.cta:hover{filter:brightness(1.08)}
+.rel{margin:0;padding-left:1.3em}
+.guide-list{margin-top:8px}
+.guide .faq{margin-top:12px}
+.concept .body a{color:var(--accent)}
+
+/* 한국어는 띄어쓰기 단위로 줄바꿈 */
+.guide,.intro h1,.intro p,.concept .body,.concept h2,.doc p,.doc li{word-break:keep-all;overflow-wrap:break-word}

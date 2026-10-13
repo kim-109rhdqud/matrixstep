@@ -2,6 +2,7 @@
 """행렬 계산기 정적 사이트 생성기. 설정을 바꾼 뒤 `python3 build.py` → dist/ 폴더가 배포본.
 표준 라이브러리만 써서 Amplify 빌드 환경에서 그대로 돌아가요."""
 import os, shutil, json, html, datetime
+import guides
 
 # ===================== 설정 =====================
 DOMAIN = "https://matrixstep.net"  # 끝에 / 없이
@@ -146,13 +147,13 @@ def head(title, meta, path, extra=""):
 def topbar():
     return f'''<header class="top"><div class="wrap top-in">
 <a class="brand" href="/"><span class="mark" aria-hidden="true">[ ]</span>{SITE}</a>
-<nav class="top-nav" aria-label="사이트"><a href="/#all">모든 계산기</a><a href="/about/">소개</a></nav>
+<nav class="top-nav" aria-label="사이트"><a href="/#all">모든 계산기</a><a href="/guide/">가이드</a><a href="/about/">소개</a></nav>
 </div></header>
 '''
 
 def footer():
     return f'''<footer class="wrap foot"><span>© 2026 {SITE}. 모든 계산은 브라우저 안에서 처리되고 입력값은 전송되지 않아요.</span>
-<nav aria-label="사이트 정보"><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy/">개인정보처리방침</a></nav></footer>
+<nav aria-label="사이트 정보"><a href="/guide/">가이드</a><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy/">개인정보처리방침</a></nav></footer>
 '''
 
 def ad():
@@ -190,10 +191,44 @@ HOWTO = '''<section class="more-sec" aria-labelledby="howH"><h2 id="howH">사용
 </ol></section>
 '''
 
+# 계산기 → 관련 가이드
+GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions"}
+
 def concept(o):
+    g = guides.BY_SLUG.get(GUIDE_FOR.get(o["key"], ""))
+    more = f'<p><a href="/guide/{g["slug"]}/">자세한 설명과 예제: {e(g["title"])}</a></p>' if g else ""
     return (f'<section class="concept" aria-labelledby="cH"><h2 id="cH">{e(o["ch"])}</h2><div class="body">'
-            + "".join(f"<p>{e(x)}</p>" for x in o["cb"])
+            + "".join(f"<p>{e(x)}</p>" for x in o["cb"]) + more
             + f'</div><div class="tip"><b>시험 팁</b>{e(o["tip"])}</div></section>\n')
+
+def guide_grid():
+    return ('<section class="more-sec" id="guides" aria-labelledby="ggH"><h2 id="ggH">가이드</h2><div class="grid-ops">'
+            + "".join(f'<a href="/guide/{g["slug"]}/"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a>' for g in guides.ARTICLES)
+            + "</div></section>\n")
+
+def guide_page(g):
+    path = f'/guide/{g["slug"]}/'
+    ldj = {"@context": "https://schema.org", "@type": "Article", "headline": g["h1"], "inLanguage": "ko",
+           "description": g["meta"], "datePublished": TODAY, "dateModified": TODAY,
+           "author": {"@type": "Organization", "name": SITE}, "publisher": {"@type": "Organization", "name": SITE},
+           "mainEntityOfPage": DOMAIN + path}
+    s = head(g["title"] + " | " + SITE, g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n")
+    s += "<body>\n" + topbar() + '<main class="wrap"><article class="doc guide">'
+    s += f'<p class="crumb"><a href="/guide/">가이드</a></p><h1>{e(g["h1"])}</h1><p class="meta">{TODAY} 업데이트 · 읽는 시간 약 {g["min"]}분</p>'
+    s += g["body"]
+    s += f'<div class="cta-box"><div><b>직접 계산해 보세요</b><span>값을 바꾸면 결과와 단계별 풀이가 바로 나와요.</span></div><a class="cta" href="{g["calc"][1]}">{e(g["calc"][0])} 열기</a></div>'
+    rel = [guides.BY_SLUG[x] for x in g["related"]]
+    s += '<h2>함께 보면 좋은 글</h2><ul class="rel">' + "".join(f'<li><a href="/guide/{r["slug"]}/">{e(r["h1"])}</a></li>' for r in rel) + "</ul>"
+    s += "</article></main>\n" + footer() + "</body>\n</html>\n"
+    write(path, s)
+
+def guide_index():
+    body = '<h1>가이드</h1><p class="meta">시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요.</p>'
+    body += '<div class="grid-ops guide-list">' + "".join(
+        f'<a href="/guide/{g["slug"]}/"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a>' for g in guides.ARTICLES) + "</div>"
+    s = head("행렬 가이드 | " + SITE, "역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.", "/guide/") + "<body>\n" + topbar()
+    s += f'<main class="wrap"><article class="doc guide">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
+    write("/guide/", s)
 
 def faq(o):
     return ('<section class="more-sec" aria-labelledby="fH"><h2 id="fH">자주 묻는 질문</h2><div class="faq">'
@@ -233,7 +268,7 @@ def home():
              ld(dict(h1=SITE, meta=meta), "/"))
     s += '<body data-op="inverse">\n' + topbar() + '<main class="wrap">\n'
     s += f'<div class="intro"><h1>{SITE}</h1><p>역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여드려요. 아래는 역행렬 계산기예요. 다른 연산은 버튼을 눌러 바꿀 수 있어요.</p></div>\n'
-    s += opsnav("inverse", home=True) + "\n" + CALC + ad() + grid() + concept(o) + HOWTO
+    s += opsnav("inverse", home=True) + "\n" + CALC + ad() + grid() + guide_grid() + concept(o) + HOWTO
     s += "</main>\n" + footer()
     s += '<div class="toast" id="toast" role="status" hidden></div>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n'
     write("/", s)
@@ -290,7 +325,7 @@ def notfound():
     open(os.path.join(OUT, "404.html"), "w", encoding="utf-8").write(s)
 
 def seo_files():
-    urls = ["/"] + [f'/{o["slug"]}/' for o in OPS] + ["/about/", "/privacy/"]
+    urls = ["/"] + [f'/{o["slug"]}/' for o in OPS] + ["/guide/"] + [f'/guide/{g["slug"]}/' for g in guides.ARTICLES] + ["/about/", "/privacy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     open(os.path.join(OUT, "sitemap.xml"), "w").write(sm)
@@ -307,6 +342,8 @@ def main():
         shutil.copy(os.path.join(HERE, "static", f), OUT)
     home()
     for o in OPS: op_page(o)
+    guide_index()
+    for g in guides.ARTICLES: guide_page(g)
     about(); privacy(); notfound(); seo_files()
     print("built", sum(len(f) for _, _, f in os.walk(OUT)), "files")
 

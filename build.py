@@ -11,7 +11,7 @@ OPERATOR = "김현서"                 # 개인정보처리방침에 들어갈 �
 ADSENSE_CLIENT = ""              # 예: "ca-pub-1234567890123456"
 AD_SLOT = ""                     # 애드센스 광고 단위 ID (승인 후)
 GA_ID = ""                       # 예: "G-XXXXXXXXXX"
-GOOGLE_VERIFY = ""               # Search Console HTML 태그 content 값
+GOOGLE_VERIFY = "RbHYlcklifwfjHGu8-Gsei87Nz5d7G33nOIyOQZuzvE"  # Search Console HTML 태그 content 값
 NAVER_VERIFY = ""                # 네이버 서치어드바이저 HTML 태그 content 값
 TODAY = datetime.date(2026, 10, 13).isoformat()
 # ================================================

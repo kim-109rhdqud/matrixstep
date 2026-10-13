@@ -6,8 +6,8 @@ import os, shutil, json, html, datetime
 # ===================== 설정 =====================
 DOMAIN = "https://matrixstep.net"  # 끝에 / 없이
 SITE = "행렬 계산기"
-EMAIL = "contact@example.com"    # 문의 이메일
-OPERATOR = "행렬 계산기 운영자"     # 개인정보처리방침에 들어갈 운영자 이름
+EMAIL = "hunni1048@gmail.com"        # 문의 이메일
+OPERATOR = "김현서"                 # 개인정보처리방침에 들어갈 운영자 이름
 ADSENSE_CLIENT = ""              # 예: "ca-pub-1234567890123456"
 AD_SLOT = ""                     # 애드센스 광고 단위 ID (승인 후)
 GA_ID = ""                       # 예: "G-XXXXXXXXXX"

@@ -144,16 +144,18 @@ def head(title, meta, path, extra=""):
     if GA_ID: s += f'<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments)}}gtag("js",new Date());gtag("config","{GA_ID}");</script>\n'
     return s + extra + "</head>\n"
 
-def topbar():
+def topbar(cur=""):
+    items = [("calc", "/calculators/", "계산기"), ("guide", "/guide/", "가이드"), ("about", "/about/", "소개")]
+    links = "".join(f'<a href="{h}"' + (' aria-current="page"' if k == cur else "") + f">{t}</a>" for k, h, t in items)
     return f'''<header class="top"><div class="wrap top-in">
 <a class="brand" href="/"><span class="mark" aria-hidden="true">[ ]</span>{SITE}</a>
-<nav class="top-nav" aria-label="사이트"><a href="/#all">모든 계산기</a><a href="/guide/">가이드</a><a href="/about/">소개</a></nav>
+<nav class="top-nav" aria-label="사이트">{links}</nav>
 </div></header>
 '''
 
 def footer():
-    return f'''<footer class="wrap foot"><span>© 2026 {SITE}. 모든 계산은 브라우저 안에서 처리되고 입력값은 전송되지 않아요.</span>
-<nav aria-label="사이트 정보"><a href="/guide/">가이드</a><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy/">개인정보처리방침</a></nav></footer>
+    return f'''<footer class="wrap foot"><span>© 2026 {SITE}. 계산은 모두 브라우저 안에서 처리돼요.</span>
+<nav aria-label="사이트 정보"><a href="/calculators/">계산기</a><a href="/guide/">가이드</a><a href="/about/">소개</a><a href="/about/#contact">문의</a><a href="/privacy/">개인정보처리방침</a></nav></footer>
 '''
 
 def ad():
@@ -172,39 +174,39 @@ CALC = '''<div class="work">
 <section class="panel in" aria-labelledby="inH">
 <div class="panel-head"><h2 id="inH">입력</h2><div class="acts"><button type="button" class="ghost" id="exBtn">예제 넣기</button><button type="button" class="ghost" id="clrBtn">모두 지우기</button></div></div>
 <div id="inputs"><noscript><p class="err">계산기를 쓰려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript></div>
-<p class="hint">정수, 분수(<code>1/3</code>), 소수(<code>0.25</code>)를 입력할 수 있어요. 빈칸은 0으로 계산해요. <kbd>Enter</kbd> 다음 칸 · <kbd>↑</kbd><kbd>↓</kbd> 위아래 칸</p>
-<div class="photo"><div class="photo-t"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg><div><strong>사진으로 행렬 입력</strong><span>교재나 필기 사진에서 숫자를 읽어 칸을 채워요</span></div></div><span class="soon">준비 중</span></div>
+<p class="hint">정수, 분수(<code>1/3</code>), 소수(<code>0.25</code>)를 쓸 수 있어요. 빈칸은 0이에요.</p>
 </section>
 <section class="panel out" aria-labelledby="outH">
 <div class="panel-head"><h2 id="outH">결과</h2><div class="seg" role="group" aria-label="숫자 표시 방식"><button type="button" data-mode="frac" aria-pressed="true">분수</button><button type="button" data-mode="dec" aria-pressed="false">소수</button></div></div>
 <div class="res-main" id="resMain" aria-live="polite"></div>
 <div class="res-actions"><button type="button" class="ghost" id="copyTex">LaTeX 복사</button></div>
-<div class="steps"><h3>단계별 풀이</h3><ol id="steps"></ol><button type="button" class="ghost more" id="moreBtn" hidden></button></div>
 </section>
 </div>
+<details class="fold steps-fold" id="stepsD" hidden><summary><h2>단계별 풀이 보기</h2><span class="cnt" id="stepCount"></span></summary>
+<div class="fold-b"><ol id="steps"></ol><button type="button" class="ghost more" id="moreBtn" hidden></button></div></details>
 '''
 
-HOWTO = '''<section class="more-sec" aria-labelledby="howH"><h2 id="howH">사용 방법</h2><ol class="howto">
+HOWTO = '''<ol class="howto">
 <li>행·열 버튼으로 행렬 크기를 정해요. 최대 6×6까지 입력할 수 있어요.</li>
 <li>칸에 숫자를 입력하면 바로 계산돼요. 분수는 <code>1/3</code>, 음수는 <code>-2</code>처럼 입력해요.</li>
-<li>오른쪽 ‘단계별 풀이’에서 과정을 확인하고, 필요하면 ‘LaTeX 복사’로 과제에 붙여넣어요.</li>
-</ol></section>
-'''
+<li><kbd>Enter</kbd>는 다음 칸, <kbd>↑</kbd> <kbd>↓</kbd>는 위아래 칸으로 이동해요.</li>
+<li>‘단계별 풀이 보기’를 누르면 계산 과정이 펼쳐지고, ‘LaTeX 복사’로 과제에 붙여넣을 수 있어요.</li>
+</ol>'''
 
 # 계산기 → 관련 가이드
 GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions"}
 
-def concept(o):
+def fold(title, body, cls=""):
+    return f'<details class="fold {cls}"><summary><h2>{title}</h2></summary><div class="fold-b">{body}</div></details>\n'
+
+def extras(o):
+    """계산기 아래 접이식 설명. 기본은 모두 접혀 있고, 사용자가 열 때만 보여요."""
     g = guides.BY_SLUG.get(GUIDE_FOR.get(o["key"], ""))
     more = f'<p><a href="/guide/{g["slug"]}/">자세한 설명과 예제: {e(g["title"])}</a></p>' if g else ""
-    return (f'<section class="concept" aria-labelledby="cH"><h2 id="cH">{e(o["ch"])}</h2><div class="body">'
-            + "".join(f"<p>{e(x)}</p>" for x in o["cb"]) + more
-            + f'</div><div class="tip"><b>시험 팁</b>{e(o["tip"])}</div></section>\n')
-
-def guide_grid():
-    return ('<section class="more-sec" id="guides" aria-labelledby="ggH"><h2 id="ggH">가이드</h2><div class="grid-ops">'
-            + "".join(f'<a href="/guide/{g["slug"]}/"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a>' for g in guides.ARTICLES)
-            + "</div></section>\n")
+    concept = "".join(f"<p>{e(x)}</p>" for x in o["cb"]) + more + f'<p class="tip"><b>시험 팁</b>{e(o["tip"])}</p>'
+    qa = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in o["faq"])
+    return ('<section class="extras" aria-label="더 알아보기">\n' + fold(e(o["ch"]), concept) + fold("사용 방법", HOWTO)
+            + fold("자주 묻는 질문", f'<dl class="qa">{qa}</dl>') + "</section>\n")
 
 def guide_page(g):
     path = f'/guide/{g["slug"]}/'
@@ -213,7 +215,7 @@ def guide_page(g):
            "author": {"@type": "Organization", "name": SITE}, "publisher": {"@type": "Organization", "name": SITE},
            "mainEntityOfPage": DOMAIN + path}
     s = head(g["title"] + " | " + SITE, g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n")
-    s += "<body>\n" + topbar() + '<main class="wrap"><article class="doc guide">'
+    s += "<body>\n" + topbar("guide") + '<main class="wrap"><article class="doc guide">'
     s += f'<p class="crumb"><a href="/guide/">가이드</a></p><h1>{e(g["h1"])}</h1><p class="meta">{TODAY} 업데이트 · 읽는 시간 약 {g["min"]}분</p>'
     s += g["body"]
     s += f'<div class="cta-box"><div><b>직접 계산해 보세요</b><span>값을 바꾸면 결과와 단계별 풀이가 바로 나와요.</span></div><a class="cta" href="{g["calc"][1]}">{e(g["calc"][0])} 열기</a></div>'
@@ -226,19 +228,9 @@ def guide_index():
     body = '<h1>가이드</h1><p class="meta">시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요.</p>'
     body += '<div class="grid-ops guide-list">' + "".join(
         f'<a href="/guide/{g["slug"]}/"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a>' for g in guides.ARTICLES) + "</div>"
-    s = head("행렬 가이드 | " + SITE, "역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.", "/guide/") + "<body>\n" + topbar()
+    s = head("행렬 가이드 | " + SITE, "역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.", "/guide/") + "<body>\n" + topbar("guide")
     s += f'<main class="wrap"><article class="doc guide">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write("/guide/", s)
-
-def faq(o):
-    return ('<section class="more-sec" aria-labelledby="fH"><h2 id="fH">자주 묻는 질문</h2><div class="faq">'
-            + "".join(f"<details><summary>{e(q)}</summary><p>{e(a)}</p></details>" for q, a in o["faq"])
-            + "</div></section>\n")
-
-def grid():
-    return ('<section class="more-sec" id="all" aria-labelledby="gH"><h2 id="gH">모든 계산기</h2><div class="grid-ops">'
-            + "".join(f'<a href="/{o["slug"]}/"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a>' for o in OPS)
-            + "</div></section>\n")
 
 def ld(o, path):
     d = {"@context": "https://schema.org", "@type": "WebApplication", "name": o["h1"], "url": DOMAIN + path,
@@ -252,29 +244,60 @@ def write(path, text):
     os.makedirs(os.path.dirname(full), exist_ok=True)
     open(full, "w", encoding="utf-8").write(text)
 
+PAGE_END = '<div class="toast" id="toast" role="status" hidden></div>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n'
+
 def op_page(o):
+    """계산기 페이지: 제목 → 연산 선택 → 계산기·결과. 나머지는 접이식."""
     path = f'/{o["slug"]}/'
     s = head(o["title"] + " | " + SITE, o["meta"], path, ld(o, path))
-    s += f'<body data-op="{o["key"]}">\n' + topbar() + '<main class="wrap">\n'
+    s += f'<body data-op="{o["key"]}">\n' + topbar("calc") + '<main class="wrap">\n'
     s += f'<div class="intro"><h1>{e(o["h1"])}</h1><p>{e(o["desc"])}</p></div>\n' + opsnav(o["key"]) + "\n" + CALC + ad()
-    s += concept(o) + HOWTO + faq(o) + grid() + "</main>\n" + footer()
-    s += '<div class="toast" id="toast" role="status" hidden></div>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n'
+    s += extras(o) + "</main>\n" + footer() + PAGE_END
     write(path, s)
 
+def home_extras():
+    ops = " · ".join(f'<a href="/{o["slug"]}/">{o["label"]}</a>' for o in OPS)
+    about = (f"<p>{SITE}는 대학 선형대수에서 자주 쓰는 행렬 계산을 분수로 정확하게 풀고, 풀이 과정을 단계별로 보여주는 무료 계산기예요. "
+             "반올림 오차 없이 1/3 같은 정확한 값으로 계산하고, 결과 행렬은 LaTeX로 복사할 수 있어요.</p>"
+             f"<p>제공하는 계산기: {ops}</p>"
+             '<p><a href="/calculators/">모든 계산기 보기</a> · <a href="/guide/">개념 가이드 보기</a></p>')
+    qa = [("몇 × 몇 행렬까지 계산할 수 있나요?", "최대 6×6까지 입력할 수 있어요. 곱셈과 연립방정식은 계산기마다 가능한 크기가 조금씩 달라요."),
+          ("계산 결과는 정확한가요?", "모든 값을 분수로 저장해 계산하기 때문에 반올림 오차가 생기지 않아요. 소수 버튼은 보여주는 방식만 바꿔요."),
+          ("입력한 행렬이 서버로 전송되나요?", "아니요. 계산은 모두 브라우저 안에서 이루어지고 입력값은 어디에도 전송되지 않아요.")]
+    dl = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in qa)
+    return ('<section class="extras" aria-label="더 알아보기">\n' + fold(f"{SITE} 소개", about) + fold("사용 방법", HOWTO)
+            + fold("자주 묻는 질문", f'<dl class="qa">{dl}</dl>') + "</section>\n")
+
 def home():
-    o = OPS[0]
     meta = "역행렬, 행렬식, 행렬 곱셈, RREF, 연립방정식까지. 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여주는 깔끔한 무료 행렬 계산기예요."
-    s = head(f"{SITE} - 역행렬·행렬식·RREF 단계별 풀이", meta, "/",
-             ld(dict(h1=SITE, meta=meta), "/"))
+    s = head(f"{SITE} - 역행렬·행렬식·RREF 단계별 풀이", meta, "/", ld(dict(h1=SITE, meta=meta), "/"))
     s += '<body data-op="inverse">\n' + topbar() + '<main class="wrap">\n'
-    s += f'<div class="intro"><h1>{SITE}</h1><p>역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여드려요. 아래는 역행렬 계산기예요. 다른 연산은 버튼을 눌러 바꿀 수 있어요.</p></div>\n'
-    s += opsnav("inverse", home=True) + "\n" + CALC + ad() + grid() + guide_grid() + concept(o) + HOWTO
-    s += "</main>\n" + footer()
-    s += '<div class="toast" id="toast" role="status" hidden></div>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n'
+    s += f'<div class="intro"><h1>{SITE}</h1><p>역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 보여드려요.</p></div>\n'
+    s += opsnav("inverse", home=True) + "\n" + CALC + ad() + home_extras() + "</main>\n" + footer() + PAGE_END
     write("/", s)
 
-def doc_page(path, title, meta, body):
-    s = head(title + " | " + SITE, meta, path) + "<body>\n" + topbar()
+# 계산기 모음 페이지(/calculators/)
+GROUPS = [("기본 연산", ["add", "sub", "scalar", "mul", "transpose"]),
+          ("역행렬과 행렬식", ["inverse", "det"]),
+          ("소거법과 연립방정식", ["rref", "solve"])]
+
+def calc_hub():
+    by = {o["key"]: o for o in OPS}
+    meta = "덧셈·뺄셈·스칼라배·곱셈·전치부터 역행렬, 행렬식, RREF, 연립방정식까지 행렬 계산기 9종을 한곳에 모았어요. 모두 분수로 정확하게 계산하고 풀이 과정을 보여줘요."
+    ldj = {"@context": "https://schema.org", "@type": "ItemList", "name": "행렬 계산기 모음",
+           "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": f'{DOMAIN}/{o["slug"]}/', "name": o["h1"]} for i, o in enumerate(OPS)]}
+    s = head("행렬 계산기 모음 - 9가지 연산 | " + SITE, meta, "/calculators/", '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n")
+    s += "<body>\n" + topbar("calc") + '<main class="wrap">\n'
+    s += '<div class="intro"><h1>행렬 계산기 모음</h1><p>필요한 연산을 골라 바로 계산해 보세요. 개념이 헷갈리면 <a href="/guide/">가이드</a>도 있어요.</p></div>\n'
+    for title, keys in GROUPS:
+        s += f'<section class="hub-g"><h2>{title}</h2><div class="grid-ops">'
+        s += "".join(f'<a href="/{by[k]["slug"]}/"><b>{by[k]["h1"]}</b><span>{e(by[k]["card"])}</span></a>' for k in keys)
+        s += "</div></section>\n"
+    s += "</main>\n" + footer() + "</body>\n</html>\n"
+    write("/calculators/", s)
+
+def doc_page(path, title, meta, body, cur=""):
+    s = head(title + " | " + SITE, meta, path) + "<body>\n" + topbar(cur)
     s += f'<main class="wrap"><article class="doc">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write(path, s)
 
@@ -290,7 +313,7 @@ def about():
 <h2 id="contact">문의</h2>
 <p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요. 계산 결과가 틀렸다면 입력한 행렬을 함께 적어 주시면 빠르게 확인할 수 있어요.</p>
 <p><strong>{e(EMAIL)}</strong></p>'''
-    doc_page("/about/", "소개 및 문의", f"{SITE}의 특징과 제공하는 계산기, 문의 방법을 안내해요.", body)
+    doc_page("/about/", "소개 및 문의", f"{SITE}의 특징과 제공하는 계산기, 문의 방법을 안내해요.", body, "about")
 
 def privacy():
     body = f'''<h1>개인정보처리방침</h1><p class="meta">시행일 {TODAY}</p>
@@ -325,7 +348,7 @@ def notfound():
     open(os.path.join(OUT, "404.html"), "w", encoding="utf-8").write(s)
 
 def seo_files():
-    urls = ["/"] + [f'/{o["slug"]}/' for o in OPS] + ["/guide/"] + [f'/guide/{g["slug"]}/' for g in guides.ARTICLES] + ["/about/", "/privacy/"]
+    urls = ["/", "/calculators/"] + [f'/{o["slug"]}/' for o in OPS] + ["/guide/"] + [f'/guide/{g["slug"]}/' for g in guides.ARTICLES] + ["/about/", "/privacy/"]
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
     sm += "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     open(os.path.join(OUT, "sitemap.xml"), "w").write(sm)
@@ -340,7 +363,7 @@ def main():
     shutil.copytree(os.path.join(HERE, "assets"), os.path.join(OUT, "assets"))
     for f in os.listdir(os.path.join(HERE, "static")):
         shutil.copy(os.path.join(HERE, "static", f), OUT)
-    home()
+    home(); calc_hub()
     for o in OPS: op_page(o)
     guide_index()
     for g in guides.ARTICLES: guide_page(g)

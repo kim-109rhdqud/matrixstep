@@ -1,4 +1,4 @@
-/* Layout: 한 화면 작업대. 상단 연산 선택 → 왼쪽 입력 / 오른쪽 결과·풀이 → 아래 개념 정리 */
+/* Layout: 연산 선택 → 왼쪽 입력 / 오른쪽 결과 → 접이식(단계별 풀이·개념·사용법·FAQ) */
 :root{
   --bg:#F7F8FA; --surface:#FFFFFF; --sunk:#F3F5F8;
   --fg:#12151A; --muted:#565D69; --faint:#868D98;
@@ -39,11 +39,12 @@ button,input{font:inherit;color:inherit}
 .mark{width:30px;height:30px;border-radius:8px;background:var(--accent);color:var(--accent-fg);display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:600}
 .tag{font-size:13px;color:var(--muted)}
 
-.intro{padding-block:40px 20px}
-.intro h1{margin:0 0 6px;font-size:clamp(26px,4vw,34px);font-weight:700;letter-spacing:-.025em;text-wrap:balance}
+.intro{padding-block:28px 16px}
+.intro h1{margin:0 0 4px;font-size:clamp(24px,3.6vw,30px);font-weight:700;letter-spacing:-.025em;text-wrap:balance}
 .intro p{margin:0;color:var(--muted);max-width:62ch}
+.intro p a{color:var(--accent)}
 
-.ops{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.ops{position:relative;display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
 .ops a{display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:21px;border:1px solid var(--line);background:var(--surface);color:var(--muted);text-decoration:none;font-size:14px;transition:border-color .15s,color .15s}
 .ops a:hover{border-color:var(--line-strong);color:var(--fg)}
 .ops a[aria-current="page"]{background:var(--fg);border-color:var(--fg);color:var(--bg);font-weight:600}
@@ -88,11 +89,6 @@ button,input{font:inherit;color:inherit}
 .sys{text-align:center;font-family:var(--mono);font-size:13px;color:var(--muted);margin-top:14px}
 .hint{margin:22px 0 0;font-size:13px;color:var(--muted)}
 .hint kbd{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--sunk)}
-.photo{margin-top:16px;border:1.5px dashed var(--line-strong);border-radius:12px;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px}
-.photo-t{display:flex;align-items:center;gap:12px}
-.photo-t strong{display:block;font-size:14px;font-weight:600}
-.photo-t span{font-size:13px;color:var(--muted)}
-.soon{font-size:12px;font-weight:600;padding:4px 10px;border-radius:12px;background:var(--sunk);color:var(--muted);border:1px solid var(--line)}
 
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
 .seg button{min-height:34px;padding:0 12px;border:none;background:var(--surface);font-size:13px;color:var(--muted);cursor:pointer}
@@ -122,9 +118,7 @@ button,input{font:inherit;color:inherit}
 .fr{display:inline-flex;flex-direction:column;align-items:center;font-size:.8em;line-height:1.15;vertical-align:middle}
 .fr>span:first-child{border-bottom:1px solid currentColor;padding:0 2px}
 
-.steps{border-top:1px solid var(--line);padding-top:18px}
-.steps h3{margin:0 0 14px;font-size:15px;font-weight:600}
-.steps ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+#steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:18px}
 .step{display:flex;gap:12px;min-width:0}
 .no{flex:none;width:24px;height:24px;border-radius:12px;background:var(--accent-soft);color:var(--accent);font-size:12px;font-weight:600;display:grid;place-items:center;margin-top:1px}
 .sb{min-width:0;flex:1;display:flex;flex-direction:column;gap:8px}
@@ -135,16 +129,10 @@ button,input{font:inherit;color:inherit}
 .eq{font-family:var(--mono);font-size:13.5px;white-space:nowrap}
 .more{margin-top:14px}
 
-.concept{margin-block:28px 8px;padding:28px 0 0;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:20px 48px}
-.concept h2{margin:0 0 10px;font-size:19px;letter-spacing:-.01em;flex:1 1 100%}
-.concept .body{flex:2 1 420px;min-width:0;max-width:66ch;color:var(--muted)}
-.concept .body p{margin:0 0 10px}
-.concept .tip{flex:1 1 260px;min-width:0;align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;font-size:14px}
-.tip b{display:block;font-size:12px;letter-spacing:.06em;color:var(--accent);margin-bottom:4px}
 .foot{padding-block:28px 40px;font-size:13px;color:var(--faint)}
 
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:10}
-@media (max-width:520px){:root{--cell:3rem}.panel{padding:18px}.intro{padding-block:28px 16px}.scalar{font-size:32px}}
+@media (max-width:520px){:root{--cell:3rem}.panel{padding:18px}.intro{padding-block:20px 14px}.scalar{font-size:32px}}
 
 /* ---------- 사이트 공통 ---------- */
 .top-nav{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:14px}
@@ -153,13 +141,6 @@ button,input{font:inherit;color:inherit}
 .ops a.on{background:var(--fg);border-color:var(--fg);color:var(--bg);font-weight:600}
 .ad{margin-top:24px;min-height:100px;display:flex;justify-content:center}
 .ad ins{width:100%;max-width:970px}
-.more-sec{margin-top:36px;padding-top:28px;border-top:1px solid var(--line)}
-.more-sec h2{margin:0 0 14px;font-size:19px;letter-spacing:-.01em}
-.faq{display:flex;flex-direction:column;gap:10px;max-width:760px}
-.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
-.faq summary{cursor:pointer;font-weight:600;font-size:15px}
-.faq p{margin:10px 0 0;color:var(--muted)}
-.howto{margin:0;padding-left:1.3em;color:var(--muted);max-width:66ch;display:flex;flex-direction:column;gap:4px}
 .grid-ops{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px}
 .grid-ops a{display:flex;flex-direction:column;gap:4px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--fg);transition:border-color .15s}
 .grid-ops a:hover{border-color:var(--accent)}
@@ -207,8 +188,45 @@ button,input{font:inherit;color:inherit}
 .doc a.cta:hover{filter:brightness(1.08)}
 .rel{margin:0;padding-left:1.3em}
 .guide-list{margin-top:8px}
-.guide .faq{margin-top:12px}
-.concept .body a{color:var(--accent)}
 
 /* 한국어는 띄어쓰기 단위로 줄바꿈 */
-.guide,.intro h1,.intro p,.concept .body,.concept h2,.doc p,.doc li{word-break:keep-all;overflow-wrap:break-word}
+.guide,.intro h1,.intro p,.hint,.fold-b,.hub-g h2,.grid-ops span,.doc p,.doc li{word-break:keep-all;overflow-wrap:break-word}
+
+/* ---------- 접이식 (기본은 접힘) ---------- */
+.fold{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.fold>summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:0 18px;cursor:pointer;list-style:none;user-select:none}
+.fold>summary::-webkit-details-marker{display:none}
+.fold>summary h2{margin:0;font-size:15px;font-weight:600;letter-spacing:-.005em}
+.fold>summary::after{content:"";flex:none;width:8px;height:8px;margin-left:auto;border-right:1.8px solid var(--faint);border-bottom:1.8px solid var(--faint);transform:rotate(45deg) translate(-2px,-2px);transition:transform .15s}
+.fold[open]>summary::after{transform:rotate(225deg) translate(-2px,-2px)}
+.fold>summary:hover h2{color:var(--accent)}
+.fold>summary .cnt{font-size:13px;color:var(--faint);margin-left:4px}
+.fold>summary .cnt:empty{display:none}
+.fold-b{padding:2px 18px 18px;color:var(--muted)}
+.fold-b>p{margin:0 0 10px;max-width:66ch}
+.fold-b a{color:var(--accent)}
+.fold-b kbd{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;background:var(--sunk)}
+.fold-b code{font-family:var(--mono);font-size:.9em}
+.fold .tip{margin:14px 0 0;padding:12px 14px;background:var(--accent-soft);border-radius:10px;font-size:14px;color:var(--fg)}
+.tip b{display:block;font-size:12px;letter-spacing:.06em;color:var(--accent);margin-bottom:2px}
+.howto{margin:0;padding-left:1.3em;max-width:66ch;display:flex;flex-direction:column;gap:6px}
+.qa{margin:0;max-width:66ch}
+.qa dt{font-weight:600;color:var(--fg);margin-top:14px}
+.qa dt:first-child{margin-top:4px}
+.qa dd{margin:4px 0 0}
+.steps-fold{margin-top:20px}
+.steps-fold>summary h2{font-size:16px}
+.steps-fold .more{margin-top:18px}
+.extras{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+
+/* ---------- 계산기 모음 ---------- */
+.hub-g{margin-bottom:28px}
+.hub-g h2{margin:0 0 12px;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+
+/* 연산 선택: 작은 화면에서는 한 줄로 밀어서 보기 */
+@media (max-width:720px){
+  .ops{flex-wrap:nowrap;overflow-x:auto;margin-inline:-16px;padding-inline:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .ops::-webkit-scrollbar{display:none}
+  .ops a{flex:none}
+}
+.top-nav a[aria-current="page"]{color:var(--fg);font-weight:600}

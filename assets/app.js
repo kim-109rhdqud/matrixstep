@@ -304,6 +304,8 @@ function renderResult(res){
     (s.ops?'<div class="rop">'+s.ops.map(x=>'<code>'+esc(x)+'</code>').join('')+'</div>':'')+(s.m?'<div class="sm">'+s.m+'</div>':'')+'</div></li>').join(''):'<li class="st">값을 입력하면 풀이가 여기에 나와요.</li>';
   const more=$('#moreBtn');
   if(steps.length>LIM){more.hidden=false;more.textContent=S.showAll?'풀이 접기':'나머지 '+(steps.length-LIM)+'단계 보기';}else more.hidden=true;
+  $('#stepsD').hidden=!steps.length;
+  $('#stepCount').textContent=steps.length?steps.length+'단계':'';
 }
 
 /* ---------- 페이지 시작 ---------- */
@@ -314,6 +316,9 @@ function init(){
   if(st&&st.touched&&st.A&&st.B){S.A=st.A;S.B=st.B;S.b=st.b||S.b;S.k=st.k||S.k;S.touched=true}else loadExample(S.op);
   try{const m=localStorage.getItem('mx-mode');if(m==='dec'||m==='frac'){MODE=m;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===m)))}}catch(e){}
   fitDims();renderInputs();compute();
+  try{if(sessionStorage.getItem('mx-steps')==='1')$('#stepsD').open=true}catch(e){}
+  const cur=document.querySelector('.ops [aria-current],.ops .on');
+  if(cur){const bar=cur.parentElement;if(bar.scrollWidth>bar.clientWidth)bar.scrollLeft=cur.offsetLeft-(bar.clientWidth-cur.offsetWidth)/2}
 }
 
 /* ---------- 이벤트 ---------- */
@@ -347,6 +352,7 @@ document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',(
   MODE=b.dataset.mode;try{localStorage.setItem('mx-mode',MODE)}catch(e){}document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));compute();
 }));
 $('#moreBtn').addEventListener('click',()=>{S.showAll=!S.showAll;compute()});
+$('#stepsD').addEventListener('toggle',e=>{try{sessionStorage.setItem('mx-steps',e.target.open?'1':'0')}catch(x){}});
 let toastT;
 function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},1800)}
 $('#copyTex').addEventListener('click',()=>{

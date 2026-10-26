@@ -99,7 +99,7 @@ def box(*parts):
 def li(i, note, ops, M, sep=-1):
     chips = f'<div class="rop">{"".join(f"<code>{o}</code>" for o in ops)}</div>' if ops else ""
     return (
-        f'<li class="step"><span class="no">{i}</span><div class="sb"><div class="st">{note}</div>{chips}'
+        f'<li class="step"><span class="no">{i:02d}</span><div class="sb"><div class="st">{note}</div>{chips}'
         f'<div class="mbox">{mx(M, sep)}</div></div></li>'
     )
 

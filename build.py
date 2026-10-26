@@ -3,7 +3,7 @@
 표준 라이브러리만 써서 Amplify 빌드 환경에서 그대로 돌아가요.
 
 한국어 페이지는 /, 영어 페이지는 /en/ 아래에 만들어요. 페이지 함수들은 현재 언어 설정 L을 읽어요."""
-import os, shutil, json, html, datetime
+import os, re, shutil, json, html, datetime
 import guides, guides_en
 
 # ===================== 설정 =====================
@@ -327,32 +327,32 @@ GUIDES_FOR = {
 # ===================== 화면 문구 =====================
 CALC_KO = '''<div class="work">
 <section class="panel in" aria-labelledby="inH">
-<div class="panel-head"><h2 id="inH">입력</h2><div class="acts"><button type="button" class="ghost" id="exBtn">예제 넣기</button><button type="button" class="ghost" id="clrBtn">모두 지우기</button></div></div>
+<div class="panel-head"><h2 id="inH">INPUT · 입력</h2><div class="acts"><button type="button" class="ghost" id="exBtn">예제 넣기</button><button type="button" class="ghost" id="clrBtn">모두 지우기</button></div></div>
 <div id="inputs"><noscript><p class="err">계산기를 쓰려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript></div>
 <p class="hint">정수, 분수(<code>1/3</code>), 소수(<code>0.25</code>)를 쓸 수 있어요. 빈칸은 0이에요.</p>
 </section>
 <section class="panel out" aria-labelledby="outH">
-<div class="panel-head"><h2 id="outH">결과</h2><div class="seg" role="group" aria-label="숫자 표시 방식"><button type="button" data-mode="frac" aria-pressed="true">분수</button><button type="button" data-mode="dec" aria-pressed="false">소수</button></div></div>
+<div class="panel-head"><h2 id="outH">RESULT · 결과</h2><div class="seg" role="group" aria-label="숫자 표시 방식"><button type="button" data-mode="frac" aria-pressed="true">분수</button><button type="button" data-mode="dec" aria-pressed="false">소수</button></div></div>
 <div class="res-main" id="resMain" aria-live="polite"></div>
-<div class="res-actions"><button type="button" class="ghost" id="copyTex">LaTeX 복사</button></div>
+<div class="res-actions"><button type="button" class="ghost" id="copyTex">LaTeX 복사</button><p class="texnote">LaTeX는 과제·논문(Overleaf), 노션 수식 블록, 워드 수식 편집기에 붙여넣는 수식 코드예요.</p></div>
 </section>
 </div>
-<details class="fold steps-fold" id="stepsD" hidden><summary><h2>단계별 풀이 보기</h2><span class="cnt" id="stepCount"></span></summary>
+<details class="fold steps-fold" id="stepsD" hidden><summary><h2>단계별 풀이</h2><span class="cnt" id="stepCount"></span></summary>
 <div class="fold-b"><ol id="steps"></ol><button type="button" class="ghost more" id="moreBtn" hidden></button></div></details>
 '''
 CALC_EN = '''<div class="work">
 <section class="panel in" aria-labelledby="inH">
-<div class="panel-head"><h2 id="inH">Input</h2><div class="acts"><button type="button" class="ghost" id="exBtn">Load example</button><button type="button" class="ghost" id="clrBtn">Clear all</button></div></div>
+<div class="panel-head"><h2 id="inH">INPUT</h2><div class="acts"><button type="button" class="ghost" id="exBtn">Load example</button><button type="button" class="ghost" id="clrBtn">Clear all</button></div></div>
 <div id="inputs"><noscript><p class="err">Please enable JavaScript in your browser to use the calculator.</p></noscript></div>
 <p class="hint">Integers, fractions (<code>1/3</code>) and decimals (<code>0.25</code>) are accepted. Empty cells count as 0.</p>
 </section>
 <section class="panel out" aria-labelledby="outH">
-<div class="panel-head"><h2 id="outH">Result</h2><div class="seg" role="group" aria-label="Number format"><button type="button" data-mode="frac" aria-pressed="true">Fraction</button><button type="button" data-mode="dec" aria-pressed="false">Decimal</button></div></div>
+<div class="panel-head"><h2 id="outH">RESULT</h2><div class="seg" role="group" aria-label="Number format"><button type="button" data-mode="frac" aria-pressed="true">Fraction</button><button type="button" data-mode="dec" aria-pressed="false">Decimal</button></div></div>
 <div class="res-main" id="resMain" aria-live="polite"></div>
-<div class="res-actions"><button type="button" class="ghost" id="copyTex">Copy LaTeX</button></div>
+<div class="res-actions"><button type="button" class="ghost" id="copyTex">Copy LaTeX</button><p class="texnote">LaTeX is the math code you can paste into Overleaf, Notion equation blocks or Word's equation editor.</p></div>
 </section>
 </div>
-<details class="fold steps-fold" id="stepsD" hidden><summary><h2>Show steps</h2><span class="cnt" id="stepCount"></span></summary>
+<details class="fold steps-fold" id="stepsD" hidden><summary><h2>Steps</h2><span class="cnt" id="stepCount"></span></summary>
 <div class="fold-b"><ol id="steps"></ol><button type="button" class="ghost more" id="moreBtn" hidden></button></div></details>
 '''
 
@@ -360,13 +360,13 @@ HOWTO_KO = '''<ol class="howto">
 <li>행·열 버튼으로 행렬 크기를 정해요. 최대 6×6까지 입력할 수 있어요.</li>
 <li>칸에 숫자를 입력하면 바로 계산돼요. 분수는 <code>1/3</code>, 음수는 <code>-2</code>처럼 입력해요.</li>
 <li><kbd>Enter</kbd>는 다음 칸, <kbd>↑</kbd> <kbd>↓</kbd>는 위아래 칸으로 이동해요.</li>
-<li>‘단계별 풀이 보기’를 누르면 계산 과정이 펼쳐지고, ‘LaTeX 복사’로 과제에 붙여넣을 수 있어요.</li>
+<li>‘단계별 풀이’를 누르면 계산 과정이 펼쳐져요. ‘LaTeX 복사’는 Overleaf, 노션 수식 블록, 워드 수식 편집기에 붙여넣을 수 있는 수식 코드를 복사해요.</li>
 </ol>'''
 HOWTO_EN = '''<ol class="howto">
 <li>Set the matrix size with the row and column buttons. Up to 6×6 is supported.</li>
 <li>Type numbers into the cells and the result updates instantly. Enter fractions as <code>1/3</code> and negatives as <code>-2</code>.</li>
 <li><kbd>Enter</kbd> moves to the next cell; <kbd>↑</kbd> <kbd>↓</kbd> move up and down.</li>
-<li>Open ‘Show steps’ to see the full working, and use ‘Copy LaTeX’ to paste the result into your homework.</li>
+<li>Open ‘Steps’ to see the full working. ‘Copy LaTeX’ copies the result as math code you can paste into Overleaf, a Notion equation block or Word's equation editor.</li>
 </ol>'''
 
 UI_KO = dict(
@@ -395,7 +395,7 @@ UI_KO = dict(
             ("소거법과 연립방정식", ["rref", "rank", "solve"]), ("고윳값", ["eigen"])],
     gi_title="행렬 가이드", gi_h1="가이드", gi_intro="시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요.",
     gi_meta="역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
-    g_meta="{d} 업데이트 · 읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글",
+    g_meta="{d} 업데이트 · 읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
     about_title="소개 및 문의", privacy_title="개인정보처리방침",
     nf_title="페이지를 찾을 수 없어요", nf_meta="요청한 페이지가 없어요.",
 )
@@ -425,7 +425,7 @@ UI_EN = dict(
             ("Elimination and linear systems", ["rref", "rank", "solve"]), ("Eigenvalues", ["eigen"])],
     gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators.",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
-    g_meta="Updated {d} · about {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides",
+    g_meta="Updated {d} · about {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
     about_title="About and Contact", privacy_title="Privacy Policy",
     nf_title="Page not found", nf_meta="The requested page does not exist.",
 )
@@ -445,7 +445,7 @@ def P(path):
     """현재 언어의 경로. 한국어는 그대로, 영어는 /en 을 앞에 붙여요."""
     return L["prefix"] + path
 
-FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">'
+FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">'
 
 def head(title, meta, path, extra="", alt=True):
     """path는 언어 접두사가 없는 논리 경로예요 (예: /inverse/). alt=False면 다른 언어 페이지가 없는 거예요."""
@@ -598,17 +598,26 @@ def guide_page(g):
            "description": g["meta"], "datePublished": g.get("published", FIRST_PUBLISHED), "dateModified": TODAY,
            "author": {"@type": "Organization", "name": L["site"]}, "publisher": {"@type": "Organization", "name": L["site"]},
            "mainEntityOfPage": DOMAIN + P(path)}
+    # 본문의 h2에 id를 붙이고 목차를 만들어요
+    heads = []
+    def _id(m):
+        heads.append(m.group(1))
+        return f'<h2 id="s{len(heads)}">{m.group(1)}</h2>'
+    body = re.sub(r"<h2>(.*?)</h2>", _id, g["body"])
+    toc = (f'<aside class="toc" aria-label="{U["toc"]}"><span class="lbl">{U["toc"]}</span>'
+           + "".join(f'<a href="#s{i + 1}">{re.sub(r"<[^>]+>", "", h)}</a>' for i, h in enumerate(heads)) + "</aside>") if heads else ""
     s = head(g["title"] + " | " + L["site"], g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n"
              + crumbs([(U["crumb_home"], "/"), (U["crumb_guide"], "/guide/"), (g["h1"], path)]), alt=alt)
-    s += "<body>\n" + topbar("guide", path, alt) + '<main class="wrap"><article class="doc guide">'
+    s += "<body>\n" + topbar("guide", path, alt) + '<main class="wrap guide-wrap"><article class="doc guide">'
     s += f'<p class="crumb"><a href="{P("/guide/")}">{U["crumb_guide"]}</a></p><h1>{e(g["h1"])}</h1><p class="meta">{U["g_meta"].format(d=TODAY, m=g["min"])}</p>'
-    s += g["body"]
+    s += body
     s += f'<div class="cta-box"><div><b>{U["cta_t"]}</b><span>{U["cta_s"]}</span></div><a class="cta" href="{P(g["calc"][1])}">{e(U["cta_b"].format(c=g["calc"][0]))}</a></div>'
     G = L["guides"].BY_SLUG
     rel = [G[x] for x in g["related"] if x in G]
     if rel:
-        s += f'<h2>{U["rel_h2"]}</h2><ul class="rel">' + "".join(f'<li><a href="{P("/guide/" + r["slug"] + "/")}">{e(r["h1"])}</a></li>' for r in rel) + "</ul>"
-    s += "</article></main>\n" + footer() + "</body>\n</html>\n"
+        s += f'<p class="lbl rel-h">{U["rel_h2"]}</p><ul class="rel">' + "".join(
+            f'<li><a href="{P("/guide/" + r["slug"] + "/")}">{e(r["h1"])}<span>{U["min"].format(m=r["min"])}</span></a></li>' for r in rel) + "</ul>"
+    s += "</article>" + toc + "</main>\n" + footer() + "</body>\n</html>\n"
     write(path, s)
 
 def guide_index():

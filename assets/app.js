@@ -61,7 +61,7 @@ ko:{
   errFail:'계산하지 못했어요. 입력값을 확인해 주세요.',
   stepsEmpty:'값을 입력하면 풀이가 여기에 나와요.',
   stepsLess:'풀이 접기', stepsMore:n=>'나머지 '+n+'단계 보기', stepsCount:n=>n+'단계',
-  copied:'LaTeX를 복사했어요', copyFail:'복사하지 못했어요. 브라우저 설정을 확인해 주세요',
+  copied:'LaTeX를 복사했어요. Overleaf, 노션 수식 블록, 워드 수식 편집기에 붙여넣으세요.', copyFail:'복사하지 못했어요. 브라우저 설정을 확인해 주세요',
   pow0:'어떤 정사각행렬이든 0제곱은 단위행렬 I로 정해요.',
   pow1:'A¹ = A 에서 시작해요.',
   powStep:i=>'A'+sup(i-1)+'에 A를 한 번 더 곱해 A'+sup(i)+'을 구해요.',
@@ -141,7 +141,7 @@ en:{
   errFail:'The calculation failed. Please check the input.',
   stepsEmpty:'Enter values and the steps will appear here.',
   stepsLess:'Show fewer steps', stepsMore:n=>'Show '+n+' more step'+(n>1?'s':''), stepsCount:n=>n+' step'+(n>1?'s':''),
-  copied:'LaTeX copied', copyFail:'Could not copy. Check your browser settings.',
+  copied:'LaTeX copied. Paste it into Overleaf, a Notion equation block or Word\'s equation editor.', copyFail:'Could not copy. Check your browser settings.',
   pow0:'Any square matrix to the power 0 is defined as the identity matrix I.',
   pow1:'Start with A¹ = A.',
   powStep:i=>'Multiply A'+sup(i-1)+' by A once more to get A'+sup(i)+'.',
@@ -293,7 +293,7 @@ const OPS={
       }
       const inv=g.M.map(r=>r.slice(n));
       steps.push({t:t('invDone')});
-      return {head:'<div class="eqline"><span class="lhs">A⁻¹ =</span>'+mx(inv,{cls:'big'})+'</div>',chips:[['','det(A) = '+txt(upper(A).det)]],latex:bm(inv),steps};
+      return {head:'<div class="eqline"><span class="lhs">A⁻¹ =</span>'+mx(inv,{cls:'big'})+'</div>',chips:[['','det(A) = '+txt(upper(A).det)],['ok',t('chipInv')]],latex:bm(inv),steps};
     }},
   det:{square:true,
     run({A}){
@@ -638,7 +638,7 @@ function renderResult(res){
   $('#resMain').innerHTML=h;
   S.latex=res.latex||null; $('#copyTex').disabled=!S.latex;
   const steps=res.steps||[],LIM=8,show=S.showAll?steps:steps.slice(0,LIM);
-  $('#steps').innerHTML=show.length?show.map((s,i)=>'<li class="step"><span class="no">'+(i+1)+'</span><div class="sb"><div class="st">'+esc(s.t||'')+'</div>'+
+  $('#steps').innerHTML=show.length?show.map((s,i)=>'<li class="step"><span class="no">'+String(i+1).padStart(2,'0')+'</span><div class="sb"><div class="st">'+esc(s.t||'')+'</div>'+
     (s.ops?'<div class="rop">'+s.ops.map(x=>'<code>'+esc(x)+'</code>').join('')+'</div>':'')+(s.m?'<div class="sm">'+s.m+'</div>':'')+'</div></li>').join(''):'<li class="st">'+esc(t('stepsEmpty'))+'</li>';
   const more=$('#moreBtn');
   if(steps.length>LIM){more.hidden=false;more.textContent=S.showAll?t('stepsLess'):t('stepsMore',steps.length-LIM);}else more.hidden=true;

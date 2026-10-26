@@ -307,7 +307,7 @@ OPS_EN = [
 GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions",
              "mul": "matrix-multiplication", "add": "matrix-add-subtract-scalar", "sub": "matrix-add-subtract-scalar",
              "scalar": "matrix-add-subtract-scalar", "transpose": "matrix-transpose-properties",
-             "rank": "rank-and-rref", "power": "matrix-multiplication", "adj": "inverse-adjugate-cofactor", "eigen": "eigenvalues-2x2"}
+             "rank": "rank-and-rref", "power": "diagonalization-matrix-power", "adj": "inverse-adjugate-cofactor", "eigen": "eigenvalues-2x2"}
 GUIDES_FOR = {
     "inverse": ["inverse-gauss-jordan", "inverse-adjugate-cofactor", "elementary-matrices"],
     "det": ["determinant-3x3", "determinant-properties", "cramer-rule", "eigenvalues-2x2"],
@@ -319,9 +319,9 @@ GUIDES_FOR = {
     "rref": ["rank-and-rref", "null-space-column-space", "linear-independence"],
     "solve": ["linear-system-solutions", "cramer-rule", "rank-and-rref"],
     "rank": ["rank-and-rref", "null-space-column-space", "linear-independence"],
-    "power": ["matrix-multiplication", "eigenvalues-2x2", "special-matrices"],
+    "power": ["diagonalization-matrix-power", "matrix-multiplication", "eigenvalues-2x2"],
     "adj": ["inverse-adjugate-cofactor", "determinant-3x3", "determinant-properties"],
-    "eigen": ["eigenvalues-2x2", "determinant-3x3", "special-matrices"],
+    "eigen": ["eigenvalues-2x2", "diagonalization-matrix-power", "determinant-3x3"],
 }
 
 # ===================== 화면 문구 =====================

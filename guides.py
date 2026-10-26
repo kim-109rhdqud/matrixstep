@@ -595,6 +595,7 @@ for _a in ARTICLES: _a["published"] = "2026-10-13"
 # 추가 가이드: 다른 모듈에서 불러와요 (위 도우미 함수가 모두 정의된 뒤에 가져와야 해요)
 import guides_a  # noqa: E402
 import guides_b  # noqa: E402
-for _a in guides_a.ARTICLES + guides_b.ARTICLES: _a["published"] = "2026-10-26"
-ARTICLES += guides_a.ARTICLES + guides_b.ARTICLES
+import guides_c  # noqa: E402
+for _a in guides_a.ARTICLES + guides_b.ARTICLES + guides_c.ARTICLES: _a["published"] = "2026-10-26"
+ARTICLES += guides_a.ARTICLES + guides_b.ARTICLES + guides_c.ARTICLES
 BY_SLUG = {a["slug"]: a for a in ARTICLES}

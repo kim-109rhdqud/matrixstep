@@ -6,8 +6,10 @@ const src = fs.readFileSync(path.join(__dirname, '..', 'assets', 'app.js'), 'utf
 const cut = src.indexOf('const ORDER=');
 if (cut < 0) throw new Error('app.js에서 const ORDER= 를 찾지 못했어요');
 let core = src.slice(0, cut).replace(/^\(function\(\)\{\s*'use strict';/, '');
-const lib = new Function('document', core + '\nreturn {F,parseF,OPS,gj,upper,det2,tex,bm,MODEFRAC:()=>MODE};')({ querySelector: () => null });
+const LANG = process.argv[3] || 'ko';
+const lib = new Function('document', core + '\nreturn {F,parseF,OPS,gj,upper,det2,tex,bm};')({ querySelector: () => null, documentElement: { lang: LANG } });
 
+// 사용: node tests/run_app.js [seed] [ko|en]
 // 재현 가능한 난수
 let seed = Number(process.argv[2] || 20261013);
 const rnd = () => { seed = (seed * 1103515245 + 12345) % 2147483648; return seed / 2147483648; };
@@ -54,4 +56,4 @@ for (let k = 0; k < 150; k++) {
 }
 // 입력 파서 경계값
 const parse = ['', '  ', '3', '-3', '+3', '1/2', '-1/2', '0.25', '-.5', '2.', '1/0', 'abc', '1/2/3', '−3', '1 / 2', '007', '1e3'].map(s => { const f = lib.parseF(s); return [s, f === null ? null : f.n + '/' + f.d]; });
-process.stdout.write(JSON.stringify({ cases: out, parse }));
+process.stdout.write(JSON.stringify({ lang: LANG, cases: out, parse }));

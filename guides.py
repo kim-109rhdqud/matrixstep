@@ -112,7 +112,17 @@ def steps_html(first_note, first_M, steps, sep=-1):
 
 
 # ---------- 소거법 ----------
-def gj(M0, split):
+# 풀이 단계 설명 문구. 영어 가이드는 guides_en.NOTES_EN을 넘겨요.
+NOTES_KO = dict(
+    swap="{c}열에서 피벗으로 쓸 0이 아닌 성분을 {r}행으로 올려요.",
+    scale="피벗을 1로 만들기 위해 {r}행 전체를 피벗 값으로 나눠요.",
+    elim="{c}열에서 피벗을 제외한 나머지 성분을 0으로 만들어요.",
+    uswap="두 행을 바꾸면 행렬식의 부호가 바뀌어요.",
+    uelim="{c}열의 피벗 아래를 0으로 만들어요. 이 연산은 행렬식을 바꾸지 않아요.",
+)
+
+
+def gj(M0, split, notes=NOTES_KO):
     M = snap(M0)
     R = len(M)
     steps, piv, r = [], [], 0
@@ -132,13 +142,13 @@ def gj(M0, split):
         if pr != r:
             M[pr], M[r] = M[r], M[pr]
             steps.append(([f"R{sub(r + 1)} ↔ R{sub(pr + 1)}"], snap(M),
-                          f"{c + 1}열에서 피벗으로 쓸 0이 아닌 성분을 {r + 1}행으로 올려요."))
+                          notes["swap"].format(c=c + 1, r=r + 1)))
         pv = M[r][c]
         if pv != 1:
             iv = 1 / pv
             M[r] = [x * iv for x in M[r]]
             steps.append(([f"R{sub(r + 1)} ← {coef(iv)}R{sub(r + 1)}"], snap(M),
-                          f"피벗을 1로 만들기 위해 {r + 1}행 전체를 피벗 값으로 나눠요."))
+                          notes["scale"].format(r=r + 1)))
         ops = []
         for i in range(R):
             if i == r or M[i][c] == 0:
@@ -147,13 +157,13 @@ def gj(M0, split):
             M[i] = [x - f * y for x, y in zip(M[i], M[r])]
             ops.append(f"R{sub(i + 1)} ← R{sub(i + 1)} {'+' if f < 0 else '−'} {coef_abs(f)}R{sub(r + 1)}")
         if ops:
-            steps.append((ops, snap(M), f"{c + 1}열에서 피벗을 제외한 나머지 성분을 0으로 만들어요."))
+            steps.append((ops, snap(M), notes["elim"].format(c=c + 1)))
         piv.append(c)
         r += 1
     return M, steps, piv, r
 
 
-def upper(A0):
+def upper(A0, notes=NOTES_KO):
     M = snap(A0)
     n = len(M)
     steps, sign = [], 1
@@ -164,7 +174,7 @@ def upper(A0):
         if pr != c:
             M[pr], M[c] = M[c], M[pr]
             sign = -sign
-            steps.append(([f"R{sub(c + 1)} ↔ R{sub(pr + 1)}"], snap(M), "두 행을 바꾸면 행렬식의 부호가 바뀌어요."))
+            steps.append(([f"R{sub(c + 1)} ↔ R{sub(pr + 1)}"], snap(M), notes["uswap"]))
         ops = []
         for i in range(c + 1, n):
             f = M[i][c] / M[c][c]
@@ -173,7 +183,7 @@ def upper(A0):
             M[i] = [x - f * y for x, y in zip(M[i], M[c])]
             ops.append(f"R{sub(i + 1)} ← R{sub(i + 1)} {'+' if f < 0 else '−'} {coef_abs(f)}R{sub(c + 1)}")
         if ops:
-            steps.append((ops, snap(M), f"{c + 1}열의 피벗 아래를 0으로 만들어요. 이 연산은 행렬식을 바꾸지 않아요."))
+            steps.append((ops, snap(M), notes["uelim"].format(c=c + 1)))
     d = Fr(sign)
     for i in range(n):
         d *= M[i][i]

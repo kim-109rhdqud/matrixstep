@@ -3,7 +3,7 @@ frontend:
   phases:
     build:
       commands:
-        - node --version && python3 tests/check_app.py
+        - node --version && python3 tests/check_app.py 20261013 ko && python3 tests/check_app.py 20261013 en
         - python3 build.py
   artifacts:
     baseDirectory: dist

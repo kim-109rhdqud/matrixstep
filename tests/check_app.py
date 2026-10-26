@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """assets/app.js 계산 결과를 Python fractions로 독립 검증해요.
 
-사용: python3 tests/check_app.py [seed]
+사용: python3 tests/check_app.py [seed] [ko|en]
 tests/run_app.js가 무작위 행렬에 대해 계산기 코드를 실행한 결과(LaTeX)를 받아,
 여기서 따로 구현한 분수 연산으로 다시 계산해 비교해요.
 """
@@ -10,8 +10,18 @@ from fractions import Fraction as Fr
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 seed = sys.argv[1] if len(sys.argv) > 1 else "20261013"
-raw = subprocess.run(["node", os.path.join(HERE, "run_app.js"), seed], capture_output=True, text=True, check=True).stdout
+lang = sys.argv[2] if len(sys.argv) > 2 else "ko"
+raw = subprocess.run(["node", os.path.join(HERE, "run_app.js"), seed, lang], capture_output=True, text=True, check=True).stdout
 data = json.loads(raw)
+assert data["lang"] == lang
+
+# 결과 칩 문구 (언어별)
+CH = {
+    "ko": dict(singular="비가역 행렬", noinv="역행렬 없음", none="해 없음", unique="유일한 해",
+               free=lambda n: f"자유변수 {n}개", piv=lambda s: f"피벗 열 {s}"),
+    "en": dict(singular="Singular matrix", noinv="Not invertible", none="No solution", unique="Unique solution",
+               free=lambda n: f"{n} free variable" + ("s" if n > 1 else ""), piv=lambda s: f"Pivot columns {s}"),
+}[lang]
 
 # ---------- 입력 파싱 (앱과 같은 규칙) ----------
 def parse(s):
@@ -73,7 +83,7 @@ for c in data["cases"]:
         if op == "inverse":
             d = det(A)
             if d == 0:
-                if c["latex"] is not None or "비가역 행렬" not in c["chips"]: fail(c, "특이행렬인데 역행렬을 냈어요")
+                if c["latex"] is not None or CH["singular"] not in c["chips"]: fail(c, "특이행렬인데 역행렬을 냈어요")
             else:
                 inv = tex_mat(c["latex"])
                 if mul(A, inv) != I(len(A)) or mul(inv, A) != I(len(A)): fail(c, "A·A⁻¹ ≠ I")
@@ -81,7 +91,7 @@ for c in data["cases"]:
         elif op == "det":
             d = det(A)
             if tex_num(c["latex"]) != d: fail(c, f"det 불일치 (정답 {d}, 결과 {c['latex']})")
-            if (d == 0) != ("역행렬 없음" in c["chips"]): fail(c, "가역 여부 칩 불일치")
+            if (d == 0) != (CH["noinv"] in c["chips"]): fail(c, "가역 여부 칩 불일치")
         elif op == "transpose":
             if tex_mat(c["latex"]) != [list(r) for r in zip(*A)]: fail(c, "전치 불일치")
         elif op == "scalar":
@@ -96,18 +106,18 @@ for c in data["cases"]:
             R, piv = rref(A)
             if tex_mat(c["latex"]) != R: fail(c, "RREF 불일치")
             if f"rank = {len(piv)}" not in c["chips"]: fail(c, f"rank 칩 불일치 (정답 {len(piv)})")
-            if piv and f"피벗 열 {', '.join(str(p + 1) for p in piv)}" not in c["chips"]: fail(c, "피벗 열 칩 불일치")
+            if piv and CH["piv"](", ".join(str(p + 1) for p in piv)) not in c["chips"]: fail(c, "피벗 열 칩 불일치")
         elif op == "solve":
             b = [parse(x) for x in c["inp"]["b"]]; n = len(A[0])
             rA, rAb = rank(A), rank([r + [bi] for r, bi in zip(A, b)])
             if rA != rAb:
-                if "해 없음" not in c["chips"]: fail(c, "해가 없어야 해요")
+                if CH["none"] not in c["chips"]: fail(c, "해가 없어야 해요")
             elif rA == n:
                 x = tex_mat(c["latex"])
                 if mul(A, x) != [[bi] for bi in b]: fail(c, "Ax ≠ b")
-                if "유일한 해" not in c["chips"]: fail(c, "유일한 해 칩 없음")
+                if CH["unique"] not in c["chips"]: fail(c, "유일한 해 칩 없음")
             else:
-                if f"자유변수 {n - rA}개" not in c["chips"] or f"rank = {rA}" not in c["chips"]: fail(c, f"자유변수/rank 칩 불일치 (정답 자유변수 {n - rA}, rank {rA})")
+                if CH["free"](n - rA) not in c["chips"] or f"rank = {rA}" not in c["chips"]: fail(c, f"자유변수/rank 칩 불일치 (정답 자유변수 {n - rA}, rank {rA})")
         if c["steps"] < 1: fail(c, "풀이 단계가 없어요")
     except Exception as ex:  # 파싱 실패 등
         fail(c, f"예외 {type(ex).__name__}: {ex}")
@@ -119,5 +129,5 @@ for s, got in data["parse"]:
     if got != want: bad += 1; print("FAIL parse", repr(s), "앱:", got, "기대:", want)
 
 total = sum(count.values())
-print(f"{total} cases ({', '.join(f'{k} {v}' for k, v in count.items())}), {len(data['parse'])} parse checks, seed {seed}: {'OK' if not bad else str(bad) + ' FAILED'}")
+print(f"[{lang}] {total} cases ({', '.join(f'{k} {v}' for k, v in count.items())}), {len(data['parse'])} parse checks, seed {seed}: {'OK' if not bad else str(bad) + ' FAILED'}")
 sys.exit(1 if bad else 0)

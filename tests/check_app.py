@@ -18,9 +18,11 @@ assert data["lang"] == lang
 # 결과 칩 문구 (언어별)
 CH = {
     "ko": dict(singular="비가역 행렬", noinv="역행렬 없음", none="해 없음", unique="유일한 해",
-               free=lambda n: f"자유변수 {n}개", piv=lambda s: f"피벗 열 {s}"),
+               free=lambda n: f"자유변수 {n}개", piv=lambda s: f"피벗 열 {s}",
+               full="최대 랭크", deficient="랭크 부족", diag="대각화 가능", notdiag="대각화 불가능"),
     "en": dict(singular="Singular matrix", noinv="Not invertible", none="No solution", unique="Unique solution",
-               free=lambda n: f"{n} free variable" + ("s" if n > 1 else ""), piv=lambda s: f"Pivot columns {s}"),
+               free=lambda n: f"{n} free variable" + ("s" if n > 1 else ""), piv=lambda s: f"Pivot columns {s}",
+               full="Full rank", deficient="Rank deficient", diag="Diagonalizable", notdiag="Not diagonalizable"),
 }[lang]
 
 # ---------- 입력 파싱 (앱과 같은 규칙) ----------
@@ -70,6 +72,38 @@ def rref(A):
 rank = lambda A: len(rref(A)[1])
 mul = lambda A, B: [[sum(a * b for a, b in zip(r, col)) for col in zip(*B)] for r in A]
 I = lambda n: [[Fr(int(i == j)) for j in range(n)] for i in range(n)]
+fr = lambda s: Fr(s)                                   # "n/d" → Fraction
+def peval(c, x):                                       # c[k] = λ^k 계수
+    r = Fr(0)
+    for a in reversed(c): r = r * x + a
+    return r
+def deflate(c, r):
+    n = len(c) - 1; q = [Fr(0)] * n; q[n - 1] = c[n]
+    for i in range(n - 1, 0, -1): q[i - 1] = c[i] + r * q[i]
+    return q, c[0] + r * q[0]
+def divisors(n):
+    n = abs(n); out = set(); i = 1
+    while i * i <= n:
+        if n % i == 0: out.add(i); out.add(n // i)
+        i += 1
+    return out
+def rational_roots(c):
+    """유리근 정리로 모든 유리수 근(중복 포함) 찾기. 상수항이 너무 크면 None."""
+    from math import lcm
+    L = 1
+    for a in c: L = lcm(L, a.denominator)
+    ic = [int(a * L) for a in c]
+    roots = []
+    while len(ic) > 1 and ic[0] == 0:                  # λ = 0
+        roots.append(Fr(0)); ic = ic[1:]
+    if len(ic) > 1:
+        if abs(ic[0]) > 10 ** 9: return None
+        cands = {Fr(sp * p, q) for p in divisors(ic[0]) for q in divisors(ic[-1]) for sp in (1, -1)}
+        cc = [Fr(a) for a in ic]
+        for r in sorted(cands):
+            while len(cc) > 1 and peval(cc, r) == 0:
+                roots.append(r); cc, rem = deflate(cc, r); assert rem == 0
+    return roots
 
 bad = 0; count = {}
 def fail(c, why):
@@ -118,6 +152,79 @@ for c in data["cases"]:
                 if CH["unique"] not in c["chips"]: fail(c, "유일한 해 칩 없음")
             else:
                 if CH["free"](n - rA) not in c["chips"] or f"rank = {rA}" not in c["chips"]: fail(c, f"자유변수/rank 칩 불일치 (정답 자유변수 {n - rA}, rank {rA})")
+        elif op == "power":
+            k = int(c["inp"]["k"]); P = I(len(A))
+            for _ in range(k): P = mul(P, A)
+            if tex_mat(c["latex"]) != P: fail(c, "거듭제곱 불일치")
+            if f"n = {k}" not in c["chips"]: fail(c, "n 칩 없음")
+        elif op == "adj":
+            n = len(A); adj = [[fr(x) for x in r] for r in c["data"]["adj"]]; d = det(A)
+            if tex_mat(c["latex"]) != adj: fail(c, "latex와 data 불일치")
+            if n == 1:
+                if adj != [[Fr(1)]]: fail(c, "1×1 수반행렬은 [1]")
+            else:
+                dI = [[d * x for x in r] for r in I(n)]
+                if mul(adj, A) != dI or mul(A, adj) != dI: fail(c, "adj(A)·A ≠ det(A)·I")
+            if f"det(A) = " not in " ".join(c["chips"]): fail(c, "det 칩 없음")
+            if (d == 0) != (CH["noinv"] in c["chips"]): fail(c, "가역 여부 칩 불일치")
+        elif op == "rank":
+            R, piv = rref(A); r = len(piv); m, n = len(A), len(A[0]); D = c["data"]
+            if (D["rank"], D["nullity"], D["piv"]) != (r, n - r, piv): fail(c, f"rank/nullity/piv 불일치 (정답 {r}, {n - r}, {piv})")
+            if c["latex"] != str(r): fail(c, "latex rank 불일치")
+            full = r == min(m, n)
+            if (CH["full"] in c["chips"]) != full or (CH["deficient"] in c["chips"]) == full: fail(c, "최대 랭크 칩 불일치")
+        elif op == "eigen":
+            n = len(A); D = c["data"]; poly = [fr(x) for x in D["poly"]]
+            if len(poly) != n + 1 or poly[n] != 1: fail(c, "특성다항식 차수/최고차 계수")
+            # p(λ) = det(λI − A) 를 λ = 0..n 에서 독립 계산과 비교
+            for lam in range(n + 1):
+                Ml = [[(Fr(lam) if i == j else Fr(0)) - A[i][j] for j in range(n)] for i in range(n)]
+                if peval(poly, Fr(lam)) != det(Ml): fail(c, f"p({lam}) ≠ det({lam}I − A)"); break
+            # 유리수 근: 정확한 근이고 중복도가 맞는지, 빠진 유리수 근이 없는지
+            q = poly[:]; got = []
+            for rs, mlt in D["rational"]:
+                r = fr(rs)
+                for _ in range(mlt):
+                    if peval(q, r) != 0: fail(c, f"유리수 근 {rs} 가 근이 아니거나 중복도 과다"); break
+                    q, rem = deflate(q, r); got.append(r)
+                if len(q) > 1 and peval(q, r) == 0: fail(c, f"유리수 근 {rs} 중복도 부족")
+            ref = rational_roots(poly)
+            if ref is not None and sorted(ref) != sorted(got): fail(c, f"유리수 근 집합 불일치 (정답 {sorted(ref)}, 결과 {sorted(got)})")
+            # 남은 이차식
+            if D["quad"]:
+                if len(q) != 3: fail(c, "quad 정보가 있는데 남은 차수가 2가 아님")
+                else:
+                    b, cc = q[1], q[0]; disc = b * b - 4 * cc
+                    Q = D["quad"]
+                    if fr(Q["D"]) != disc or fr(Q["re"]) != -b / 2: fail(c, "판별식/실수부 불일치")
+                    k, m = fr(Q["k"]), int(Q["m"])
+                    if k * k * m * 4 != abs(disc): fail(c, "√ 단순화 불일치 (k²·m·4 ≠ |D|)")
+                    if m > 1 and any(m % (f * f) == 0 for f in range(2, min(int(m ** 0.5) + 1, 1000))): fail(c, "√ 안에 제곱인수가 남음")
+            elif len(q) == 3: fail(c, "남은 이차식이 있는데 quad 정보 없음")
+            # 수치 근
+            if D["numeric"]:
+                if len(q) < 4: fail(c, "차수 3 미만인데 수치 근 사용")
+                if len(D["numeric"]) != len(q) - 1: fail(c, "수치 근 개수 불일치")
+                qf = [float(a) for a in q]
+                for re_, im_ in D["numeric"]:
+                    z = complex(re_, im_); v = sum(a * z ** k for k, a in enumerate(qf))
+                    if abs(v) > 1e-6 * max(1.0, abs(z)) ** (len(q) - 1) * max(1.0, max(abs(a) for a in qf)): fail(c, f"수치 근 {z} 이 근이 아님 |q(z)|={abs(v):.2e}"); break
+            elif len(q) >= 4: fail(c, "남은 고차식이 있는데 수치 근 없음")
+            # 고유벡터
+            if [fr(v[0]) for v in D["vecs"]] != [fr(rs) for rs, _ in D["rational"]]: fail(c, "고유벡터 λ 목록 불일치")
+            for ls, vecs in D["vecs"]:
+                lam = fr(ls); Ml = [[A[i][j] - (lam if i == j else 0) for j in range(n)] for i in range(n)]
+                V = [[fr(x) for x in v] for v in vecs]
+                if len(V) != n - rank(Ml): fail(c, f"λ={ls} 고유벡터 개수 ≠ nullity"); continue
+                for v in V:
+                    if all(x == 0 for x in v) or any(x != 0 for r in mul(Ml, [[x] for x in v]) for x in r): fail(c, f"λ={ls} 고유벡터가 (A−λI)v=0 을 만족하지 않음"); break
+                if V and rank(V) != len(V): fail(c, f"λ={ls} 고유벡터가 선형종속")
+            # 대각화 칩
+            if CH["diag"] in c["chips"] or CH["notdiag"] in c["chips"]:
+                if D["quad"] and fr(D["quad"]["D"]) < 0: fail(c, "복소 고윳값인데 대각화 칩")
+                elif sum(m for _, m in D["rational"]) == n:
+                    geo = sum(len(v) for _, v in D["vecs"]); want = CH["diag"] if geo == n else CH["notdiag"]
+                    if want not in c["chips"]: fail(c, f"대각화 칩 오류 (기하 {geo}, n {n})")
         if c["steps"] < 1: fail(c, "풀이 단계가 없어요")
     except Exception as ex:  # 파싱 실패 등
         fail(c, f"예외 {type(ex).__name__}: {ex}")

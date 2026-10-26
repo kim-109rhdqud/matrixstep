@@ -242,3 +242,5 @@ button,input{font:inherit;color:inherit}
 .rel-list a{font-weight:600}
 .rel-list span{display:block;font-size:13.5px;color:var(--muted)}
 .top-nav .lang{padding-left:18px;border-left:1px solid var(--line);font-size:13px;letter-spacing:.02em}
+.scalar.sm{font-size:20px;line-height:1.5}
+.sol .mx{vertical-align:middle;margin:2px 4px}

@@ -117,6 +117,52 @@ OPS_KO = [
   tip="랭크 = 미지수 개수이고 모순이 없으면 해가 하나뿐이에요.",
   faq=[("식의 개수와 미지수 개수가 달라도 되나요?","네. 행(식)과 열(미지수)을 따로 조절할 수 있어요."),
        ("해가 무수히 많을 때 t는 무엇인가요?","자유변수를 나타내는 매개변수예요. t에 어떤 수를 넣어도 방정식을 만족하는 해가 돼요.")]),
+ dict(key="rank", slug="rank", label="랭크",
+  title="행렬 랭크 계산기 - 랭크·영공간 차원·피벗 열까지", h1="행렬 랭크 계산기",
+  meta="행렬의 랭크를 행 연산 과정과 함께 구하고, 영공간의 차원(nullity)과 피벗 열, 열공간의 기저까지 알려줘요. 분수도 정확하게 계산해요.",
+  desc="행 연산으로 피벗을 찾아 랭크를 구하고, 영공간의 차원과 피벗 열을 알려드려요.",
+  card="랭크와 영공간 차원 구하기",
+  ch="랭크란?",
+  cb=["랭크는 행렬에서 서로 독립인 행(또는 열)의 개수예요. 기약 행사다리꼴로 바꿨을 때 피벗의 개수와 같아요.",
+      "랭크-영공간 차원 정리: rank(A) + nullity(A) = 열의 수. nullity는 Ax = 0의 해 공간의 차원이에요."],
+  tip="n×n 행렬의 랭크가 n이면 역행렬이 있고 행렬식이 0이 아니에요.",
+  faq=[("랭크와 행렬식은 어떤 관계인가요?","정사각행렬에서 행렬식이 0이 아니면 랭크가 최대(n)예요. 행렬식이 0이면 랭크가 n보다 작아요."),
+       ("열공간의 기저는 어떻게 구하나요?","RREF에서 피벗이 있는 열 번호를 찾고, 원래 행렬 A의 그 열들을 가져오면 돼요. RREF의 열을 쓰면 안 돼요."),
+       ("행 랭크와 열 랭크가 다를 수 있나요?","아니요. 항상 같아요. 그래서 rank(A) = rank(Aᵀ)예요.")]),
+ dict(key="power", slug="power", label="거듭제곱",
+  title="행렬 거듭제곱 계산기 - Aⁿ을 분수로 정확하게", h1="행렬 거듭제곱 계산기",
+  meta="정사각행렬의 거듭제곱 Aⁿ(n = 0~12)을 분수로 정확하게 계산하고, A², A³, … 을 차례로 보여줘요. 피보나치 행렬 같은 점화식 계산에도 써요.",
+  desc="A를 n번 곱한 Aⁿ을 구하고, 중간 결과 A², A³, …을 차례로 보여드려요.",
+  card="Aⁿ을 중간 결과와 함께 구하기",
+  ch="행렬의 거듭제곱",
+  cb=["Aⁿ은 정사각행렬 A를 n번 곱한 행렬이에요. A⁰은 단위행렬 I로 정해요.",
+      "대각행렬의 거듭제곱은 대각 성분을 각각 n제곱하면 되고, 일반 행렬은 대각화 A = PDP⁻¹를 이용하면 Aⁿ = PDⁿP⁻¹로 빠르게 구할 수 있어요."],
+  tip="[[1, 1], [1, 0]]ⁿ의 성분은 피보나치 수예요. 점화식 문제에서 자주 나와요.",
+  faq=[("음수 지수도 되나요?","이 계산기는 0 이상의 정수 지수만 지원해요. A⁻ⁿ은 역행렬을 구한 뒤 n제곱하면 돼요."),
+       ("정사각행렬이 아니면 안 되나요?","네. A·A가 정의되려면 A의 열 수와 행 수가 같아야 해서 정사각행렬만 거듭제곱할 수 있어요.")]),
+ dict(key="adj", slug="adjugate", label="수반행렬",
+  title="수반행렬(여인수행렬) 계산기 - adj(A)와 역행렬 공식", h1="수반행렬 계산기",
+  meta="여인수 Cᵢⱼ를 하나씩 구해 여인수행렬과 수반행렬 adj(A)를 만들고, A⁻¹ = adj(A)/det(A) 공식으로 역행렬까지 이어서 보여줘요.",
+  desc="소행렬식과 여인수를 하나씩 구해 여인수행렬 C와 수반행렬 adj(A) = Cᵀ를 만들어요.",
+  card="여인수행렬과 adj(A) 구하기",
+  ch="수반행렬이란?",
+  cb=["성분 aᵢⱼ의 여인수는 Cᵢⱼ = (−1)ⁱ⁺ʲMᵢⱼ예요. 여기서 Mᵢⱼ는 i행과 j열을 지운 소행렬식이에요.",
+      "여인수를 모은 행렬을 전치한 것이 수반행렬 adj(A)이고, A·adj(A) = det(A)·I가 성립해요. 그래서 det(A) ≠ 0이면 A⁻¹ = adj(A)/det(A)예요."],
+  tip="2×2에서 adj([[a, b], [c, d]]) = [[d, −b], [−c, a]]예요. 대각 성분을 바꾸고 나머지 부호를 바꿔요.",
+  faq=[("수반행렬과 여인수행렬은 뭐가 다른가요?","여인수행렬 C는 여인수를 같은 위치에 둔 행렬이고, 수반행렬은 그것을 전치한 Cᵀ예요. 전치를 빼먹는 실수가 많아요."),
+       ("역행렬을 구할 때 소거법과 수반행렬 중 뭐가 빠른가요?","2×2, 3×3은 수반행렬 공식이 빠르고, 4×4 이상은 소거법이 훨씬 빨라요.")]),
+ dict(key="eigen", slug="eigenvalues", label="고윳값",
+  title="고윳값 계산기 - 특성다항식과 고유벡터까지 단계별로", h1="고윳값·고유벡터 계산기",
+  meta="특성다항식 det(λI − A)를 분수로 정확하게 구하고 고윳값과 고유벡터를 단계별로 풀어요. 2×2는 근의 공식으로 정확한 값을, 중복도와 대각화 가능 여부도 알려줘요.",
+  desc="특성다항식을 구해 고윳값을 찾고, (A − λI)v = 0을 풀어 고유벡터를 구해요.",
+  card="특성다항식, 고윳값, 고유벡터 구하기",
+  ch="고윳값과 고유벡터",
+  cb=["Av = λv를 만족하는 0이 아닌 벡터 v가 고유벡터, 수 λ가 고윳값이에요. 고윳값은 특성다항식 det(λI − A) = 0의 근이에요.",
+      "유리수 고윳값은 정확하게 구하고, 2×2는 근의 공식으로 (a ± √b)/c 꼴까지 보여줘요. 3×3 이상에서 유리수가 아닌 근은 소수로 근사해요."],
+  tip="고윳값의 합은 대각합 tr(A), 곱은 행렬식 det(A)예요. 검산할 때 써요.",
+  faq=[("고윳값이 소수로 나오는 건 왜 그런가요?","특성다항식의 근이 유리수가 아니면 정확한 표기가 복잡해져서, 3×3 이상에서는 수치적으로 근사해 ≈로 표시해요. 2×2는 √를 써서 정확하게 보여줘요."),
+       ("복소 고윳값이 나오면요?","실수 고윳값이 없다는 뜻이에요. 2×2에서는 a ± bi 꼴로 정확히 보여주고, 그 이상은 근사값으로 보여줘요."),
+       ("대각화 가능 여부는 어떻게 판단하나요?","각 고윳값의 기하적 중복도(고유벡터 개수)의 합이 n이면 대각화할 수 있어요. 모든 고윳값이 정확히 구해진 경우에만 판단해요.")]),
 ]
 
 # ===================== 계산기 내용 (영어) =====================
@@ -209,12 +255,59 @@ OPS_EN = [
   tip="If the rank equals the number of unknowns and there is no contradiction, the solution is unique.",
   faq=[("Can the number of equations differ from the number of unknowns?","Yes. Rows (equations) and columns (unknowns) can be set independently."),
        ("What is t in the general solution?","A parameter standing for a free variable. Any value of t gives a solution of the system.")]),
+ dict(key="rank", slug="rank", label="Rank",
+  title="Matrix Rank Calculator - Rank, Nullity and Pivot Columns", h1="Matrix Rank Calculator",
+  meta="Find the rank of a matrix with every row operation shown, plus the nullity, the pivot columns and a basis of the column space. Exact fraction arithmetic.",
+  desc="Finds the pivots by row reduction to get the rank, and reports the nullity and pivot columns.",
+  card="Rank and nullity",
+  ch="What is the rank?",
+  cb=["The rank is the number of linearly independent rows (or columns) of a matrix. It equals the number of pivots in the reduced row echelon form.",
+      "Rank-nullity theorem: rank(A) + nullity(A) = number of columns, where the nullity is the dimension of the solution space of Ax = 0."],
+  tip="An n×n matrix with rank n is invertible and has a nonzero determinant.",
+  faq=[("How are rank and determinant related?","For a square matrix, a nonzero determinant means full rank n. A zero determinant means the rank is less than n."),
+       ("How do I find a basis of the column space?","Take the pivot column numbers from the RREF and use those columns of the original matrix A, not the columns of the RREF."),
+       ("Can row rank and column rank differ?","No. They are always equal, so rank(A) = rank(Aᵀ).")]),
+ dict(key="power", slug="power", label="Power",
+  title="Matrix Power Calculator - Aⁿ in Exact Fractions", h1="Matrix Power Calculator",
+  meta="Raise a square matrix to a power n from 0 to 12 in exact fractions and see A², A³, … one after another. Handy for recurrences such as the Fibonacci matrix.",
+  desc="Computes Aⁿ by repeated multiplication and shows the intermediate powers A², A³, …",
+  card="Aⁿ with every intermediate power",
+  ch="Powers of a matrix",
+  cb=["Aⁿ is the square matrix A multiplied by itself n times, with A⁰ defined as the identity I.",
+      "For a diagonal matrix, raise each diagonal entry to the n-th power. For a general matrix, diagonalization A = PDP⁻¹ gives Aⁿ = PDⁿP⁻¹ quickly."],
+  tip="The entries of [[1, 1], [1, 0]]ⁿ are Fibonacci numbers, a classic recurrence example.",
+  faq=[("Are negative exponents supported?","No, only integers from 0 to 12. For A⁻ⁿ, invert the matrix first and raise the inverse to the n-th power."),
+       ("Why must the matrix be square?","A·A is only defined when the number of columns of A equals its number of rows.")]),
+ dict(key="adj", slug="adjugate", label="Adjugate",
+  title="Adjugate Matrix Calculator - Cofactors and the Inverse Formula", h1="Adjugate Matrix Calculator",
+  meta="Compute every cofactor Cᵢⱼ, build the cofactor matrix and the adjugate adj(A), and continue to the inverse with A⁻¹ = adj(A)/det(A).",
+  desc="Finds each minor and cofactor to build the cofactor matrix C and the adjugate adj(A) = Cᵀ.",
+  card="Cofactor matrix and adj(A)",
+  ch="What is the adjugate?",
+  cb=["The cofactor of the entry aᵢⱼ is Cᵢⱼ = (−1)ⁱ⁺ʲMᵢⱼ, where the minor Mᵢⱼ is the determinant after deleting row i and column j.",
+      "The adjugate adj(A) is the transpose of the cofactor matrix, and A·adj(A) = det(A)·I. So when det(A) ≠ 0, A⁻¹ = adj(A)/det(A)."],
+  tip="For 2×2, adj([[a, b], [c, d]]) = [[d, −b], [−c, a]]: swap the diagonal entries and negate the others.",
+  faq=[("What is the difference between the cofactor matrix and the adjugate?","The cofactor matrix C holds each cofactor in its own position; the adjugate is its transpose Cᵀ. Forgetting the transpose is a common mistake."),
+       ("Elimination or the adjugate formula for inverses?","For 2×2 and 3×3 the adjugate formula is quick. From 4×4 up, elimination is much faster.")]),
+ dict(key="eigen", slug="eigenvalues", label="Eigenvalues",
+  title="Eigenvalue Calculator - Characteristic Polynomial and Eigenvectors with Steps", h1="Eigenvalue and Eigenvector Calculator",
+  meta="Get the characteristic polynomial det(λI − A) in exact fractions, then the eigenvalues and eigenvectors step by step. Exact 2×2 roots, multiplicities and whether the matrix is diagonalizable.",
+  desc="Finds the characteristic polynomial, solves it for the eigenvalues, and solves (A − λI)v = 0 for the eigenvectors.",
+  card="Characteristic polynomial, eigenvalues, eigenvectors",
+  ch="Eigenvalues and eigenvectors",
+  cb=["A nonzero vector v with Av = λv is an eigenvector and the number λ is its eigenvalue. The eigenvalues are the roots of the characteristic polynomial det(λI − A) = 0.",
+      "Rational eigenvalues are found exactly, and 2×2 matrices get exact roots of the form (a ± √b)/c. For 3×3 and larger, irrational roots are approximated numerically."],
+  tip="The eigenvalues add up to the trace tr(A) and multiply to det(A). Use this to check your work.",
+  faq=[("Why are some eigenvalues shown as decimals?","When the roots of the characteristic polynomial are not rational, an exact expression gets unwieldy for 3×3 and larger, so they are approximated and marked with ≈. For 2×2 the exact form with √ is shown."),
+       ("What if the eigenvalues are complex?","Then there are no real eigenvalues. For 2×2 they are shown exactly as a ± bi; for larger matrices as approximations."),
+       ("How is diagonalizability decided?","A matrix is diagonalizable when the geometric multiplicities (numbers of eigenvectors) add up to n. The verdict is given only when every eigenvalue was found exactly.")]),
 ]
 
 # 계산기 → 관련 가이드 (영어판에는 있는 글만 보여줘요)
 GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions",
              "mul": "matrix-multiplication", "add": "matrix-add-subtract-scalar", "sub": "matrix-add-subtract-scalar",
-             "scalar": "matrix-add-subtract-scalar", "transpose": "matrix-transpose-properties"}
+             "scalar": "matrix-add-subtract-scalar", "transpose": "matrix-transpose-properties",
+             "rank": "rank-and-rref", "power": "matrix-multiplication", "adj": "inverse-adjugate-cofactor", "eigen": "eigenvalues-2x2"}
 GUIDES_FOR = {
     "inverse": ["inverse-gauss-jordan", "inverse-adjugate-cofactor", "elementary-matrices"],
     "det": ["determinant-3x3", "determinant-properties", "cramer-rule", "eigenvalues-2x2"],
@@ -225,6 +318,10 @@ GUIDES_FOR = {
     "transpose": ["matrix-transpose-properties", "special-matrices"],
     "rref": ["rank-and-rref", "null-space-column-space", "linear-independence"],
     "solve": ["linear-system-solutions", "cramer-rule", "rank-and-rref"],
+    "rank": ["rank-and-rref", "null-space-column-space", "linear-independence"],
+    "power": ["matrix-multiplication", "eigenvalues-2x2", "special-matrices"],
+    "adj": ["inverse-adjugate-cofactor", "determinant-3x3", "determinant-properties"],
+    "eigen": ["eigenvalues-2x2", "determinant-3x3", "special-matrices"],
 }
 
 # ===================== 화면 문구 =====================
@@ -282,7 +379,7 @@ UI_KO = dict(
     more_guide="자세한 설명과 예제: {t}", tip="시험 팁",
     crumb_home="홈", crumb_calc="계산기", crumb_guide="가이드",
     home_title="행렬 계산기 - 역행렬·행렬식·RREF를 분수로 정확하게",
-    home_meta="역행렬, 행렬식, 곱셈, RREF, 연립방정식을 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여주는 깔끔한 무료 행렬 계산기예요.",
+    home_meta="역행렬, 행렬식, 곱셈, RREF, 연립방정식, 고윳값까지 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여주는 깔끔한 무료 행렬 계산기예요.",
     home_h1="행렬 계산기", home_intro="역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 보여드려요.",
     home_about=("<p>{site}는 대학 선형대수에서 자주 쓰는 행렬 계산을 분수로 정확하게 풀고, 풀이 과정을 단계별로 보여주는 무료 계산기예요. "
                 "반올림 오차 없이 1/3 같은 정확한 값으로 계산하고, 결과 행렬은 LaTeX로 복사할 수 있어요.</p>"
@@ -291,10 +388,11 @@ UI_KO = dict(
     home_faq=[("몇 × 몇 행렬까지 계산할 수 있나요?", "최대 6×6까지 입력할 수 있어요. 곱셈과 연립방정식은 계산기마다 가능한 크기가 조금씩 달라요."),
               ("계산 결과는 정확한가요?", "모든 값을 분수로 저장해 계산하기 때문에 반올림 오차가 생기지 않아요. 소수 버튼은 보여주는 방식만 바꿔요."),
               ("입력한 행렬이 서버로 전송되나요?", "아니요. 계산은 모두 브라우저 안에서 이루어지고 입력값은 어디에도 전송되지 않아요.")],
-    hub_title="행렬 계산기 모음 - 9가지 연산", hub_h1="행렬 계산기 모음", hub_ld="행렬 계산기 모음",
-    hub_meta="덧셈·뺄셈·스칼라배·곱셈·전치부터 역행렬, 행렬식, RREF, 연립방정식까지 행렬 계산기 9종을 한곳에 모았어요. 모두 분수로 정확하게 계산하고 풀이 과정을 보여줘요.",
+    hub_title="행렬 계산기 모음 - 13가지 연산", hub_h1="행렬 계산기 모음", hub_ld="행렬 계산기 모음",
+    hub_meta="덧셈·뺄셈·곱셈·거듭제곱·전치부터 역행렬, 행렬식, 수반행렬, RREF, 랭크, 연립방정식, 고윳값까지 행렬 계산기 13종을 한곳에 모았어요. 모두 분수로 정확하게 계산하고 풀이 과정을 보여줘요.",
     hub_intro='필요한 연산을 골라 바로 계산해 보세요. 개념이 헷갈리면 <a href="{p}/guide/">가이드</a>도 있어요.',
-    groups=[("기본 연산", ["add", "sub", "scalar", "mul", "transpose"]), ("역행렬과 행렬식", ["inverse", "det"]), ("소거법과 연립방정식", ["rref", "solve"])],
+    groups=[("기본 연산", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("역행렬과 행렬식", ["inverse", "det", "adj"]),
+            ("소거법과 연립방정식", ["rref", "rank", "solve"]), ("고윳값", ["eigen"])],
     gi_title="행렬 가이드", gi_h1="가이드", gi_intro="시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요.",
     gi_meta="역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
     g_meta="{d} 업데이트 · 읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글",
@@ -311,7 +409,7 @@ UI_EN = dict(
     more_guide="Full explanation with examples: {t}", tip="Exam tip",
     crumb_home="Home", crumb_calc="Calculators", crumb_guide="Guides",
     home_title="Matrix Calculator with Steps - Inverse, Determinant, RREF",
-    home_meta="Free matrix calculator that works in exact fractions and shows every step: inverse, determinant, multiplication, RREF and linear systems. Clean and fast, no sign-up.",
+    home_meta="Free matrix calculator that works in exact fractions and shows every step: inverse, determinant, multiplication, RREF, linear systems and eigenvalues. Clean and fast, no sign-up.",
     home_h1="Matrix Calculator", home_intro="From inverses to linear systems: exact fractions, every step shown.",
     home_about=("<p>{site} is a free matrix calculator for the computations you meet in a linear algebra course. It works in exact fractions, so 1/3 stays 1/3 instead of 0.3333…, and it shows every step of the working. "
                 "Results can be copied as LaTeX.</p>"
@@ -320,10 +418,11 @@ UI_EN = dict(
     home_faq=[("What is the largest matrix I can enter?", "Up to 6×6. For multiplication and linear systems the exact limits depend on the operation."),
               ("Are the results exact?", "Yes. Every value is stored as a fraction, so there is no rounding error. The Decimal button only changes how results are displayed."),
               ("Is my matrix sent to a server?", "No. Everything is computed in your browser and nothing you type is transmitted anywhere.")],
-    hub_title="All Matrix Calculators - 9 Operations", hub_h1="All matrix calculators", hub_ld="Matrix calculators",
-    hub_meta="Nine matrix calculators in one place: addition, subtraction, scalar multiplication, multiplication, transpose, inverse, determinant, RREF and linear systems. All in exact fractions with steps.",
+    hub_title="All Matrix Calculators - 13 Operations", hub_h1="All matrix calculators", hub_ld="Matrix calculators",
+    hub_meta="Thirteen matrix calculators in one place: addition, subtraction, multiplication, powers, transpose, inverse, determinant, adjugate, RREF, rank, linear systems and eigenvalues. All in exact fractions with steps.",
     hub_intro='Pick an operation and start calculating. If a concept is unclear, the <a href="{p}/guide/">guides</a> explain it with examples.',
-    groups=[("Basic operations", ["add", "sub", "scalar", "mul", "transpose"]), ("Inverse and determinant", ["inverse", "det"]), ("Elimination and linear systems", ["rref", "solve"])],
+    groups=[("Basic operations", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("Inverse and determinant", ["inverse", "det", "adj"]),
+            ("Elimination and linear systems", ["rref", "rank", "solve"]), ("Eigenvalues", ["eigen"])],
     gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators.",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
     g_meta="Updated {d} · about {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides",
@@ -540,7 +639,7 @@ def about():
 <li><strong>브라우저 안에서만 계산</strong>: 입력한 행렬은 서버로 전송되지 않아요. 계산은 모두 사용 중인 브라우저에서 이루어져요.</li>
 <li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
 <h2>정확성은 어떻게 확인하나요</h2>
-<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 1,700여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
+<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 2,400여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
 <h2>제공하는 계산기 {ncal}종</h2><ul>{ops_list}</ul>
 <h2>가이드 {ngd}편</h2>
 <p>계산기만으로는 부족한 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요. 역행렬과 행렬식 같은 기본부터 랭크, 영공간, 선형독립, 고윳값까지, 시험에서 자주 헷갈리는 순서로 정리했어요. 모든 글은 직접 손으로 따라 풀 수 있는 작은 예제로 시작하고, 마지막에는 계산기로 바로 확인할 수 있게 이어져요.</p>
@@ -565,7 +664,7 @@ def about():
 <li><strong>Everything in your browser</strong>: the matrices you type are never sent to a server. All computation happens locally.</li>
 <li><strong>LaTeX export</strong>: copy any result matrix as LaTeX and paste it straight into your notes or homework.</li></ul>
 <h2>How accuracy is checked</h2>
-<p>Every deployment runs an automated check. About 1,700 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
+<p>Every deployment runs an automated check. About 2,400 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
 <h2>Calculators ({ncal})</h2><ul>{ops_list}</ul>
 <h2>Guides ({ngd})</h2>
 <p>For the ideas behind the calculators, the <a href="/en/guide/">guides</a> explain inverses, determinants, rank and RREF, and the solution sets of linear systems with fully worked examples. Each one starts from a small example you can follow by hand and ends with a link to check it in the calculator. The Korean edition of the site has more guides, and they are being translated.</p>

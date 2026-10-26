@@ -28,7 +28,7 @@ const toF = M => M.map(r => r.map(F));
 
 function latexOf(res) { return res.latex == null ? null : res.latex; }
 const out = [];
-function push(op, inp, res, extra) { out.push(Object.assign({ op, inp, latex: latexOf(res), chips: (res.chips || []).map(c => c[1]), steps: res.steps.length }, extra || {})); }
+function push(op, inp, res, extra) { out.push(Object.assign({ op, inp, latex: latexOf(res), chips: (res.chips || []).map(c => c[1]), steps: res.steps.length, data: res.data || null }, extra || {})); }
 
 for (let n = 1; n <= 6; n++) for (let k = 0; k < 40; k++) {
   let A = mat(n, n);
@@ -40,6 +40,30 @@ for (let n = 1; n <= 6; n++) for (let k = 0; k < 40; k++) {
   push('transpose', { A }, lib.OPS.transpose.run({ A: fA }));
   const kv = entry();
   push('scalar', { A, k: kv }, lib.OPS.scalar.run({ A: fA, k: F(kv) }));
+  push('adj', { A }, lib.OPS.adj.run({ A: fA }));
+  push('rank', { A }, lib.OPS.rank.run({ A: fA }));
+  if (n <= 4 || k % 4 === 0) { const ne = k % 13; push('power', { A, k: String(ne) }, lib.OPS.power.run({ A: fA, k: F(String(ne)) })); }
+}
+// 고윳값: 작은 정수·분수 행렬, 삼각행렬, 닮은 행렬(P D P⁻¹)
+const small = () => String(Math.floor(rnd() * 13) - 6);
+const smallFrac = () => (rnd() < 0.8 ? small() : String(Math.floor(rnd() * 9) - 4) + '/' + (Math.floor(rnd() * 3) + 2));
+for (let n = 1; n <= 5; n++) for (let k = 0; k < 24; k++) {
+  let A;
+  const kind = k % 4;
+  if (kind === 0) A = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => j < i ? '0' : small()));            // 상삼각
+  else if (kind === 1 && n >= 2) {                                                                                               // P D P⁻¹ (P 단위모듈러 → 고윳값 = d)
+    const Fn = x => new lib.F(BigInt(x)), ONE = Fn(1), ZERO = Fn(0);
+    const d = Array.from({ length: n }, () => Math.floor(rnd() * 7) - 3);
+    const U = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => Fn(i === j ? 1 : (j > i ? Math.floor(rnd() * 3) - 1 : 0))));
+    const Lo = Array.from({ length: n }, (_, i) => Array.from({ length: n }, (_, j) => Fn(i === j ? 1 : (j < i ? Math.floor(rnd() * 3) - 1 : 0))));
+    const M = (X, Y) => X.map(r => Y[0].map((_, j) => r.reduce((s, a, t) => s.add(a.mul(Y[t][j])), ZERO)));
+    const P = M(U, Lo);                                                                                                          // det = 1
+    const inv = lib.gj(P.map((r, i) => [...r, ...r.map((_, j) => i === j ? ONE : ZERO)]), n).M.map(r => r.slice(n));
+    const D = P.map((r, i) => r.map((_, j) => Fn(i === j ? d[i] : 0)));
+    A = M(M(P, D), inv).map(r => r.map(x => x.n + (x.d === 1n ? '' : '/' + x.d)));
+  } else if (kind === 2) A = Array.from({ length: n }, () => Array.from({ length: n }, smallFrac));
+  else A = Array.from({ length: n }, () => Array.from({ length: n }, small));
+  push('eigen', { A }, lib.OPS.eigen.run({ A: toF(A) }));
 }
 for (let k = 0; k < 150; k++) {
   const m = 1 + Math.floor(rnd() * 6), n = 1 + Math.floor(rnd() * 6), q = 1 + Math.floor(rnd() * 6);

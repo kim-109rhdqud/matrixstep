@@ -2,8 +2,9 @@
 'use strict';
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const SUBD='₀₁₂₃₄₅₆₇₈₉';
+const SUBD='₀₁₂₃₄₅₆₇₈₉', SUPD='⁰¹²³⁴⁵⁶⁷⁸⁹';
 const sub=n=>String(n).split('').map(d=>SUBD[+d]).join('');
+const sup=n=>String(n).split('').map(d=>SUPD[+d]).join('');
 const ij=(i,j)=>sub(i+1)+sub(j+1);
 const MAX=6;
 
@@ -60,7 +61,35 @@ ko:{
   errFail:'계산하지 못했어요. 입력값을 확인해 주세요.',
   stepsEmpty:'값을 입력하면 풀이가 여기에 나와요.',
   stepsLess:'풀이 접기', stepsMore:n=>'나머지 '+n+'단계 보기', stepsCount:n=>n+'단계',
-  copied:'LaTeX를 복사했어요', copyFail:'복사하지 못했어요. 브라우저 설정을 확인해 주세요'
+  copied:'LaTeX를 복사했어요', copyFail:'복사하지 못했어요. 브라우저 설정을 확인해 주세요',
+  pow0:'어떤 정사각행렬이든 0제곱은 단위행렬 I로 정해요.',
+  pow1:'A¹ = A 에서 시작해요.',
+  powStep:i=>'A'+sup(i-1)+'에 A를 한 번 더 곱해 A'+sup(i)+'을 구해요.',
+  powNote:'n은 0부터 12까지의 정수예요.',
+  errPow:'지수 n은 0부터 12까지의 정수만 입력할 수 있어요.',
+  rankDone:r=>'피벗의 개수가 랭크예요. rank(A) = '+r+'이에요.',
+  rankZero:'모든 성분이 0이라 피벗이 없어요. rank(A) = 0이에요.',
+  rankNullity:(c,r)=>'nullity(A) = (열 수) − rank(A) = '+c+' − '+r+' = '+(c-r)+'. 피벗이 없는 열의 개수와 같아요.',
+  rankPiv:list=>'피벗 열: '+list, rankBasis:list=>'열공간 기저: A의 '+list+'열',
+  chipFull:'최대 랭크', chipDeficient:'랭크 부족',
+  adj1:'1×1 행렬의 수반행렬은 [1]로 정해요.',
+  adjMinor:(i,j,sg)=>i+'행과 '+j+'열을 지우고 남은 행렬의 행렬식이 소행렬식 M'+ij(i-1,j-1)+'이에요. 부호 '+sg+'를 붙이면 여인수 C'+ij(i-1,j-1)+'예요.',
+  adjCof:'여인수를 같은 위치에 모으면 여인수행렬 C예요.',
+  adjT:'여인수행렬을 전치하면 수반행렬 adj(A) = Cᵀ예요.',
+  adjInv:'det(A) ≠ 0 이므로 A⁻¹ = adj(A) / det(A) 로 역행렬도 바로 구할 수 있어요.',
+  adjNoInv:'det(A) = 0 이라서 역행렬은 없지만 수반행렬은 항상 존재해요. 이때 A·adj(A) = det(A)·I = O 예요.',
+  eigPoly:'특성다항식 p(λ) = det(λI − A)를 구해요. 이 다항식의 근이 고윳값이에요.',
+  eigPoly2:(tr,d)=>'2×2에서는 p(λ) = λ² − (대각합)λ + (행렬식) = λ² − ('+tr+')λ + ('+d+') 이에요.',
+  eigRational:list=>'유리수 근을 찾았어요: '+list+'. 특성다항식을 이 근으로 나눠 차수를 낮춰요.',
+  eigNoRational:'유리수 근이 없어요.',
+  eigQuad:q=>'남은 이차식 '+q+' = 0 을 근의 공식으로 풀어요.',
+  eigQuadD:D=>'판별식 D = b² − 4c = '+D,
+  eigComplex:'D < 0 이라서 실수 고윳값이 없어요. 고윳값은 켤레복소수 쌍이에요.',
+  eigNumeric:q=>'남은 다항식 '+q+' = 0 은 유리수 근이 없어서 수치적으로 근사해요.',
+  eigVec:l=>'λ = '+l+' 에 대해 (A − λI)v = 0 을 풀어요. 영공간의 기저가 고유벡터예요.',
+  eigVecRes:(l,g)=>'λ = '+l+' 의 고유벡터예요. 자유변수가 '+g+'개라서 기하적 중복도는 '+g+'이에요.',
+  eigMult:m=>'중복 '+m, chipDiag:'대각화 가능', chipNotDiag:'대각화 불가능', chipComplex:'복소 고윳값',
+  eigLabelExact:'고윳값', eigLabelApprox:'근사 고윳값'
 },
 en:{
   swap:(c,r)=>'Move a nonzero entry of column '+c+' up to row '+r+' to use as the pivot.',
@@ -112,7 +141,35 @@ en:{
   errFail:'The calculation failed. Please check the input.',
   stepsEmpty:'Enter values and the steps will appear here.',
   stepsLess:'Show fewer steps', stepsMore:n=>'Show '+n+' more step'+(n>1?'s':''), stepsCount:n=>n+' step'+(n>1?'s':''),
-  copied:'LaTeX copied', copyFail:'Could not copy. Check your browser settings.'
+  copied:'LaTeX copied', copyFail:'Could not copy. Check your browser settings.',
+  pow0:'Any square matrix to the power 0 is defined as the identity matrix I.',
+  pow1:'Start with A¹ = A.',
+  powStep:i=>'Multiply A'+sup(i-1)+' by A once more to get A'+sup(i)+'.',
+  powNote:'n is an integer from 0 to 12.',
+  errPow:'The exponent n must be an integer from 0 to 12.',
+  rankDone:r=>'The number of pivots is the rank: rank(A) = '+r+'.',
+  rankZero:'Every entry is 0, so there are no pivots and rank(A) = 0.',
+  rankNullity:(c,r)=>'nullity(A) = (number of columns) − rank(A) = '+c+' − '+r+' = '+(c-r)+', the number of columns without a pivot.',
+  rankPiv:list=>'Pivot columns: '+list, rankBasis:list=>'Column space basis: columns '+list+' of A',
+  chipFull:'Full rank', chipDeficient:'Rank deficient',
+  adj1:'The adjugate of a 1×1 matrix is defined as [1].',
+  adjMinor:(i,j,sg)=>'Delete row '+i+' and column '+j+'; the determinant of what remains is the minor M'+ij(i-1,j-1)+'. Attach the sign '+sg+' to get the cofactor C'+ij(i-1,j-1)+'.',
+  adjCof:'Collect the cofactors in their positions to form the cofactor matrix C.',
+  adjT:'Transpose the cofactor matrix to get the adjugate adj(A) = Cᵀ.',
+  adjInv:'Since det(A) ≠ 0, the inverse follows directly: A⁻¹ = adj(A) / det(A).',
+  adjNoInv:'det(A) = 0, so there is no inverse, but the adjugate always exists. Here A·adj(A) = det(A)·I = O.',
+  eigPoly:'Find the characteristic polynomial p(λ) = det(λI − A). Its roots are the eigenvalues.',
+  eigPoly2:(tr,d)=>'For a 2×2 matrix, p(λ) = λ² − (trace)λ + (determinant) = λ² − ('+tr+')λ + ('+d+').',
+  eigRational:list=>'Rational roots found: '+list+'. Divide the polynomial by these roots to lower its degree.',
+  eigNoRational:'There are no rational roots.',
+  eigQuad:q=>'Solve the remaining quadratic '+q+' = 0 with the quadratic formula.',
+  eigQuadD:D=>'Discriminant D = b² − 4c = '+D,
+  eigComplex:'D < 0, so there are no real eigenvalues. The eigenvalues are a complex conjugate pair.',
+  eigNumeric:q=>'The remaining polynomial '+q+' = 0 has no rational roots, so its roots are approximated numerically.',
+  eigVec:l=>'For λ = '+l+', solve (A − λI)v = 0. A basis of the null space gives the eigenvectors.',
+  eigVecRes:(l,g)=>'Eigenvectors for λ = '+l+'. There '+(g>1?'are '+g+' free variables':'is 1 free variable')+', so the geometric multiplicity is '+g+'.',
+  eigMult:m=>'multiplicity '+m, chipDiag:'Diagonalizable', chipNotDiag:'Not diagonalizable', chipComplex:'Complex eigenvalues',
+  eigLabelExact:'Eigenvalues', eigLabelApprox:'Approximate eigenvalues'
 }};
 const t=(k,...a)=>{const v=STR[LANG][k];return typeof v==='function'?v(...a):v};
 
@@ -322,7 +379,172 @@ const OPS={
       return {head:'<div class="none">'+t('solInfHead')+'</div><div class="sol">'+lines.map(l=>'<div>'+esc(l)+'</div>').join('')+'</div>',chips:[['warn',t('chipFree',free.length)],['','rank = '+g.rank]],steps};
     }}
 };
-const ORDER=['inverse','det','mul','add','sub','scalar','transpose','rref','solve'];
+
+/* ---------- 거듭제곱 · 랭크 · 수반행렬 · 고윳값 ---------- */
+const ident=n=>Array.from({length:n},(_,i)=>Array.from({length:n},(_,j)=>i===j?ONE:Z));
+const mmul=(A,B)=>A.map(r=>B[0].map((_,j)=>r.reduce((s,a,k)=>s.add(a.mul(B[k][j])),Z)));
+const trace=A=>A.reduce((s,r,i)=>s.add(r[i]),Z);
+const detF=A=>upper(A).det;
+const minorOf=(A,i,j)=>A.filter((_,r)=>r!==i).map(r=>r.filter((_,c)=>c!==j));
+const col=v=>mx(v.map(x=>[x]));
+const eqline=(lhs,inner)=>'<div class="eqline"><span class="lhs">'+lhs+'</span>'+inner+'</div>';
+function charPoly(A){ // Faddeev–LeVerrier: p(λ)=λⁿ+c[n-1]λⁿ⁻¹+…+c[0], 정확한 분수
+  const n=A.length,c=Array(n+1).fill(Z);c[n]=ONE;let M=A.map(r=>r.map(()=>Z));
+  for(let k=1;k<=n;k++){const AM=mmul(A,M);M=AM.map((r,i)=>r.map((x,j)=>i===j?x.add(c[n-k+1]):x));c[n-k]=trace(mmul(A,M)).div(new F(BigInt(k))).neg();}
+  return c;
+}
+const peval=(c,x)=>{let r=Z;for(let i=c.length-1;i>=0;i--)r=r.mul(x).add(c[i]);return r};
+function deflate(c,r){const n=c.length-1,q=Array(n).fill(Z);q[n-1]=c[n];for(let i=n-1;i>=1;i--)q[i-1]=c[i].add(r.mul(q[i]));return q;}
+function polyStr(c,latex){
+  const n=c.length-1;let s='';
+  for(let k=n;k>=0;k--){const a=c[k];if(a.isZero())continue;const m=a.abs();
+    let co=(k>0&&m.isOne())?'':(latex?tex(m):(m.d===1n?txt(m):'('+txt(m)+')'));
+    const v=k===0?'':(latex?('\\lambda'+(k>1?'^{'+k+'}':'')):('λ'+(k>1?sup(k):'')));
+    const term=co+v;
+    if(s==='')s=(a.isNeg()?(latex?'-':'−'):'')+term;else s+=' '+(a.isNeg()?(latex?'-':'−'):'+')+' '+term;}
+  return s||'0';
+}
+function isqrt(n){if(n<2n)return n;let x=BigInt(Math.floor(Math.sqrt(Number(n))));while(x*x>n)x--;while((x+1n)*(x+1n)<=n)x++;return x;}
+function sqrtSimp(D){ // D>0: √D = k·√m (k 분수, m 정수)
+  let m=D.n*D.d,s=1n;
+  for(let f=2n;f*f<=m&&f<100000n;f++){const ff=f*f;while(m%ff===0n){m/=ff;s*=f}}
+  const r=isqrt(m);if(r*r===m){s*=r;m=1n}
+  return {k:new F(s,D.d),m};
+}
+function divisorsOf(L){ // L의 약수 (작은 소인수 기준, 최대 400개)
+  const fac=[];let m=L;for(let f=2n;f*f<=m&&f<100000n;f++){let e=0;while(m%f===0n){m/=f;e++}if(e)fac.push([f,e])}
+  if(m>1n)fac.push([m,1]);
+  let ds=[1n];for(const [f,e] of fac){const nd=[];for(const d of ds){let x=d;for(let i=0;i<=e;i++){nd.push(x);x*=f}}ds=nd;if(ds.length>400)break}
+  return ds.sort((a,b)=>(a<b?-1:a>b?1:0));
+}
+function dkRoots(a){ // Durand–Kerner, a: 실수 계수(낮은 차수부터, 최고차 1)
+  const m=a.length-1;if(m<1)return[];
+  const cm=(x,y)=>[x[0]*y[0]-x[1]*y[1],x[0]*y[1]+x[1]*y[0]],cs=(x,y)=>[x[0]-y[0],x[1]-y[1]],ca=(x,y)=>[x[0]+y[0],x[1]+y[1]];
+  const cd=(x,y)=>{const d=y[0]*y[0]+y[1]*y[1]||1e-300;return[(x[0]*y[0]+x[1]*y[1])/d,(x[1]*y[0]-x[0]*y[1])/d]};
+  const pe=z=>{let r=[1,0];for(let i=m-1;i>=0;i--)r=ca(cm(r,z),[a[i],0]);return r};
+  let z=Array.from({length:m},(_,k)=>{let p=[1,0];for(let i=0;i<=k;i++)p=cm(p,[0.4,0.9]);return p});
+  for(let it=0;it<2000;it++){let mx=0;const nz=z.map((zi,i)=>{let den=[1,0];z.forEach((zj,j)=>{if(j!==i)den=cm(den,cs(zi,zj))});const d=cd(pe(zi),den);mx=Math.max(mx,Math.hypot(d[0],d[1]));return cs(zi,d)});z=nz;if(mx<1e-15)break}
+  return z.map(r=>Math.abs(r[1])<1e-7*(1+Math.abs(r[0]))?[r[0],0]:r);
+}
+function pmStr(re,k,m,sg,im){ // re ± k√m 을 (a ± b√m)/d 꼴로. im이면 허수 단위 i를 붙여요
+  const D=re.d*k.d/gcd(re.d,k.d),a=re.n*(D/re.d),b=k.n*(D/k.d),rad=m===1n?'':'√'+m;
+  let bs=(b===1n&&(rad||im))?'':String(b);
+  let tail=bs+rad+(im?((rad?' ':'')+'i'):'');
+  const core=(a===0n?'':a+' ')+sg+' '+tail;
+  return D===1n?core:'('+core+')/'+D;
+}
+const dec4=x=>{let s=String(Math.round(x*1e4)/1e4);if(s==='-0')s='0';return s.replace('-','−')};
+function nullBasis(M){ // Mv=0 의 기저 (정확)
+  const n=M[0].length,g=gj(M,n),free=[];for(let j=0;j<n;j++)if(!g.piv.includes(j))free.push(j);
+  return {g,vecs:free.map(f=>{const v=Array(n).fill(Z);v[f]=ONE;g.piv.forEach((pc,r)=>{v[pc]=g.M[r][f].neg()});
+    let L=1n;v.forEach(x=>{L=L*x.d/gcd(L,x.d)});let G=0n;v.forEach(x=>{G=gcd(G,x.n*L/x.d)});const sc=new F(L,G||1n); // 분모를 없애고 최대공약수로 나눠 정수 벡터로
+    return v.map(x=>x.mul(sc))})};
+}
+const OPS2={
+  power:{square:true,k:true,kint:true,
+    run({A,k}){
+      const n=Number(k.n),N=A.length,steps=[];
+      if(n===0){const I=ident(N);steps.push({t:t('pow0'),m:mx(I)});return {head:eqline('A⁰ =',mx(I,{cls:'big'})),chips:[['','n = 0']],latex:bm(I),steps};}
+      let P=A;steps.push({t:t('pow1'),m:mx(A)});
+      for(let i=2;i<=n;i++){P=mmul(P,A);steps.push({t:t('powStep',i),ops:['A'+sup(i)+' = A'+sup(i-1)+'·A'],m:mx(P)});}
+      return {head:eqline('A'+sup(n)+' =',mx(P,{cls:'big'})),chips:[['','n = '+n]],latex:bm(P),steps,data:{n}};
+    }},
+  rank:{
+    run({A}){
+      const m=A.length,n=A[0].length,g=gj(A,n),r=g.rank,steps=[{t:t('rrefStart'),m:mx(A)}];
+      g.steps.forEach(s=>steps.push({t:s.t,ops:s.ops,m:mx(s.M)}));
+      const pl=g.piv.map(c=>c+1).join(', ');
+      steps.push({t:r?t('rankDone',r):t('rankZero'),m:mx(g.M)});
+      steps.push({t:t('rankNullity',n,r)});
+      const sol='<div class="sol"><div>nullity(A) = '+(n-r)+'</div>'+(r?'<div>'+esc(t('rankPiv',pl))+'</div><div>'+esc(t('rankBasis',pl))+'</div>':'')+'</div>';
+      const full=r===Math.min(m,n);
+      return {head:eqline('rank(A) =','<span class="scalar">'+r+'</span>')+sol,chips:[['',m+'×'+n],full?['ok',t('chipFull')]:['warn',t('chipDeficient')]],latex:String(r),steps,data:{rank:r,nullity:n-r,piv:g.piv}};
+    }},
+  adj:{square:true,
+    run({A}){
+      const n=A.length,steps=[];
+      if(n===1){const adj=[[ONE]],d=A[0][0];steps.push({t:t('adj1')});steps.push({t:d.isZero()?t('adjNoInv'):t('adjInv')});return {head:eqline('adj(A) =',mx(adj,{cls:'big'})),chips:[['','det(A) = '+txt(d)],d.isZero()?['bad',t('chipNoInv')]:['ok',t('chipInv')]],latex:bm(adj),steps,data:{adj:[['1/1']],det:d.n+'/'+d.d}};}
+      const C=A.map((r,i)=>r.map((_,j)=>{const mn=detF(minorOf(A,i,j));return (i+j)%2?mn.neg():mn}));
+      A.forEach((r,i)=>r.forEach((_,j)=>{const mn=minorOf(A,i,j),md=detF(mn),sg=(i+j)%2?'−':'+';
+        steps.push({ops:['C'+ij(i,j)],t:t('adjMinor',i+1,j+1,sg),m:mx(mn)+eq('M'+ij(i,j)+' = '+txt(md)+',  C'+ij(i,j)+' = '+sg+p(md)+' = '+txt(C[i][j]))});}));
+      steps.push({t:t('adjCof'),m:mx(C)});
+      const adj=C[0].map((_,j)=>C.map(r=>r[j]));
+      steps.push({t:t('adjT'),m:mx(adj)});
+      const d=detF(A);
+      if(!d.isZero()){const inv=adj.map(r=>r.map(x=>x.div(d)));steps.push({t:t('adjInv'),m:eq('A⁻¹ = '+html(ONE.div(d))+' ·')+mx(adj)+eq('=')+mx(inv)});}
+      else steps.push({t:t('adjNoInv')});
+      return {head:eqline('adj(A) =',mx(adj,{cls:'big'})),chips:[['','det(A) = '+txt(d)],d.isZero()?['bad',t('chipNoInv')]:['ok',t('chipInv')]],latex:bm(adj),steps,data:{adj:adj.map(r=>r.map(x=>x.n+'/'+x.d)),det:d.n+'/'+d.d}};
+    }},
+  eigen:{square:true,
+    run({A}){
+      const n=A.length,steps=[],c=charPoly(A);
+      const data={poly:c.map(x=>x.n+'/'+x.d),rational:[],quad:null,numeric:[],vecs:[]};
+      steps.push({t:t('eigPoly'),m:eq('p(λ) = '+polyStr(c))});
+      if(n===2)steps.push({t:t('eigPoly2',txt(trace(A)),txt(detF(A)))});
+      // 유리수 근: 수치 근을 유리수로 맞춰 보고 정확히 검산
+      let q=c.slice(),found=[];
+      let L=1n;c.forEach(x=>{L=L*x.d/gcd(L,x.d)});const ds=divisorsOf(L);
+      for(let guard=0;guard<n&&q.length>1;guard++){
+        let hit=null;
+        if(q[0].isZero())hit=Z;
+        else{const num=dkRoots(q.map(x=>Number(x.n)/Number(x.d)));
+          outer:for(const z of num){if(Math.abs(z[1])>1e-3*(1+Math.abs(z[0])))continue;for(const d of ds){const r=new F(BigInt(Math.round(z[0]*Number(d))),d);if(peval(q,r).isZero()){hit=r;break outer}}}}
+        if(hit===null)break;
+        const f=found.find(x=>x[0].sub(hit).isZero());if(f)f[1]++;else found.push([hit,1]);
+        q=deflate(q,hit);
+      }
+      const vals=[];let complex=false,approx=false;
+      if(q.length===3){ // 남은 이차식 λ²+bλ+c
+        const b=q[1],cc=q[0],D=b.mul(b).sub(cc.mul(new F(4n))),re=b.neg().div(new F(2n));
+        steps.push({t:t('eigQuad',polyStr(q)),m:eq(t('eigQuadD',txt(D)))});
+        const S_=D.isZero()?{k:Z,m:1n}:sqrtSimp(D.abs()),k=S_.k.div(new F(2n));
+        if(!D.isNeg()&&S_.m===1n){ // 사실은 유리수 근 (중근 포함)
+          for(const r of [re.add(k),re.sub(k)]){const f=found.find(x=>x[0].sub(r).isZero());if(f)f[1]++;else found.push([r,1]);}
+          q=[ONE];
+          steps.push({m:eq('λ = '+txt(re)+' ± '+txt(k)+' = '+txt(re.add(k))+', '+txt(re.sub(k)))});
+        } else {
+          const num=Number(re.n)/Number(re.d),kn=Number(k.n)/Number(k.d)*Math.sqrt(Number(S_.m));
+          data.quad={D:D.n+'/'+D.d,re:re.n+'/'+re.d,k:k.n+'/'+k.d,m:String(S_.m)};
+          if(D.isNeg()){complex=true;steps.push({t:t('eigComplex')});
+            const basei=pmStr(re,k,S_.m,'±',true);
+            vals.push({s:basei,pair:true,approx:dec4(num)+' ± '+dec4(kn)+'i'});
+            steps.push({m:eq('λ = '+(re.isZero()?'':txt(re)+' ')+'± '+(k.isOne()?'':coef(k))+'√(−'+txt(D.abs())+') = '+basei)});}
+          else{const pl=pmStr(re,k,S_.m,'+'),mi=pmStr(re,k,S_.m,'−');
+            vals.push({s:pl,approx:dec4(num+kn),irr:true},{s:mi,approx:dec4(num-kn),irr:true});
+            steps.push({m:eq('λ = '+pmStr(re,k,S_.m,'±')+'  ≈ '+dec4(num+kn)+', '+dec4(num-kn))});}
+        }
+      } else if(q.length>3){
+        approx=true;steps.push({t:t('eigNumeric',polyStr(q))});
+        dkRoots(q.map(x=>Number(x.n)/Number(x.d))).forEach(z=>{if(z[1]!==0)complex=true;vals.push({s:'≈ '+(z[1]===0?dec4(z[0]):dec4(z[0])+(z[1]<0?' − ':' + ')+dec4(Math.abs(z[1]))+'i'),approx:true});data.numeric.push([z[0],z[1]])});
+      }
+      found.sort((x,y)=>{const d=x[0].sub(y[0]);return d.isNeg()?-1:d.isZero()?0:1});
+      data.rational=found.map(([r,m])=>[r.n+'/'+r.d,m]);
+      const fstr=found.map(([r,m])=>'λ = '+txt(r)+(m>1?' ('+t('eigMult',m)+')':'')).join(', ');
+      steps.push({t:found.length?t('eigRational',fstr):t('eigNoRational')});
+      found.slice().reverse().forEach(([r,m])=>{for(let i=0;i<m;i++)vals.unshift({exact:r,s:txt(r)})});
+      // 고유벡터 (정확한 유리수 고윳값만)
+      let geoSum=0;const vecHtml=[];
+      found.forEach(([r,m])=>{const Ml=A.map((row,i)=>row.map((x,j)=>i===j?x.sub(r):x));const nb=nullBasis(Ml);
+        steps.push({t:t('eigVec',txt(r)),m:eq('A − ('+txt(r)+')I =')+mx(Ml)+eq('→')+mx(nb.g.M)});
+        steps.push({t:t('eigVecRes',txt(r),nb.vecs.length),m:nb.vecs.map((v,i)=>eq('v'+sub(i+1)+' =')+col(v)).join('')});
+        geoSum+=nb.vecs.length;vecHtml.push('<div>λ = '+esc(txt(r))+': '+nb.vecs.map(v=>col(v)).join(' ')+'</div>');
+        data.vecs.push([r.n+'/'+r.d,nb.vecs.map(v=>v.map(x=>x.n+'/'+x.d))]);});
+      const allExact=vals.every(v=>v.exact);
+      const label=approx?t('eigLabelApprox'):t('eigLabelExact');
+      let list=vals.map(v=>v.s).join(', ');
+      let head='<div class="eqline"><span class="lhs">λ =</span><span class="scalar sm">'+esc(list)+'</span></div>';
+      const ap=vals.filter(v=>v.approx&&!approx).map(v=>v.approx).filter((x,i,a)=>a.indexOf(x)===i);
+      if(ap.length)head+='<div class="sol"><div>≈ '+esc(ap.join(', '))+'</div></div>';
+      if(vecHtml.length)head+='<div class="sol">'+vecHtml.join('')+'</div>';
+      const chips=[['','tr(A) = '+txt(trace(A))],['','det(A) = '+txt(detF(A))]];
+      if(complex)chips.push(['warn',t('chipComplex')]);
+      else if(allExact)chips.push(geoSum===n?['ok',t('chipDiag')]:['bad',t('chipNotDiag')]);
+      else if(!approx&&new Set(vals.map(v=>v.s)).size===n)chips.push(['ok',t('chipDiag')]);
+      return {head,chips,latex:polyStr(c,true),steps,data};
+    }}
+};
+Object.assign(OPS,OPS2);
+const ORDER=['inverse','det','mul','add','sub','scalar','transpose','rref','solve','rank','power','adj','eigen'];
 
 const EX={
   inverse:{A:[[2,1,1],[1,3,2],[1,0,0]]},
@@ -333,7 +555,11 @@ const EX={
   scalar:{A:[[2,-1],[4,'1/3']],k:'3/2'},
   transpose:{A:[[1,2,3],[4,5,6]]},
   rref:{A:[[1,2,-1,3],[2,4,1,0],[-1,-2,2,1]]},
-  solve:{A:[[2,1,-1],[-3,-1,2],[-2,1,2]],b:[8,-11,-3]}
+  solve:{A:[[2,1,-1],[-3,-1,2],[-2,1,2]],b:[8,-11,-3]},
+  rank:{A:[[1,2,-1,3],[2,4,1,0],[-1,-2,2,1]]},
+  power:{A:[[1,1],[1,0]],k:'5'},
+  adj:{A:[[2,-1,0],[1,3,2],[0,1,4]]},
+  eigen:{A:[[4,1],[2,3]]}
 };
 
 /* ---------- 상태 ---------- */
@@ -373,8 +599,9 @@ function editor(m,T,ctrl,label){
 function renderInputs(){
   const o=OPS[S.op];let h='<div class="eqrow">';
   const aCtrl=o.square?stepper('A','n',t('size'),S.A.r):stepper('A','r',t('rows'),S.A.r)+stepper('A','c',t('cols'),S.A.c);
-  if(o.k) h+='<div class="ed"><div class="ed-head"><label class="ed-name" for="k">k</label></div><input id="k" class="kin" data-m="k" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div><span class="opsym" aria-hidden="true">·</span>';
+  if(o.k&&!o.kint) h+='<div class="ed"><div class="ed-head"><label class="ed-name" for="k">k</label></div><input id="k" class="kin" data-m="k" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div><span class="opsym" aria-hidden="true">·</span>';
   h+=editor('A',S.A,aCtrl,'A');
+  if(o.kint) h+='<span class="opsym" aria-hidden="true">^</span><div class="ed"><div class="ed-head"><label class="ed-name" for="k">n</label></div><input id="k" class="kin" data-m="k" inputmode="numeric" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div>';
   if(o.B){ h+='<span class="opsym" aria-hidden="true">'+o.sym+'</span>'+editor('B',S.B,o.B==='mul'?stepper('B','c',t('cols'),S.B.c):'','B'); }
   if(o.vec){
     let cells='';for(let i=0;i<S.A.r;i++) cells+='<input id="b-'+i+'" data-m="b" data-i="'+i+'" autocomplete="off" spellcheck="false" placeholder="0" value="'+esc(S.b[i])+'" aria-label="'+esc(t('bCell',i+1))+'">';
@@ -382,6 +609,7 @@ function renderInputs(){
   }
   h+='</div>';
   if(o.vec) h+='<p class="sys">'+esc(t('sys',S.A.r,S.A.c))+'</p>';
+  if(o.kint) h+='<p class="sys">A'+sup(String(S.k).trim()||'n')+' · '+esc(t('powNote'))+'</p>';
   $('#inputs').innerHTML=h;
 }
 
@@ -397,9 +625,10 @@ function compute(){
   const a=readM('A',S.A);args.A=a.M;ok=ok&&a.ok;
   if(o.B){const b=readM('B',S.B);args.B=b.M;ok=ok&&b.ok;}
   if(o.vec){args.b=[];for(let i=0;i<S.A.r;i++){const f=parseF(S.b[i]);const el=document.getElementById('b-'+i);if(el)el.classList.toggle('bad',!f);if(!f)ok=false;args.b.push(f||Z)}}
-  if(o.k){const f=parseF(S.k);const el=$('#k');if(el)el.classList.toggle('bad',!f);if(!f||String(S.k).trim()==='')ok=false;args.k=f||Z}
+  let kbad=false;
+  if(o.k){const f=parseF(S.k);let good=!!f&&String(S.k).trim()!=='';if(good&&o.kint&&!(f.d===1n&&f.n>=0n&&f.n<=12n))good=false;const el=$('#k');if(el)el.classList.toggle('bad',!good);if(!good){ok=false;kbad=true}args.k=f||Z}
   let res;
-  if(!ok) res={head:'<p class="err">'+esc(t('errInput'))+'</p>',steps:[]};
+  if(!ok) res={head:'<p class="err">'+esc(kbad&&o.kint&&a.ok?t('errPow'):t('errInput'))+'</p>',steps:[]};
   else { try{res=o.run(args)}catch(e){res={head:'<p class="err">'+esc(t('errFail'))+'</p>',steps:[]}} }
   renderResult(res);
 }
@@ -423,6 +652,7 @@ function init(){
   const op=document.body.dataset.op;S.op=OPS[op]?op:'inverse';
   let st=null;try{st=JSON.parse(sessionStorage.getItem('mx-state')||'null')}catch(e){}
   if(st&&st.touched&&st.A&&st.B){S.A=st.A;S.B=st.B;S.b=st.b||S.b;S.k=st.k||S.k;S.touched=true}else loadExample(S.op);
+  if(OPS[S.op].kint&&!/^\s*\d{1,2}\s*$/.test(String(S.k)))S.k=EX[S.op].k;
   try{const m=localStorage.getItem('mx-mode');if(m==='dec'||m==='frac'){MODE=m;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===m)))}}catch(e){}
   fitDims();renderInputs();compute();
   try{if(sessionStorage.getItem('mx-steps')==='1')$('#stepsD').open=true}catch(e){}

@@ -393,7 +393,11 @@ UI_KO = dict(
     hub_intro='필요한 연산을 골라 바로 계산해 보세요. 개념이 헷갈리면 <a href="{p}/guide/">가이드</a>도 있어요.',
     groups=[("기본 연산", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("역행렬과 행렬식", ["inverse", "det", "adj"]),
             ("소거법과 연립방정식", ["rref", "rank", "solve"]), ("고윳값", ["eigen"])],
-    gi_title="행렬 가이드", gi_h1="가이드", gi_intro="시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요.",
+    gi_title="행렬 가이드", gi_h1="가이드", gi_intro="시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요. 모든 예제는 계산기로 바로 확인할 수 있어요.",
+    gi_groups=[("기초 연산", ["matrix-multiplication", "matrix-add-subtract-scalar", "matrix-transpose-properties", "special-matrices"]),
+               ("역행렬과 행렬식", ["inverse-gauss-jordan", "determinant-3x3", "determinant-properties", "inverse-adjugate-cofactor", "cramer-rule", "elementary-matrices"]),
+               ("소거법과 벡터 공간", ["rank-and-rref", "linear-system-solutions", "null-space-column-space", "linear-independence"]),
+               ("고윳값과 대각화", ["eigenvalues-2x2", "diagonalization-matrix-power"])], gi_other="그 밖의 글",
     gi_meta="역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
     g_meta="{d} 업데이트 · 읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
     about_title="소개 및 문의", privacy_title="개인정보처리방침",
@@ -423,7 +427,8 @@ UI_EN = dict(
     hub_intro='Pick an operation and start calculating. If a concept is unclear, the <a href="{p}/guide/">guides</a> explain it with examples.',
     groups=[("Basic operations", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("Inverse and determinant", ["inverse", "det", "adj"]),
             ("Elimination and linear systems", ["rref", "rank", "solve"]), ("Eigenvalues", ["eigen"])],
-    gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators.",
+    gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators. Every example can be checked in the calculator.",
+    gi_groups=[("Inverse and determinant", ["inverse-gauss-jordan", "determinant-3x3"]), ("Elimination and linear systems", ["rank-and-rref", "linear-system-solutions"])], gi_other="More guides",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
     g_meta="Updated {d} · about {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
     about_title="About and Contact", privacy_title="Privacy Policy",
@@ -621,11 +626,21 @@ def guide_page(g):
     write(path, s)
 
 def guide_index():
+    G = L["guides"].BY_SLUG
+    placed = set()
+    groups = []
+    for title, slugs in U["gi_groups"]:
+        items = [G[x] for x in slugs if x in G]
+        placed.update(g["slug"] for g in items)
+        if items: groups.append((title, items))
+    rest = [g for g in L["guides"].ARTICLES if g["slug"] not in placed]
+    if rest: groups.append((U["gi_other"], rest))
     body = f'<h1>{U["gi_h1"]}</h1><p class="meta">{U["gi_intro"]}</p>'
-    body += '<div class="grid-ops guide-list">' + "".join(
-        f'<a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a>' for g in L["guides"].ARTICLES) + "</div>"
+    for title, items in groups:
+        body += f'<section class="glist-g"><h2 class="lbl">{title}</h2><ul class="glist">' + "".join(
+            f'<li><a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span><em>{U["min"].format(m=g["min"])}</em></a></li>' for g in items) + "</ul></section>"
     s = head(U["gi_title"] + " | " + L["site"], U["gi_meta"], "/guide/") + "<body>\n" + topbar("guide", "/guide/")
-    s += f'<main class="wrap"><article class="doc guide">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
+    s += f'<main class="wrap"><article class="doc index">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write("/guide/", s)
 
 def doc_page(path, title, meta, body, cur=""):
@@ -635,7 +650,7 @@ def doc_page(path, title, meta, body, cur=""):
 
 def about():
     ncal, ngd = len(L["ops"]), len(L["guides"].ARTICLES)
-    ops_list = "".join(f'<li><a href="{P("/" + o["slug"] + "/")}">{o["h1"]}</a> · {e(o["card"])}</li>' for o in L["ops"])
+    ops_list = "".join(f'<li><a href="{P("/" + o["slug"] + "/")}"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in L["ops"])
     if L["code"] == "ko":
         body = f'''<h1>{SITE} 소개</h1><p class="meta">마지막 업데이트 {TODAY}</p>
 <p>{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
@@ -649,7 +664,7 @@ def about():
 <li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
 <h2>정확성은 어떻게 확인하나요</h2>
 <p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 2,400여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
-<h2>제공하는 계산기 {ncal}종</h2><ul>{ops_list}</ul>
+<h2>제공하는 계산기 {ncal}종</h2><ul class="oplist">{ops_list}</ul>
 <h2>가이드 {ngd}편</h2>
 <p>계산기만으로는 부족한 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요. 역행렬과 행렬식 같은 기본부터 랭크, 영공간, 선형독립, 고윳값까지, 시험에서 자주 헷갈리는 순서로 정리했어요. 모든 글은 직접 손으로 따라 풀 수 있는 작은 예제로 시작하고, 마지막에는 계산기로 바로 확인할 수 있게 이어져요.</p>
 <h2>운영 원칙</h2><ul>
@@ -658,8 +673,7 @@ def about():
 <li>사이트는 무료로 운영하고, 비용은 광고로 충당해요. 광고는 계산 결과 아래에만 배치해요.</li></ul>
 <h2 id="contact">문의</h2>
 <p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
-<p><strong>{e(EMAIL)}</strong></p>
-<p>운영자: {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></p>'''
+<div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
         meta = f"{SITE}가 행렬을 분수로 정확하게 계산하는 방법, 결과를 검증하는 방식, 제공하는 계산기 {ncal}종과 가이드 {ngd}편, 문의 방법을 안내해요."
     else:
         body = f'''<h1>About {SITE_EN}</h1><p class="meta">Last updated {TODAY}</p>
@@ -674,7 +688,7 @@ def about():
 <li><strong>LaTeX export</strong>: copy any result matrix as LaTeX and paste it straight into your notes or homework.</li></ul>
 <h2>How accuracy is checked</h2>
 <p>Every deployment runs an automated check. About 2,400 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
-<h2>Calculators ({ncal})</h2><ul>{ops_list}</ul>
+<h2>Calculators ({ncal})</h2><ul class="oplist">{ops_list}</ul>
 <h2>Guides ({ngd})</h2>
 <p>For the ideas behind the calculators, the <a href="/en/guide/">guides</a> explain inverses, determinants, rank and RREF, and the solution sets of linear systems with fully worked examples. Each one starts from a small example you can follow by hand and ends with a link to check it in the calculator. The Korean edition of the site has more guides, and they are being translated.</p>
 <h2>Principles</h2><ul>
@@ -683,8 +697,7 @@ def about():
 <li>The site is free and supported by advertising, placed only below the result.</li></ul>
 <h2 id="contact">Contact</h2>
 <p>For bug reports, feature requests or partnership enquiries, email:</p>
-<p><strong>{e(EMAIL)}</strong></p>
-<p>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></p>'''
+<div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''
         meta = f"How {SITE_EN} computes matrices in exact fractions, how results are verified, the {ncal} calculators and {ngd} guides it offers, and how to get in touch."
     doc_page("/about/", U["about_title"], meta, body, "about")
 
@@ -692,58 +705,58 @@ def privacy():
     if L["code"] == "ko":
         body = f'''<h1>개인정보처리방침</h1><p class="meta">시행일 {PRIVACY_DATE}</p>
 <p>{e(OPERATOR)}(이하 ‘운영자’)는 {SITE}(이하 ‘사이트’)를 이용하는 분의 개인정보를 소중히 여기며, 「개인정보 보호법」 등 관련 법령을 지켜요. 이 방침은 사이트가 어떤 정보를 어떻게 다루는지 알려드려요.</p>
-<h2>1. 수집하는 개인정보</h2>
+<h2>수집하는 개인정보</h2>
 <p>사이트는 회원가입 없이 이용할 수 있고, 이름·연락처 같은 개인정보를 직접 수집하지 않아요. 계산을 위해 입력한 행렬 값은 이용자의 브라우저 안에서만 처리되며 운영자의 서버로 전송되지 않아요.</p>
-<h2>2. 브라우저에 저장되는 정보</h2>
+<h2>브라우저에 저장되는 정보</h2>
 <p>다른 계산기로 이동해도 입력값이 유지되도록, 입력한 행렬을 브라우저의 세션 저장소(sessionStorage)에 임시로 저장해요. 이 정보는 브라우저 탭을 닫으면 사라져요. 분수·소수 표시 설정은 브라우저의 로컬 저장소(localStorage)에 저장돼요. 이 정보들은 이용자의 기기에만 남고 운영자에게 전달되지 않아요.</p>
-<h2>3. 자동으로 수집되는 정보</h2>
+<h2>자동으로 수집되는 정보</h2>
 <p>사이트를 제공하는 호스팅 서비스(Amazon Web Services)는 보안과 서비스 안정성을 위해 접속 IP 주소, 브라우저 종류, 접속 시간 같은 접속 기록을 자동으로 남길 수 있어요.</p>
-<h2>4. 쿠키와 외부 서비스</h2>
+<h2>쿠키와 외부 서비스</h2>
 <p>사이트는 방문 통계 분석을 위해 Google Analytics를, 광고 게재를 위해 Google AdSense를 이용하거나 이용할 수 있어요. 이 서비스들은 쿠키를 사용해 방문 기록을 바탕으로 통계를 내거나, 이용자의 관심사에 맞는 광고를 보여줄 수 있어요.</p>
 <ul><li>Google을 포함한 제3자 광고 사업자는 쿠키를 사용해 이용자의 이 사이트 및 다른 사이트 방문 기록을 기반으로 광고를 게재해요.</li>
 <li>맞춤 광고는 <a href="https://adssettings.google.com" rel="noopener">Google 광고 설정</a>에서 끌 수 있어요.</li>
 <li>Google이 정보를 이용하는 방식은 <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">Google 파트너 사이트 정책</a>에서 확인할 수 있어요.</li>
 <li>브라우저 설정에서 쿠키 저장을 거부하거나 삭제할 수 있어요. 다만 일부 기능이나 광고 표시가 달라질 수 있어요.</li></ul>
-<h2>5. 개인정보의 보유 및 파기</h2>
+<h2>개인정보의 보유 및 파기</h2>
 <p>운영자는 개인정보를 직접 보관하지 않아요. 이메일로 문의하신 경우, 받은 이메일 주소와 문의 내용은 답변을 마친 뒤 지체 없이 삭제해요.</p>
-<h2>6. 이용자의 권리</h2>
+<h2>이용자의 권리</h2>
 <p>이용자는 언제든지 자신의 개인정보 처리에 대해 열람, 정정, 삭제, 처리 정지를 요청할 수 있어요. 아래 문의처로 연락해 주세요.</p>
-<h2>7. 개인정보 보호 책임자 및 문의처</h2>
+<h2>개인정보 보호 책임자 및 문의처</h2>
 <p>책임자: {e(OPERATOR)}<br>이메일: {e(EMAIL)}</p>
 <p>개인정보 침해에 대한 상담이 필요하면 개인정보침해신고센터(privacy.kisa.or.kr, 국번 없이 118)에 문의할 수 있어요.</p>
-<h2>8. 방침의 변경</h2>
+<h2>방침의 변경</h2>
 <p>이 방침이 바뀌면 사이트에서 시행일과 함께 알려드려요.</p>'''
         meta = f"{SITE}의 개인정보처리방침이에요."
     else:
         body = f'''<h1>Privacy Policy</h1><p class="meta">Effective {PRIVACY_DATE}</p>
 <p>{e(OPERATOR_EN)} (the “operator”) runs {SITE_EN} at matrixstep.net (the “site”). This policy explains what information the site handles and how.</p>
-<h2>1. Information we collect</h2>
+<h2>Information we collect</h2>
 <p>The site can be used without an account, and it does not ask for personal information such as your name or contact details. The matrices you enter are processed entirely in your browser and are never sent to the operator's servers.</p>
-<h2>2. Data stored in your browser</h2>
+<h2>Data stored in your browser</h2>
 <p>So that your input survives switching between calculators, the matrices you enter are kept temporarily in your browser's session storage (sessionStorage); this is cleared when you close the tab. Your fraction/decimal display preference is kept in local storage (localStorage). Both stay on your device and are not transmitted to the operator.</p>
-<h2>3. Information collected automatically</h2>
+<h2>Information collected automatically</h2>
 <p>The hosting provider (Amazon Web Services) may automatically record access logs such as IP address, browser type and time of access for security and reliability purposes.</p>
-<h2>4. Cookies and third-party services</h2>
+<h2>Cookies and third-party services</h2>
 <p>The site uses, or may use, Google Analytics to measure traffic and Google AdSense to serve advertising. These services use cookies to compile statistics from your visits and may show ads based on your interests.</p>
 <ul><li>Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website and other websites.</li>
 <li>You can opt out of personalised advertising in <a href="https://adssettings.google.com" rel="noopener">Google Ads Settings</a>.</li>
 <li>How Google uses data from sites that use its services is described in <a href="https://policies.google.com/technologies/partner-sites" rel="noopener">Google's partner sites policy</a>.</li>
 <li>You can refuse or delete cookies in your browser settings; some features or ads may then behave differently.</li></ul>
-<h2>5. Retention</h2>
+<h2>Retention</h2>
 <p>The operator does not keep any personal data itself. If you contact us by email, your address and message are deleted once the enquiry has been answered.</p>
-<h2>6. Your rights</h2>
+<h2>Your rights</h2>
 <p>You may at any time request access to, correction or deletion of, or a halt to the processing of your personal data by contacting the address below.</p>
-<h2>7. Contact</h2>
+<h2>Contact</h2>
 <p>Responsible person: {e(OPERATOR_EN)}<br>Email: {e(EMAIL)}</p>
-<h2>8. Changes to this policy</h2>
+<h2>Changes to this policy</h2>
 <p>If this policy changes, the new version and its effective date will be published on the site.</p>'''
         meta = f"Privacy policy for {SITE_EN} (matrixstep.net)."
     doc_page("/privacy/", U["privacy_title"], meta, body)
 
 def notfound():
     """404는 한 파일로 모든 언어를 받아요. 한국어 안내 아래에 영어 안내를 함께 둬요."""
-    ko_ops = "".join(f'<li><a href="/{o["slug"]}/">{o["h1"]}</a></li>' for o in OPS_KO)
-    body = ('<h1>페이지를 찾을 수 없어요</h1><p>주소가 바뀌었거나 없는 페이지예요. 아래에서 원하는 계산기를 골라 주세요.</p><ul>' + ko_ops + "</ul>"
+    ko_ops = "".join(f'<li><a href="/{o["slug"]}/"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in OPS_KO)
+    body = ('<h1>페이지를 찾을 수 없어요</h1><p>주소가 바뀌었거나 없는 페이지예요. 아래에서 원하는 계산기를 골라 주세요.</p><ul class="oplist">' + ko_ops + "</ul>"
             '<p lang="en"><strong>Page not found.</strong> The address may have changed. Go to the <a href="/en/">English matrix calculator</a> or <a href="/en/calculators/">all calculators</a>.</p>')
     s = head("페이지를 찾을 수 없어요 | " + SITE, "요청한 페이지가 없어요.", "/404.html", '<meta name="robots" content="noindex">\n', alt=False) + "<body>\n" + topbar("", "/", alt=False)
     s += f'<main class="wrap"><article class="doc">{body}</article></main>\n' + footer() + "</body>\n</html>\n"

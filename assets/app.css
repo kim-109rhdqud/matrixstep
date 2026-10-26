@@ -199,12 +199,43 @@ button,input{font:inherit;color:inherit}
 .grid-ops span{font-size:13.5px;color:var(--muted)}
 .hub-g{margin-bottom:32px}
 .hub-g h2{margin:0 0 12px;font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--muted)}
-.doc{max-width:720px;padding-block:44px 20px}
+.doc{max-width:720px;padding-block:44px 20px;counter-reset:sec}
 .doc h1{margin:0 0 10px;font-size:clamp(27px,3.4vw,38px);line-height:1.2;font-weight:600;letter-spacing:-.025em;text-wrap:balance}
 .doc .meta{color:var(--muted);font-size:13px;margin:0 0 28px}
-.doc h2{font-size:20px;margin:36px 0 10px;font-weight:600;letter-spacing:-.015em}
-.doc p,.doc li{color:var(--muted)}
-.doc a{color:var(--accent)}
+.doc h2{margin:40px 0 12px;font-size:22px;line-height:1.3;font-weight:600;letter-spacing:-.015em;text-wrap:balance;display:flex;align-items:baseline;gap:12px;counter-increment:sec}
+.doc h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);flex:none}
+.doc h2.lbl{counter-increment:none;margin:34px 0 4px;font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--muted)}
+.doc h2.lbl::before{content:none}
+.doc p{color:var(--muted);line-height:1.75;font-size:16px}
+.doc a{color:var(--accent);text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px;text-decoration-color:var(--line-strong)}
+.doc a:hover{text-decoration-color:var(--accent)}
+.doc>p:first-of-type,.doc .lead{font-size:17px;color:var(--fg)}
+.doc ul:not(.oplist):not(.glist):not(.rel){list-style:none;margin:8px 0;padding:0;border-top:1px solid var(--line)}
+.doc ul:not(.oplist):not(.glist):not(.rel)>li{padding:10px 0;border-bottom:1px solid var(--line);color:var(--muted);line-height:1.7;font-size:15.5px}
+.doc ol:not(.gsteps):not(.rel){list-style:none;margin:8px 0;padding:0;counter-reset:item}
+.doc ol:not(.gsteps):not(.rel)>li{position:relative;padding:8px 0 8px 36px;counter-increment:item;color:var(--muted);line-height:1.7;font-size:15.5px}
+.doc ol:not(.gsteps):not(.rel)>li::before{content:counter(item,decimal-leading-zero);position:absolute;left:0;top:11px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.05em}
+.doc strong{color:var(--fg);font-weight:600}
+.oplist{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 32px;border-top:1px solid var(--line)}
+.oplist li{border-bottom:1px solid var(--line)}
+.oplist a{display:flex;flex-direction:column;gap:2px;padding:12px 0;color:var(--fg);text-decoration:none}
+.oplist a:hover b{color:var(--accent)}
+.oplist b{font-size:15px;font-weight:600}
+.oplist span{font-size:13.5px;color:var(--muted)}
+.contact{display:flex;flex-direction:column;gap:6px;margin:14px 0 0;padding:20px 24px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.contact>a{font-family:var(--mono);font-size:20px;font-weight:500;color:var(--fg);text-decoration:none;word-break:break-all}
+.contact>a:hover{color:var(--accent)}
+.contact span{font-size:13.5px;color:var(--muted)}
+.contact span a{color:var(--muted)}
+.doc.index{max-width:860px}
+.glist{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.glist li{border-bottom:1px solid var(--line)}
+.glist a{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"t m" "d m";column-gap:24px;row-gap:3px;align-items:baseline;padding:14px 0;color:var(--fg);text-decoration:none}
+.glist a:hover b{color:var(--accent)}
+.glist b{grid-area:t;font-size:16px;font-weight:600;letter-spacing:-.005em}
+.glist span{grid-area:d;font-size:14px;color:var(--muted)}
+.glist em{grid-area:m;font-style:normal;font-family:var(--mono);font-size:12px;color:var(--muted);align-self:start;padding-top:4px}
+.glist-g+.glist-g{margin-top:6px}
 
 /* ---------- 가이드 글 ---------- */
 .guide-wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:48px;align-items:start}
@@ -214,18 +245,16 @@ button,input{font:inherit;color:inherit}
 .toc .lbl{padding:0 0 10px 14px}
 .toc a{display:block;padding:6px 0 6px 14px;border-left:2px solid transparent;color:var(--muted);font-size:13px;line-height:1.4;text-decoration:none}
 .toc a:hover{color:var(--fg)}
-.guide{max-width:720px;counter-reset:sec}
+.guide{max-width:720px}
 .guide .crumb{margin:0 0 12px;font-size:12.5px;font-weight:500;letter-spacing:.04em}
 .guide .crumb a{color:var(--muted);text-decoration:none}
 .guide .crumb a:hover{color:var(--fg)}
 .guide .lead{font-size:18px;color:var(--fg);line-height:1.7}
-.guide h2{margin:40px 0 12px;font-size:22px;line-height:1.3;letter-spacing:-.015em;text-wrap:balance;display:flex;align-items:baseline;gap:12px;counter-increment:sec}
-.guide h2::before{content:counter(sec,decimal-leading-zero);font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);flex:none}
 .guide h3{margin:22px 0 6px;font-size:16px;font-weight:600}
-.guide p,.guide li{line-height:1.75;font-size:16px}
-.guide ul,.guide ol:not(.gsteps){padding-left:1.3em;display:flex;flex-direction:column;gap:6px;color:var(--muted)}
-.guide strong{color:var(--fg);font-weight:600}
-.mbox{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:16px 20px;margin:12px 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow-x:auto;max-width:100%}
+.mbox{display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;padding:14px 20px;margin:12px 0;background:var(--sunk);border-radius:10px;overflow-x:auto;max-width:100%}
+.mbox+.mbox{margin-top:-10px;border-top:1px solid var(--bg);border-top-left-radius:0;border-top-right-radius:0}
+.mbox:has(+.mbox){border-bottom-left-radius:0;border-bottom-right-radius:0}
+.gsteps .mbox{background:transparent;padding:4px 0}
 .mline{font-family:var(--mono);font-size:14.5px;color:var(--fg);white-space:nowrap;font-variant-numeric:tabular-nums}
 .mbox .op{font-family:var(--mono);font-size:20px;color:var(--faint)}
 .gsteps{list-style:none;margin:16px 0;padding:0;display:flex;flex-direction:column;border-top:1px solid var(--line)}
@@ -233,10 +262,11 @@ button,input{font:inherit;color:inherit}
 .gsteps .mbox{margin:0;align-self:flex-start}
 .gsteps .st{color:var(--fg);font-size:15px}
 .tbl{overflow-x:auto;margin:14px 0}
-.gtable{border-collapse:collapse;width:100%;min-width:520px;font-size:14px}
-.gtable th,.gtable td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
-.gtable th{background:var(--sunk);color:var(--fg);font-weight:600}
+.gtable{border-collapse:collapse;width:100%;min-width:520px;font-size:14.5px}
+.gtable th,.gtable td{border:0;border-bottom:1px solid var(--line);padding:11px 14px 11px 0;text-align:left;vertical-align:top}
+.gtable th{font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--muted);border-bottom-color:var(--line-strong)}
 .gtable td{color:var(--muted)}
+.gtable td:first-child{color:var(--fg);font-weight:500}
 .cta-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:14px 20px;margin:40px 0 8px;padding:22px 26px;background:var(--fg);color:var(--bg);border-radius:var(--r)}
 .cta-box div{display:flex;flex-direction:column;gap:3px;min-width:0}
 .cta-box b{font-size:16px;color:var(--bg)}
@@ -247,11 +277,11 @@ button,input{font:inherit;color:inherit}
 .rel-h{margin:28px 0 4px}
 .rel{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
 .rel li{border-bottom:1px solid var(--line)}
-.rel a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;color:var(--fg);font-weight:500;font-size:15px;text-decoration:none}
+.doc .rel a{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 0;color:var(--fg);font-weight:500;font-size:15px;text-decoration:none}
 .rel a:hover{color:var(--accent)}
 .rel a span{font-family:var(--mono);font-size:12px;color:var(--muted);flex:none}
 .guide-list{margin-top:8px}
-.faq{display:flex;flex-direction:column;max-width:760px;border-top:1px solid var(--line)}
+.faq{display:flex;flex-direction:column;max-width:760px;border-top:1px solid var(--line);margin-top:12px}
 .faq details{border-bottom:1px solid var(--line);padding:4px 0}
 .faq summary{cursor:pointer;font-weight:600;font-size:15px;padding:10px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .faq summary::-webkit-details-marker{display:none}

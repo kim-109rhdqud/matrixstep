@@ -230,3 +230,14 @@ button,input{font:inherit;color:inherit}
   .ops a{flex:none}
 }
 .top-nav a[aria-current="page"]{color:var(--fg);font-weight:600}
+
+/* ---------- 가이드 글 FAQ ---------- */
+.faq{display:flex;flex-direction:column;gap:10px;max-width:760px}
+.faq details{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+.faq summary{cursor:pointer;font-weight:600;font-size:15px}
+.faq p{margin:10px 0 0;color:var(--muted)}
+.guide .faq{margin-top:12px}
+
+.rel-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.rel-list a{font-weight:600}
+.rel-list span{display:block;font-size:13.5px;color:var(--muted)}

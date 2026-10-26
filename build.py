@@ -14,7 +14,9 @@ AD_SLOT = ""                     # 애드센스 광고 단위 ID (승인 후)
 GA_ID = "G-C9HEVN1K5G"          # Google Analytics 측정 ID
 GOOGLE_VERIFY = "RbHYlcklifwfjHGu8-Gsei87Nz5d7G33nOIyOQZuzvE"  # Search Console HTML 태그 content 값
 NAVER_VERIFY = "47b17112975f4850acd04b4dc30e856d9028e899"  # 네이버 서치어드바이저 HTML 태그 content 값
-TODAY = datetime.date(2026, 10, 13).isoformat()
+TODAY = datetime.date(2026, 10, 26).isoformat()   # 내용을 고칠 때 올려요 (가이드·소개 "업데이트" 날짜, sitemap lastmod)
+PRIVACY_DATE = "2026-10-13"                        # 개인정보처리방침 시행일 (방침을 바꿀 때만 올려요)
+FIRST_PUBLISHED = "2026-10-13"                     # 가이드 최초 게시일
 # ================================================
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -112,6 +114,21 @@ OPS = [
        ("해가 무수히 많을 때 t는 무엇인가요?","자유변수를 나타내는 매개변수예요. t에 어떤 수를 넣어도 방정식을 만족하는 해가 돼요.")]),
 ]
 
+# 검색 결과에 보이는 제목·설명 (제목은 사이트 이름 앞에서 30자 안쪽, 설명은 90자 안쪽으로)
+SNIP = {
+ "inverse": ("역행렬 계산기 - 분수로 정확하게, 풀이 과정까지", "역행렬을 분수로 정확하게 계산하고 가우스-조던 소거법의 행 연산을 한 단계씩 보여줘요. 2×2부터 6×6까지, 가입 없이 무료로 써요."),
+ "det": ("행렬식 계산기 - 2×2부터 6×6, 풀이 과정까지", "행렬식을 분수로 정확하게 계산해요. 2×2 공식, 3×3 여인수 전개, 4×4 이상 행 소거까지 풀이 과정을 단계별로 보여줘요."),
+ "mul": ("행렬 곱셈 계산기 - 성분별 계산 과정 보기", "두 행렬의 곱 AB를 계산하고, 각 성분을 A의 행과 B의 열로 어떻게 구하는지 보여줘요. 분수와 소수도 입력할 수 있어요."),
+ "add": ("행렬 덧셈 계산기 - 분수까지 정확하게", "크기가 같은 두 행렬의 합 A + B를 분수까지 정확하게 계산해요. 성분별 계산 과정도 함께 보여줘요."),
+ "sub": ("행렬 뺄셈 계산기 - 분수까지 정확하게", "크기가 같은 두 행렬의 차 A − B를 분수까지 정확하게 계산해요. 성분별 계산 과정도 함께 보여줘요."),
+ "scalar": ("행렬 스칼라배 계산기 - kA를 바로 계산", "행렬의 모든 성분에 수 k를 곱한 kA를 분수까지 정확하게 계산해요. 성분별 계산 과정도 함께 보여줘요."),
+ "transpose": ("전치행렬 계산기 - 행과 열을 바꿔 Aᵀ 구하기", "행렬의 행과 열을 바꾼 전치행렬 Aᵀ를 바로 구하고, 행이 어느 열로 옮겨지는지 단계별로 보여줘요."),
+ "rref": ("RREF 계산기 - 기약 행사다리꼴과 랭크", "행렬을 기약 행사다리꼴(RREF)로 바꾸는 행 연산을 단계별로 보여주고, 랭크와 피벗 열까지 알려줘요."),
+ "solve": ("연립방정식 행렬 계산기 - 해와 일반해까지", "Ax = b 연립방정식을 소거법으로 풀어 해가 하나인지, 없는지, 무수히 많은지 알려주고 일반해까지 보여줘요."),
+}
+for _o in OPS:
+    _o["title"], _o["meta"] = SNIP[_o["key"]]
+
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">'
 
 def head(title, meta, path, extra=""):
@@ -194,7 +211,20 @@ HOWTO = '''<ol class="howto">
 </ol>'''
 
 # 계산기 → 관련 가이드
-GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions"}
+GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions",
+             "mul": "matrix-multiplication", "add": "matrix-add-subtract-scalar", "sub": "matrix-add-subtract-scalar",
+             "scalar": "matrix-add-subtract-scalar", "transpose": "matrix-transpose-properties"}
+GUIDES_FOR = {
+    "inverse": ["inverse-gauss-jordan", "inverse-adjugate-cofactor", "elementary-matrices"],
+    "det": ["determinant-3x3", "determinant-properties", "cramer-rule", "eigenvalues-2x2"],
+    "mul": ["matrix-multiplication", "elementary-matrices", "special-matrices"],
+    "add": ["matrix-add-subtract-scalar", "matrix-multiplication"],
+    "sub": ["matrix-add-subtract-scalar", "matrix-multiplication"],
+    "scalar": ["matrix-add-subtract-scalar", "matrix-multiplication"],
+    "transpose": ["matrix-transpose-properties", "special-matrices"],
+    "rref": ["rank-and-rref", "null-space-column-space", "linear-independence"],
+    "solve": ["linear-system-solutions", "cramer-rule", "rank-and-rref"],
+}
 
 def fold(title, body, cls=""):
     return f'<details class="fold {cls}"><summary><h2>{title}</h2></summary><div class="fold-b">{body}</div></details>\n'
@@ -205,16 +235,18 @@ def extras(o):
     more = f'<p><a href="/guide/{g["slug"]}/">자세한 설명과 예제: {e(g["title"])}</a></p>' if g else ""
     concept = "".join(f"<p>{e(x)}</p>" for x in o["cb"]) + more + f'<p class="tip"><b>시험 팁</b>{e(o["tip"])}</p>'
     qa = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in o["faq"])
+    rel = "".join(f'<li><a href="/guide/{x}/">{e(guides.BY_SLUG[x]["h1"])}</a><span>{e(guides.BY_SLUG[x]["desc"])}</span></li>' for x in GUIDES_FOR.get(o["key"], []))
     return ('<section class="extras" aria-label="더 알아보기">\n' + fold(e(o["ch"]), concept) + fold("사용 방법", HOWTO)
-            + fold("자주 묻는 질문", f'<dl class="qa">{qa}</dl>') + "</section>\n")
+            + fold("자주 묻는 질문", f'<dl class="qa">{qa}</dl>')
+            + (fold("관련 가이드", f'<ul class="rel-list">{rel}</ul>') if rel else "") + "</section>\n")
 
 def guide_page(g):
     path = f'/guide/{g["slug"]}/'
     ldj = {"@context": "https://schema.org", "@type": "Article", "headline": g["h1"], "inLanguage": "ko",
-           "description": g["meta"], "datePublished": TODAY, "dateModified": TODAY,
+           "description": g["meta"], "datePublished": g.get("published", FIRST_PUBLISHED), "dateModified": TODAY,
            "author": {"@type": "Organization", "name": SITE}, "publisher": {"@type": "Organization", "name": SITE},
            "mainEntityOfPage": DOMAIN + path}
-    s = head(g["title"] + " | " + SITE, g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n")
+    s = head(g["title"] + " | " + SITE, g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n" + crumbs([("홈", "/"), ("가이드", "/guide/"), (g["h1"], path)]))
     s += "<body>\n" + topbar("guide") + '<main class="wrap"><article class="doc guide">'
     s += f'<p class="crumb"><a href="/guide/">가이드</a></p><h1>{e(g["h1"])}</h1><p class="meta">{TODAY} 업데이트 · 읽는 시간 약 {g["min"]}분</p>'
     s += g["body"]
@@ -238,6 +270,15 @@ def ld(o, path):
          "description": o["meta"], "offers": {"@type": "Offer", "price": "0", "priceCurrency": "KRW"}}
     return '<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + "</script>\n"
 
+def crumbs(items):
+    d = {"@context": "https://schema.org", "@type": "BreadcrumbList",
+         "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": DOMAIN + p} for i, (n, p) in enumerate(items)]}
+    return '<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + "</script>\n"
+
+def website_ld():
+    d = {"@context": "https://schema.org", "@type": "WebSite", "name": SITE, "alternateName": ["matrixstep", "MatrixStep"], "url": DOMAIN + "/", "inLanguage": "ko"}
+    return '<script type="application/ld+json">' + json.dumps(d, ensure_ascii=False) + "</script>\n"
+
 def write(path, text):
     full = os.path.join(OUT, path.lstrip("/"))
     if full.endswith("/") or path.endswith("/"): full = os.path.join(full, "index.html")
@@ -249,7 +290,7 @@ PAGE_END = '<div class="toast" id="toast" role="status" hidden></div>\n<script s
 def op_page(o):
     """계산기 페이지: 제목 → 연산 선택 → 계산기·결과. 나머지는 접이식."""
     path = f'/{o["slug"]}/'
-    s = head(o["title"] + " | " + SITE, o["meta"], path, ld(o, path))
+    s = head(o["title"] + " | " + SITE, o["meta"], path, ld(o, path) + crumbs([("홈", "/"), ("계산기", "/calculators/"), (o["h1"], path)]))
     s += f'<body data-op="{o["key"]}">\n' + topbar("calc") + '<main class="wrap">\n'
     s += f'<div class="intro"><h1>{e(o["h1"])}</h1><p>{e(o["desc"])}</p></div>\n' + opsnav(o["key"]) + "\n" + CALC + ad()
     s += extras(o) + "</main>\n" + footer() + PAGE_END
@@ -269,8 +310,8 @@ def home_extras():
             + fold("자주 묻는 질문", f'<dl class="qa">{dl}</dl>') + "</section>\n")
 
 def home():
-    meta = "역행렬, 행렬식, 행렬 곱셈, RREF, 연립방정식까지. 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여주는 깔끔한 무료 행렬 계산기예요."
-    s = head(f"{SITE} - 역행렬·행렬식·RREF 단계별 풀이", meta, "/", ld(dict(h1=SITE, meta=meta), "/"))
+    meta = "역행렬, 행렬식, 곱셈, RREF, 연립방정식을 분수로 정확하게 계산하고 풀이 과정을 단계별로 보여주는 깔끔한 무료 행렬 계산기예요."
+    s = head(f"{SITE} - 역행렬·행렬식·RREF를 분수로 정확하게", meta, "/", website_ld() + ld(dict(h1=SITE, meta=meta), "/"))
     s += '<body data-op="inverse">\n' + topbar() + '<main class="wrap">\n'
     s += f'<div class="intro"><h1>{SITE}</h1><p>역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 보여드려요.</p></div>\n'
     s += opsnav("inverse", home=True) + "\n" + CALC + ad() + home_extras() + "</main>\n" + footer() + PAGE_END
@@ -302,21 +343,34 @@ def doc_page(path, title, meta, body, cur=""):
     write(path, s)
 
 def about():
+    ncal, ngd = len(OPS), len(guides.ARTICLES)
     body = f'''<h1>{SITE} 소개</h1><p class="meta">마지막 업데이트 {TODAY}</p>
-<p>{SITE}는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해 정확하고 읽기 쉬운 풀이를 보여주는 것을 목표로 해요.</p>
-<h2>특징</h2><ul>
-<li><strong>분수로 정확한 계산</strong>: 0.3333… 같은 반올림 오차 없이 1/3처럼 정확한 값으로 계산해요.</li>
-<li><strong>단계별 풀이</strong>: 행 연산 하나하나와 그때의 행렬을 순서대로 보여줘서 손으로 푼 과정과 비교할 수 있어요.</li>
-<li><strong>개인정보 걱정 없음</strong>: 모든 계산은 사용자의 브라우저 안에서 이루어지고, 입력한 행렬은 서버로 전송되지 않아요.</li>
+<p>{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
+<h2>왜 만들었나요</h2>
+<p>행렬 문제는 답보다 과정이 중요한데, 기존 계산기는 답만 보여주거나 소수로 반올림해 손으로 푼 풀이와 비교하기 어려웠어요. 또 광고와 메뉴가 많아 정작 계산기를 찾기 힘든 경우도 많았고요. 그래서 계산기와 결과만 먼저 보이고, 설명은 필요할 때 펼쳐 보는 단순한 페이지로 만들었어요.</p>
+<h2>어떻게 계산하나요</h2><ul>
+<li><strong>분수로 정확한 계산</strong>: 모든 값을 정수 분자·분모로 저장해 계산해요. 0.3333… 같은 반올림 오차 없이 1/3처럼 정확한 값이 나오고, 소수 표시는 보여주는 방식만 바꿔요.</li>
+<li><strong>교과서와 같은 방법</strong>: 역행렬과 RREF는 가우스-조던 소거법, 행렬식은 2×2 공식·3×3 여인수 전개·4×4 이상은 행 소거로 계산해요. 수업에서 배우는 순서 그대로예요.</li>
+<li><strong>단계별 풀이</strong>: 행 연산 하나하나와 그때의 행렬을 순서대로 보여줘서, 어디서 계산이 틀렸는지 바로 찾을 수 있어요.</li>
+<li><strong>브라우저 안에서만 계산</strong>: 입력한 행렬은 서버로 전송되지 않아요. 계산은 모두 사용 중인 브라우저에서 이루어져요.</li>
 <li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
-<h2>제공하는 계산기</h2><ul>{"".join(f'<li><a href="/{o["slug"]}/">{o["h1"]}</a> · {e(o["card"])}</li>' for o in OPS)}</ul>
+<h2>정확성은 어떻게 확인하나요</h2>
+<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 1,700여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
+<h2>제공하는 계산기 {ncal}종</h2><ul>{"".join(f'<li><a href="/{o["slug"]}/">{o["h1"]}</a> · {e(o["card"])}</li>' for o in OPS)}</ul>
+<h2>가이드 {ngd}편</h2>
+<p>계산기만으로는 부족한 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요. 역행렬과 행렬식 같은 기본부터 랭크, 영공간, 선형독립, 고윳값까지, 시험에서 자주 헷갈리는 순서로 정리했어요. 모든 글은 직접 손으로 따라 풀 수 있는 작은 예제로 시작하고, 마지막에는 계산기로 바로 확인할 수 있게 이어져요.</p>
+<h2>운영 원칙</h2><ul>
+<li>계산기 화면에는 계산기와 결과만 두고, 설명과 광고가 계산을 가리지 않게 해요.</li>
+<li>기능을 추가할 때는 "선형대수 수업에서 실제로 쓰는가"를 기준으로 골라요.</li>
+<li>사이트는 무료로 운영하고, 비용은 광고로 충당해요. 광고는 계산 결과 아래에만 배치해요.</li></ul>
 <h2 id="contact">문의</h2>
-<p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요. 계산 결과가 틀렸다면 입력한 행렬을 함께 적어 주시면 빠르게 확인할 수 있어요.</p>
-<p><strong>{e(EMAIL)}</strong></p>'''
-    doc_page("/about/", "소개 및 문의", f"{SITE}의 특징과 제공하는 계산기, 문의 방법을 안내해요.", body, "about")
+<p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
+<p><strong>{e(EMAIL)}</strong></p>
+<p>운영자: {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></p>'''
+    doc_page("/about/", "소개 및 문의", f"{SITE}가 행렬을 분수로 정확하게 계산하는 방법, 결과를 검증하는 방식, 제공하는 계산기 {ncal}종과 가이드 {ngd}편, 문의 방법을 안내해요.", body, "about")
 
 def privacy():
-    body = f'''<h1>개인정보처리방침</h1><p class="meta">시행일 {TODAY}</p>
+    body = f'''<h1>개인정보처리방침</h1><p class="meta">시행일 {PRIVACY_DATE}</p>
 <p>{e(OPERATOR)}(이하 ‘운영자’)는 {SITE}(이하 ‘사이트’)를 이용하는 분의 개인정보를 소중히 여기며, 「개인정보 보호법」 등 관련 법령을 지켜요. 이 방침은 사이트가 어떤 정보를 어떻게 다루는지 알려드려요.</p>
 <h2>1. 수집하는 개인정보</h2>
 <p>사이트는 회원가입 없이 이용할 수 있고, 이름·연락처 같은 개인정보를 직접 수집하지 않아요. 계산을 위해 입력한 행렬 값은 이용자의 브라우저 안에서만 처리되며 운영자의 서버로 전송되지 않아요.</p>

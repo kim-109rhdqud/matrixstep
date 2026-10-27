@@ -73,7 +73,7 @@ function makeSet(topic,size,count,seed){R=rng(seed);const out=[];for(let i=0;i<c
 /* 표시 */
 const enc=M=>M.map(r=>r.join(',')).join(';');
 function calcLink(p){
-  const slug={det:'determinant',inverse:'inverse',mul:'multiplication',add:'addition',sub:'subtraction',power:'power',rref:'rref',solve:'solve',rank:'rank',eigen:'eigenvalues'}[p.op];
+  const slug={det:'determinant',inverse:'inverse',mul:'multiplication',add:'addition',sub:'subtraction',power:'power',rref:'rref',solve:'linear-system',rank:'rank',eigen:'eigenvalues'}[p.op];
   let h='#A='+enc(p.A);if(p.B)h+='&B='+enc(p.B);if(p.b)h+='&b='+p.b.join(',');if(p.k)h+='&k='+p.k;
   return (LANG==='en'?'/en/':'/')+slug+'/'+h;
 }

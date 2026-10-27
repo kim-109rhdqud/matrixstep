@@ -171,6 +171,54 @@ OPS_KO = [
   faq=[("고윳값이 소수로 나오는 건 왜 그런가요?","특성다항식의 근이 유리수가 아니면 정확한 표기가 복잡해져서, 3×3 이상에서는 수치적으로 근사해 ≈로 표시해요. 2×2는 √를 써서 정확하게 보여줘요."),
        ("복소 고윳값이 나오면요?","실수 고윳값이 없다는 뜻이에요. 2×2에서는 a ± bi 꼴로 정확히 보여주고, 그 이상은 근사값으로 보여줘요."),
        ("대각화 가능 여부는 어떻게 판단하나요?","각 고윳값의 기하적 중복도(고유벡터 개수)의 합이 n이면 대각화할 수 있어요. 모든 고윳값이 정확히 구해진 경우에만 판단해요.")]),
+ dict(key="diag", slug="diagonalization", label="대각화",
+  title="행렬 대각화 계산기 - P, D, P⁻¹을 단계별로", h1="행렬 대각화 계산기",
+  meta="A = PDP⁻¹ 꼴로 행렬을 대각화해요. 고윳값과 고유벡터를 분수로 정확하게 구해 P와 D를 만들고, P⁻¹까지 계산해 PDP⁻¹ = A를 검산해요. 대각화가 안 되는 경우도 이유를 알려줘요.",
+  desc="고윳값과 고유벡터를 구해 A = PDP⁻¹의 P, D, P⁻¹을 만들어요.",
+  card="A = PDP⁻¹의 P, D, P⁻¹ 구하기",
+  ch="대각화란?",
+  cb=["정방행렬 A에 대해 가역행렬 P와 대각행렬 D가 있어서 A = PDP⁻¹이 되면 A는 대각화 가능해요. P의 열은 고유벡터, D의 대각 성분은 같은 순서의 고윳값이에요.",
+      "서로 독립인 고유벡터가 n개 있어야 P가 가역이 돼요. 고윳값이 n개 모두 다르면 항상 가능하고, 중복 고윳값이 있으면 기하적 중복도를 확인해야 해요."],
+  tip="대각화하면 Aᵏ = PDᵏP⁻¹이라 거듭제곱이 쉬워져요. Dᵏ는 대각 성분을 k제곱하면 끝이에요.",
+  faq=[("대각화가 안 된다고 나오는 이유는 뭔가요?","두 가지예요. 고윳값이 유리수가 아니어서 이 계산기가 정확한 P를 쓸 수 없거나, 중복 고윳값의 고유벡터가 중복도보다 적은 경우(결함 행렬)예요. 후자는 어떤 방법으로도 대각화할 수 없어요."),
+       ("P의 열 순서가 교재와 다른데 괜찮나요?","괜찮아요. 고윳값의 순서만 D에서 같게 맞추면 어떤 순서든 A = PDP⁻¹이 성립해요. 고유벡터에 0이 아닌 수를 곱해도 돼요."),
+       ("대칭행렬은 항상 대각화되나요?","네. 실수 대칭행렬은 항상 직교 대각화할 수 있어요. 고유벡터를 정규화하면 P⁻¹ = Pᵀ가 돼요.")]),
+ dict(key="axb", slug="matrix-equation", label="AX = B",
+  title="행렬방정식 AX = B 계산기 - X = A⁻¹B를 단계별로", h1="행렬방정식 AX = B 계산기",
+  meta="행렬방정식 AX = B의 해 X를 분수로 정확하게 구해요. 첨가행렬 [A | B]를 가우스-조던 소거법으로 풀어 과정을 보여주고, A가 특이행렬이면 해가 없는지 무수히 많은지 알려줘요.",
+  desc="첨가행렬 [A | B]를 기약 행사다리꼴로 만들어 X = A⁻¹B를 구해요.",
+  card="AX = B의 해 X 구하기",
+  ch="행렬방정식 AX = B",
+  cb=["A가 가역이면 X = A⁻¹B가 유일한 해예요. 역행렬을 따로 구하지 않고 [A | B]를 소거하면 오른쪽에 바로 X가 나와요.",
+      "B의 열 하나하나가 연립방정식 Ax = b의 우변이에요. 그래서 AX = B는 우변이 여러 개인 연립방정식을 한 번에 푸는 것과 같아요."],
+  tip="XA = B 꼴은 양변을 전치해서 AᵀXᵀ = Bᵀ로 바꾸면 같은 방법으로 풀 수 있어요.",
+  faq=[("XA = B는 어떻게 푸나요?","전치하면 AᵀXᵀ = Bᵀ예요. Aᵀ와 Bᵀ를 입력해 Xᵀ를 구한 뒤 다시 전치하세요."),
+       ("A가 정방행렬이 아니면요?","이 계산기는 정방행렬 A만 받아요. 직사각형이면 연립방정식 계산기에서 열별로 풀거나 최소제곱 문제가 돼요."),
+       ("B가 단위행렬이면요?","X = A⁻¹이 나와요. 역행렬 계산기가 하는 일과 같아요.")]),
+ dict(key="gs", slug="gram-schmidt", label="그람-슈미트",
+  title="그람-슈미트 직교화 계산기 - 직교 기저를 단계별로", h1="그람-슈미트 직교화 계산기",
+  meta="그람-슈미트 과정으로 열벡터를 직교 기저로 바꿔요. 각 단계의 정사영과 뺄셈을 분수로 정확하게 보여주고, 종속인 벡터는 걸러내요. 정규화를 위한 길이의 제곱도 알려줘요.",
+  desc="열벡터 v₁, v₂, …에서 정사영을 빼며 서로 직교하는 u₁, u₂, …를 만들어요.",
+  card="열벡터를 직교 기저로 바꾸기",
+  ch="그람-슈미트 과정이란?",
+  cb=["주어진 벡터들에서 앞서 만든 벡터 방향의 성분(정사영)을 빼면 서로 수직인 벡터들이 나와요. uₖ = vₖ − Σ (vₖ·uⱼ)/(uⱼ·uⱼ) uⱼ 가 그 식이에요.",
+      "결과를 각자의 길이로 나누면 정규직교 기저가 돼요. 길이에 √가 들어가는 경우가 많아서 계산기는 정규화 전의 u와 ‖u‖²를 보여줘요."],
+  tip="uₖ가 0이 되면 vₖ는 앞 벡터들의 일차결합이에요. 기저에서 빼고 다음 벡터로 넘어가요.",
+  faq=[("벡터는 어디에 입력하나요?","행렬의 각 열이 벡터 하나예요. 3차원 벡터 두 개면 3×2 행렬을 입력하세요."),
+       ("정규직교 기저는 안 나오나요?","정규화하면 √가 들어가 분수로 정확히 쓸 수 없어서, 직교 벡터 u와 길이의 제곱 ‖u‖²를 보여줘요. u를 √(‖u‖²)로 나누면 정규직교 기저예요."),
+       ("QR 분해와는 어떤 관계인가요?","그람-슈미트로 얻은 정규직교 벡터를 열로 세운 것이 Q이고, R = QᵀA예요.")]),
+ dict(key="lu", slug="lu", label="LU 분해",
+  title="LU 분해 계산기 - A = LU를 단계별로", h1="LU 분해 계산기",
+  meta="행렬을 하삼각행렬 L과 상삼각행렬 U의 곱 A = LU로 분해해요. 소거 과정과 배수를 분수로 정확하게 보여주고, 행 교환이 필요하면 치환행렬 P를 써서 PA = LU로 알려줘요.",
+  desc="가우스 소거의 배수를 L에, 결과를 U에 담아 A = LU(또는 PA = LU)를 만들어요.",
+  card="A = LU의 L, U 구하기",
+  ch="LU 분해란?",
+  cb=["가우스 소거로 상삼각행렬 U를 만들 때 사용한 배수 lᵢⱼ를 하삼각행렬 L에 적으면 A = LU예요. 이 계산기는 L의 대각선이 1인 둘리틀(Doolittle) 방식이에요.",
+      "피벗이 0이 되면 행을 바꿔야 해요. 바꾼 행을 치환행렬 P에 기록하면 PA = LU가 성립해요."],
+  tip="LU가 있으면 Ax = b를 Ly = b, Ux = y 두 번의 대입으로 풀 수 있어서, 우변 b가 여러 개일 때 특히 효율적이에요.",
+  faq=[("왜 PA = LU라고 나오나요?","소거 중에 피벗이 0이어서 행을 바꿨기 때문이에요. P는 그 행 교환을 나타내는 치환행렬이고, PA를 분해한 결과가 L, U예요."),
+       ("det(A)를 LU로 구할 수 있나요?","네. det(A) = ±(U의 대각 성분의 곱)이에요. 부호는 행 교환 횟수가 홀수면 −예요."),
+       ("특이행렬도 분해되나요?","분해는 돼요. U의 마지막 대각 성분이 0으로 나오고, 그러면 det(A) = 0이에요.")]),
 ]
 
 # ===================== 계산기 내용 (영어) =====================
@@ -309,13 +357,62 @@ OPS_EN = [
   faq=[("Why are some eigenvalues shown as decimals?","When the roots of the characteristic polynomial are not rational, an exact expression gets unwieldy for 3×3 and larger, so they are approximated and marked with ≈. For 2×2 the exact form with √ is shown."),
        ("What if the eigenvalues are complex?","Then there are no real eigenvalues. For 2×2 they are shown exactly as a ± bi; for larger matrices as approximations."),
        ("How is diagonalizability decided?","A matrix is diagonalizable when the geometric multiplicities (numbers of eigenvectors) add up to n. The verdict is given only when every eigenvalue was found exactly.")]),
+ dict(key="diag", slug="diagonalization", label="Diagonalize",
+  title="Matrix Diagonalization Calculator - P, D and P⁻¹ with Steps", h1="Matrix diagonalization calculator",
+  meta="Diagonalize a matrix as A = PDP⁻¹. Eigenvalues and eigenvectors are found in exact fractions to build P and D, then P⁻¹ is computed and PDP⁻¹ = A is verified. Explains why a matrix is not diagonalizable.",
+  desc="Finds eigenvalues and eigenvectors, then builds P, D and P⁻¹ with A = PDP⁻¹.",
+  card="P, D and P⁻¹ with A = PDP⁻¹",
+  ch="What is diagonalization?",
+  cb=["A square matrix A is diagonalizable when there is an invertible P and a diagonal D with A = PDP⁻¹. The columns of P are eigenvectors and the diagonal of D holds the eigenvalues in the same order.",
+      "P is invertible only if there are n linearly independent eigenvectors. Distinct eigenvalues guarantee this; repeated eigenvalues need their geometric multiplicity checked."],
+  tip="Once diagonalized, Aᵏ = PDᵏP⁻¹, and Dᵏ just raises each diagonal entry to the k-th power.",
+  faq=[("Why does it say not diagonalizable?","Two reasons: the eigenvalues are not rational, so this calculator cannot write P exactly, or a repeated eigenvalue has fewer eigenvectors than its multiplicity (a defective matrix). The second case cannot be diagonalized by any method."),
+       ("My textbook orders the columns of P differently. Is that fine?","Yes. Any order works as long as D uses the same order. Eigenvectors may also be scaled by any nonzero number."),
+       ("Is a symmetric matrix always diagonalizable?","Yes. A real symmetric matrix is always orthogonally diagonalizable; with normalized eigenvectors, P⁻¹ = Pᵀ.")]),
+ dict(key="axb", slug="matrix-equation", label="AX = B",
+  title="Matrix Equation AX = B Calculator - X = A⁻¹B with Steps", h1="Matrix equation AX = B calculator",
+  meta="Solve the matrix equation AX = B in exact fractions. Reduces the augmented matrix [A | B] by Gauss-Jordan elimination with every step shown, and tells you when a singular A gives no solution or infinitely many.",
+  desc="Reduces [A | B] to RREF to find X = A⁻¹B.",
+  card="Solve AX = B for X",
+  ch="The matrix equation AX = B",
+  cb=["If A is invertible the unique solution is X = A⁻¹B. Instead of computing the inverse, reduce [A | B]: X appears on the right.",
+      "Each column of B is the right-hand side of a linear system Ax = b, so AX = B solves several systems with the same coefficient matrix at once."],
+  tip="For XA = B, transpose both sides: AᵀXᵀ = Bᵀ, which has the same form.",
+  faq=[("How do I solve XA = B?","Transpose to get AᵀXᵀ = Bᵀ. Enter Aᵀ and Bᵀ, solve for Xᵀ, then transpose the result."),
+       ("What if A is not square?","This calculator takes a square A. For rectangular A, solve column by column with the linear system calculator, or it becomes a least-squares problem."),
+       ("What if B is the identity?","Then X = A⁻¹, which is exactly what the inverse calculator does.")]),
+ dict(key="gs", slug="gram-schmidt", label="Gram-Schmidt",
+  title="Gram-Schmidt Calculator - Orthogonal Basis with Steps", h1="Gram-Schmidt orthogonalization calculator",
+  meta="Turn column vectors into an orthogonal basis with the Gram-Schmidt process. Every projection and subtraction is shown in exact fractions, dependent vectors are dropped, and squared lengths are given for normalization.",
+  desc="Subtracts projections from v₁, v₂, … to build mutually orthogonal u₁, u₂, ….",
+  card="Orthogonal basis from column vectors",
+  ch="What is the Gram-Schmidt process?",
+  cb=["Subtracting from each vector its components along the previously built vectors leaves mutually perpendicular vectors: uₖ = vₖ − Σ (vₖ·uⱼ)/(uⱼ·uⱼ) uⱼ.",
+      "Dividing each result by its length gives an orthonormal basis. Since lengths usually involve square roots, the calculator shows the unnormalized u and ‖u‖²."],
+  tip="If uₖ comes out as 0, vₖ is a combination of the earlier vectors: drop it and move on.",
+  faq=[("Where do I enter the vectors?","Each column of the matrix is one vector. For two vectors in ℝ³, enter a 3×2 matrix."),
+       ("Why no orthonormal basis?","Normalizing introduces square roots that cannot be written as exact fractions, so the calculator gives the orthogonal u and ‖u‖². Divide u by √(‖u‖²) to normalize."),
+       ("How does this relate to QR?","The normalized vectors as columns form Q, and R = QᵀA.")]),
+ dict(key="lu", slug="lu", label="LU",
+  title="LU Decomposition Calculator - A = LU with Steps", h1="LU decomposition calculator",
+  meta="Factor a matrix into a lower triangular L and an upper triangular U with A = LU. Every elimination step and multiplier is shown in exact fractions; when a row swap is needed, a permutation matrix P gives PA = LU.",
+  desc="Stores the Gaussian elimination multipliers in L and the result in U so that A = LU (or PA = LU).",
+  card="L and U with A = LU",
+  ch="What is LU decomposition?",
+  cb=["Record the multipliers lᵢⱼ used while reducing A to an upper triangular U in a lower triangular L, and A = LU. This calculator uses the Doolittle form, with 1s on the diagonal of L.",
+      "If a pivot is 0, rows must be swapped. Recording the swaps in a permutation matrix P gives PA = LU."],
+  tip="With LU in hand, Ax = b becomes two substitutions, Ly = b then Ux = y, which is efficient for many right-hand sides.",
+  faq=[("Why does it show PA = LU?","A pivot was 0 during elimination, so rows were swapped. P is the permutation matrix for those swaps, and L, U factor PA."),
+       ("Can I get det(A) from LU?","Yes: det(A) = ±(product of the diagonal of U), with a minus sign for an odd number of row swaps."),
+       ("Does a singular matrix have an LU factorization?","Yes. The last diagonal entry of U comes out 0, which means det(A) = 0.")]),
 ]
 
 # 계산기 → 관련 가이드 (영어판에는 있는 글만 보여줘요)
 GUIDE_FOR = {"inverse": "inverse-gauss-jordan", "det": "determinant-3x3", "rref": "rank-and-rref", "solve": "linear-system-solutions",
              "mul": "matrix-multiplication", "add": "matrix-add-subtract-scalar", "sub": "matrix-add-subtract-scalar",
              "scalar": "matrix-add-subtract-scalar", "transpose": "matrix-transpose-properties",
-             "rank": "rank-and-rref", "power": "diagonalization-matrix-power", "adj": "inverse-adjugate-cofactor", "eigen": "eigenvalues-2x2"}
+             "rank": "rank-and-rref", "power": "diagonalization-matrix-power", "adj": "inverse-adjugate-cofactor", "eigen": "eigenvalues-2x2",
+             "diag": "diagonalization-matrix-power", "axb": "inverse-gauss-jordan", "gs": "linear-independence", "lu": "elementary-matrices"}
 GUIDES_FOR = {
     "inverse": ["inverse-gauss-jordan", "inverse-adjugate-cofactor", "elementary-matrices"],
     "det": ["determinant-3x3", "determinant-properties", "cramer-rule", "eigenvalues-2x2"],
@@ -330,6 +427,10 @@ GUIDES_FOR = {
     "power": ["diagonalization-matrix-power", "matrix-multiplication", "eigenvalues-2x2"],
     "adj": ["inverse-adjugate-cofactor", "determinant-3x3", "determinant-properties"],
     "eigen": ["eigenvalues-2x2", "diagonalization-matrix-power", "determinant-3x3"],
+    "diag": ["diagonalization-matrix-power", "eigenvalues-2x2", "linear-independence"],
+    "axb": ["inverse-gauss-jordan", "linear-system-solutions", "matrix-multiplication"],
+    "gs": ["linear-independence", "null-space-column-space", "matrix-transpose-properties"],
+    "lu": ["elementary-matrices", "inverse-gauss-jordan", "determinant-properties"],
 }
 
 # ===================== 화면 문구 =====================
@@ -396,11 +497,11 @@ UI_KO = dict(
     home_faq=[("몇 × 몇 행렬까지 계산할 수 있나요?", "최대 6×6까지 입력할 수 있어요. 곱셈과 연립방정식은 계산기마다 가능한 크기가 조금씩 달라요."),
               ("계산 결과는 정확한가요?", "모든 값을 분수로 저장해 계산하기 때문에 반올림 오차가 생기지 않아요. 소수 버튼은 보여주는 방식만 바꿔요."),
               ("입력한 행렬이 서버로 전송되나요?", "아니요. 계산은 모두 브라우저 안에서 이루어지고 입력값은 어디에도 전송되지 않아요.")],
-    hub_title="행렬 계산기 모음 - 13가지 연산", hub_h1="행렬 계산기 모음", hub_ld="행렬 계산기 모음",
-    hub_meta="덧셈·뺄셈·곱셈·거듭제곱·전치부터 역행렬, 행렬식, 수반행렬, RREF, 계수(rank), 연립방정식, 고윳값까지 행렬 계산기 13종을 한곳에 모았어요. 모두 분수로 정확하게 계산하고 풀이 과정을 보여줘요.",
+    hub_title="행렬 계산기 모음 - 17가지 연산", hub_h1="행렬 계산기 모음", hub_ld="행렬 계산기 모음",
+    hub_meta="덧셈·뺄셈·곱셈·거듭제곱·전치부터 역행렬, 행렬식, 수반행렬, RREF, 계수(rank), 연립방정식, AX = B, LU 분해, 고윳값, 대각화, 그람-슈미트까지 행렬 계산기 17종을 한곳에 모았어요. 모두 분수로 정확하게 계산하고 풀이 과정을 보여줘요.",
     hub_intro='필요한 연산을 골라 바로 계산해 보세요. 개념이 헷갈리면 <a href="{p}/guide/">가이드</a>도 있어요.',
     groups=[("기본 연산", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("역행렬과 행렬식", ["inverse", "det", "adj"]),
-            ("소거법과 연립방정식", ["rref", "rank", "solve"]), ("고윳값", ["eigen"])],
+            ("소거법과 연립방정식", ["rref", "rank", "solve", "axb", "lu"]), ("고윳값과 직교화", ["eigen", "diag", "gs"])],
     gi_title="행렬 가이드", gi_h1="가이드", gi_intro="시험 범위에서 자주 헷갈리는 개념을 예제와 함께 정리했어요. 모든 예제는 계산기로 바로 확인할 수 있어요.",
     gi_groups=[("기초 연산", ["matrix-multiplication", "matrix-add-subtract-scalar", "matrix-transpose-properties", "special-matrices"]),
                ("역행렬과 행렬식", ["inverse-gauss-jordan", "determinant-3x3", "determinant-properties", "inverse-adjugate-cofactor", "cramer-rule", "elementary-matrices"]),
@@ -430,11 +531,11 @@ UI_EN = dict(
     home_faq=[("What is the largest matrix I can enter?", "Up to 6×6. For multiplication and linear systems the exact limits depend on the operation."),
               ("Are the results exact?", "Yes. Every value is stored as a fraction, so there is no rounding error. The Decimal button only changes how results are displayed."),
               ("Is my matrix sent to a server?", "No. Everything is computed in your browser and nothing you type is transmitted anywhere.")],
-    hub_title="All Matrix Calculators - 13 Operations", hub_h1="All matrix calculators", hub_ld="Matrix calculators",
-    hub_meta="Thirteen matrix calculators in one place: addition, subtraction, multiplication, powers, transpose, inverse, determinant, adjugate, RREF, rank, linear systems and eigenvalues. All in exact fractions with steps.",
+    hub_title="All Matrix Calculators - 17 Operations", hub_h1="All matrix calculators", hub_ld="Matrix calculators",
+    hub_meta="Seventeen matrix calculators in one place: addition, subtraction, multiplication, powers, transpose, inverse, determinant, adjugate, RREF, rank, linear systems, AX = B, LU, eigenvalues, diagonalization and Gram-Schmidt. All in exact fractions with steps.",
     hub_intro='Pick an operation and start calculating. If a concept is unclear, the <a href="{p}/guide/">guides</a> explain it with examples.',
     groups=[("Basic operations", ["add", "sub", "scalar", "mul", "power", "transpose"]), ("Inverse and determinant", ["inverse", "det", "adj"]),
-            ("Elimination and linear systems", ["rref", "rank", "solve"]), ("Eigenvalues", ["eigen"])],
+            ("Elimination and linear systems", ["rref", "rank", "solve", "axb", "lu"]), ("Eigenvalues and orthogonalization", ["eigen", "diag", "gs"])],
     gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators. Every example can be checked in the calculator.",
     gi_groups=[("Inverse and determinant", ["inverse-gauss-jordan", "determinant-3x3"]), ("Elimination and linear systems", ["rank-and-rref", "linear-system-solutions"])], gi_other="More guides",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
@@ -679,7 +780,7 @@ def about():
 <h2>정확성은 어떻게 확인하나요</h2>
 <p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 2,400여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
 <h2>무엇이 있나요</h2>
-<p>역행렬, 행렬식, 곱셈, RREF, 연립방정식, 계수, 거듭제곱, 수반행렬, 고윳값까지 <a href="/calculators/">계산기 {ncal}종</a>이 있고, 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요.</p>
+<p>역행렬, 행렬식, 곱셈, RREF, 연립방정식, 계수, 거듭제곱, 수반행렬, 고윳값, 대각화, LU 분해, 그람-슈미트까지 <a href="/calculators/">계산기 {ncal}종</a>이 있고, 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요.</p>
 <h2 id="contact">문의</h2>
 <p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
@@ -698,7 +799,7 @@ def about():
 <h2>How accuracy is checked</h2>
 <p>Every deployment runs an automated check. About 2,400 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
 <h2>What is here</h2>
-<p>There are <a href="/en/calculators/">{ncal} calculators</a>, from inverses, determinants and multiplication to RREF, linear systems, rank, powers, adjugates and eigenvalues, and the <a href="/en/guide/">guides</a> explain the ideas behind them with worked examples.</p>
+<p>There are <a href="/en/calculators/">{ncal} calculators</a>, from inverses, determinants and multiplication to RREF, linear systems, rank, powers, adjugates, LU, eigenvalues, diagonalization and Gram-Schmidt, and the <a href="/en/guide/">guides</a> explain the ideas behind them with worked examples.</p>
 <h2 id="contact">Contact</h2>
 <p>For bug reports, feature requests or partnership enquiries, email:</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''

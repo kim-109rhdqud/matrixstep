@@ -19,10 +19,10 @@ assert data["lang"] == lang
 CH = {
     "ko": dict(singular="비가역 행렬", noinv="역행렬 없음", none="해 없음", unique="유일한 해",
                free=lambda n: f"자유변수 {n}개", piv=lambda s: f"피벗 열 {s}",
-               full="최대 계수", deficient="계수 부족", diag="대각화 가능", notdiag="대각화 불가능"),
+               full="최대 계수", deficient="계수 부족", diag="대각화 가능", notdiag="대각화 불가능", diagok="대각화 완료"),
     "en": dict(singular="Singular matrix", noinv="Not invertible", none="No solution", unique="Unique solution",
                free=lambda n: f"{n} free variable" + ("s" if n > 1 else ""), piv=lambda s: f"Pivot columns {s}",
-               full="Full rank", deficient="Rank deficient", diag="Diagonalizable", notdiag="Not diagonalizable"),
+               full="Full rank", deficient="Rank deficient", diag="Diagonalizable", notdiag="Not diagonalizable", diagok="Diagonalized"),
 }[lang]
 
 # ---------- 입력 파싱 (앱과 같은 규칙) ----------
@@ -87,6 +87,20 @@ def divisors(n):
         if n % i == 0: out.add(i); out.add(n // i)
         i += 1
     return out
+def charpoly(A):
+    # det(λI − A) 를 λ = 0..n 보간 (라그랑주) → 계수 리스트 c[k] = λ^k
+    n = len(A); xs = list(range(n + 1))
+    ys = [det([[(Fr(x) if i == j else Fr(0)) - A[i][j] for j in range(n)] for i in range(n)]) for x in xs]
+    c = [Fr(0)] * (n + 1)
+    for i, xi in enumerate(xs):
+        term = [Fr(1)]; denom = Fr(1)
+        for j, xj in enumerate(xs):
+            if j == i: continue
+            term = [Fr(0)] + term; 
+            for k in range(len(term) - 1): term[k] -= xj * term[k + 1]
+            denom *= (xi - xj)
+        for k in range(len(term)): c[k] += ys[i] * term[k] / denom
+    return c
 def rational_roots(c):
     """유리근 정리로 모든 유리수 근(중복 포함) 찾기. 상수항이 너무 크면 None."""
     from math import lcm
@@ -225,6 +239,54 @@ for c in data["cases"]:
                 elif sum(m for _, m in D["rational"]) == n:
                     geo = sum(len(v) for _, v in D["vecs"]); want = CH["diag"] if geo == n else CH["notdiag"]
                     if want not in c["chips"]: fail(c, f"대각화 칩 오류 (기하 {geo}, n {n})")
+        elif op == "diag":
+            n = len(A); D = c["data"]
+            # 특성다항식은 eigen 검사에서 이미 검증 → 여기서는 유리수 근 완전성으로 가능 여부 판정
+            cp = charpoly(A); ref = rational_roots(cp)
+            if D["ok"]:
+                P = [[fr(x) for x in r] for r in D["P"]]; dv = [fr(x) for x in D["D"]]; Pi = [[fr(x) for x in r] for r in D["Pi"]]
+                if mul(P, Pi) != I(n): fail(c, "P·P⁻¹ ≠ I")
+                Dm = [[dv[i] if i == j else Fr(0) for j in range(n)] for i in range(n)]
+                if mul(mul(P, Dm), Pi) != A: fail(c, "PDP⁻¹ ≠ A")
+                if CH["diagok"] not in c["chips"]: fail(c, "대각화 완료 칩 없음")
+            else:
+                if CH["notdiag"] not in c["chips"]: fail(c, "대각화 불가능 칩 없음")
+                if ref is not None and len(ref) == n:
+                    geo = sum(n - rank([[A[i][j] - (r if i == j else 0) for j in range(n)] for i in range(n)]) for r in set(ref))
+                    if geo == n: fail(c, "대각화 가능한데 불가능이라 함")
+                    if D["reason"] != "defective": fail(c, "불가능 사유가 달라요")
+                elif D["reason"] != "irrational": fail(c, "유리수 근이 부족한데 사유가 irrational 이 아님")
+        elif op == "axb":
+            B = M(c["inp"]["B"]); n = len(A); D = c["data"]
+            rA = rank(A); rAB = rank([r + rb for r, rb in zip(A, B)])
+            if rA != rAB:
+                if D["kind"] != "none" or CH["none"] not in c["chips"]: fail(c, "해가 없어야 해요")
+            else:
+                X = [[fr(x) for x in r] for r in D["X"]]
+                if mul(A, X) != B: fail(c, "AX ≠ B")
+                if tex_mat(c["latex"]) != X: fail(c, "latex와 data 불일치")
+                want = "unique" if rA == n else "inf"
+                if D["kind"] != want: fail(c, f"해의 종류 불일치 (정답 {want})")
+                if want == "unique" and CH["unique"] not in c["chips"]: fail(c, "유일한 해 칩 없음")
+                if want == "inf" and CH["free"](n - rA) not in c["chips"]: fail(c, "자유변수 칩 불일치")
+        elif op == "gs":
+            D = c["data"]; U = [[fr(x) for x in u] for u in D["U"]]; kept = D["kept"]
+            cols = [list(cl) for cl in zip(*A)]
+            if len(U) != rank(A): fail(c, f"직교 벡터 개수 ≠ rank (정답 {rank(A)})")
+            for i, u in enumerate(U):
+                if all(x == 0 for x in u): fail(c, "영벡터가 남아 있어요"); break
+                for v in U[:i]:
+                    if sum(a * b for a, b in zip(u, v)) != 0: fail(c, "직교하지 않아요"); break
+                # span(u_1..u_i) == span(v_kept[0..i])
+                if rank(U[:i + 1] + cols[:kept[i] + 1]) != i + 1: fail(c, "생성 공간이 달라요"); break
+            if len(U) and tex_mat(c["latex"]) != [list(r) for r in zip(*U)]: fail(c, "latex와 data 불일치")
+        elif op == "lu":
+            n = len(A); D = c["data"]; L = [[fr(x) for x in r] for r in D["L"]]; U = [[fr(x) for x in r] for r in D["U"]]; perm = D["perm"]
+            if any(L[i][j] != (1 if i == j else 0) for i in range(n) for j in range(i, n)): fail(c, "L이 단위 하삼각이 아님")
+            if any(U[i][j] != 0 for i in range(n) for j in range(i)): fail(c, "U가 상삼각이 아님")
+            PA = [A[p] for p in perm]
+            if mul(L, U) != PA: fail(c, "LU ≠ PA")
+            if sorted(perm) != list(range(n)): fail(c, "perm이 치환이 아님")
         if c["steps"] < 1: fail(c, "풀이 단계가 없어요")
     except Exception as ex:  # 파싱 실패 등
         fail(c, f"예외 {type(ex).__name__}: {ex}")

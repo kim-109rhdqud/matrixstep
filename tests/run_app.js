@@ -66,6 +66,8 @@ for (let n = 1; n <= 5; n++) for (let k = 0; k < 24; k++) {
   } else if (kind === 2) A = Array.from({ length: n }, () => Array.from({ length: n }, smallFrac));
   else A = Array.from({ length: n }, () => Array.from({ length: n }, small));
   push('eigen', { A }, lib.OPS.eigen.run({ A: toF(A) }));
+  push('diag', { A }, lib.OPS.diag.run({ A: toF(A) }));
+  push('lu', { A }, lib.OPS.lu.run({ A: toF(A) }));
 }
 for (let k = 0; k < 150; k++) {
   const m = 1 + Math.floor(rnd() * 6), n = 1 + Math.floor(rnd() * 6), q = 1 + Math.floor(rnd() * 6);
@@ -79,6 +81,18 @@ for (let k = 0; k < 150; k++) {
   let S = mat(m, n), b = Array.from({ length: m }, entry);
   if (k % 3 === 0 && m > 1) S[m - 1] = S[0].slice();                   // 종속 행 → 해 없음/무수히 많음
   push('solve', { A: S, b }, lib.OPS.solve.run({ A: toF(S), b: b.map(F) }));
+  // AX = B (정방 A), 그람-슈미트, LU
+  let Q = mat(n, n), Bq = mat(n, q);
+  if (k % 3 === 0 && n > 1) Q[n - 1] = Q[0].slice();
+  if (k % 6 === 0 && n > 1) { Bq[n - 1] = Bq[0].slice(); }                 // 종속 A에 모순 없는 B가 되도록 섞기
+  push('axb', { A: Q, B: Bq }, lib.OPS.axb.run({ A: toF(Q), B: toF(Bq) }));
+  let G = mat(m, n);
+  if (k % 4 === 0 && n > 1) G = G.map(r => { r[n - 1] = r[0]; return r; });  // 종속 열
+  push('gs', { A: G }, lib.OPS.gs.run({ A: toF(G) }));
+  let Lm = mat(n, n);
+  if (k % 5 === 0) Lm[0][0] = '0';                                             // 행 교환 유도
+  if (k % 7 === 0 && n > 1) Lm[n - 1] = Lm[0].slice();
+  push('lu', { A: Lm }, lib.OPS.lu.run({ A: toF(Lm) }));
 }
 // 입력 파서 경계값
 const parse = ['', '  ', '3', '-3', '+3', '1/2', '-1/2', '0.25', '-.5', '2.', '1/0', 'abc', '1/2/3', '−3', '1 / 2', '007', '1e3'].map(s => { const f = lib.parseF(s); return [s, f === null ? null : f.n + '/' + f.d]; });

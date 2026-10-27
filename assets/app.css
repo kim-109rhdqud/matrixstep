@@ -307,6 +307,7 @@ button,input{font:inherit;color:inherit}
 
 /* ---------- 작은 화면 ---------- */
 @media (max-width:900px){.panel.in{flex:1 1 100%}}
+@media (min-width:721px){.ops{flex-wrap:wrap;row-gap:0;overflow:visible}}
 @media (max-width:720px){.ops{margin-inline:-16px;padding-inline:16px}}
 @media (max-width:520px){
   :root{--cell:3.1rem}

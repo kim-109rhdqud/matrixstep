@@ -100,7 +100,34 @@ ko:{
   sarrusR:'오른쪽 아래 대각선 곱의 합',sarrusL:'왼쪽 아래 대각선 곱의 합',sarrusDone:'두 합의 차가 행렬식이에요.',
   adjIntro:'수반행렬 공식 A⁻¹ = adj(A) / det(A)를 써요. 먼저 행렬식을 구해요.',
   adjDet:d=>'det(A) = '+d+(d==='0'?' 이라서 역행렬이 없어요.':' 이에요. 0이 아니므로 역행렬이 있어요.'),
-  adjFinal:'수반행렬을 행렬식으로 나누면 역행렬이에요.'
+  adjFinal:'수반행렬을 행렬식으로 나누면 역행렬이에요.',
+  dgIntro:'대각화 A = PDP⁻¹: 먼저 고윳값을 구하고, 고유벡터를 P의 열로, 고윳값을 D의 대각선에 같은 순서로 놓아요.',
+  dgEig:list=>'고윳값: '+list,
+  dgVec:(l,g)=>'λ = '+l+' 의 고유벡터 (기하적 중복도 '+g+')',
+  dgNo:'서로 독립인 고유벡터가 n개가 안 돼서 대각화할 수 없어요. (기하적 중복도의 합 < n)',
+  dgIrr:'고윳값이 유리수가 아니라서(무리수나 복소수) 이 계산기에서는 정확한 P, D를 쓸 수 없어요. 고윳값 계산기에서 근사값을 확인하세요.',
+  dgPD:'고유벡터를 열로 세운 P와, 같은 순서의 고윳값을 대각선에 둔 D예요.',
+  dgPinv:'P⁻¹을 구해요.',
+  dgCheck:'검산: PDP⁻¹ = A 가 성립해요.',
+  chipDiagOk:'대각화 완료', chipDiagNo:'대각화 불가능',
+  axbIntro:'AX = B 의 X는 첨가행렬 [A | B]를 기약 행사다리꼴로 만들면 오른쪽에 나타나요. 열마다 Ax = b 를 동시에 푸는 것과 같아요.',
+  axbDone:'왼쪽이 단위행렬이 되었어요. 오른쪽이 X = A⁻¹B 예요.',
+  axbNone:'A가 가역이 아니고, 어떤 열에서 0 = (0이 아닌 수) 꼴이 생겨서 해가 없어요.',
+  axbInf:'A가 가역이 아니지만 모순은 없어서 X가 무수히 많아요. 자유변수가 있는 열은 특수해만 표시해요.',
+  axbNoneHead:'<strong>해가 없어요</strong><span>A가 가역이 아니고 모순인 행이 생겨요.</span>',
+  axbInfHead:'<strong>X가 무수히 많아요</strong><span>아래는 자유변수를 0으로 둔 특수해예요.</span>',
+  gsIntro:n=>'열벡터 v₁ … v'+sub(n)+' 에 그람-슈미트 직교화를 해요. uₖ = vₖ − Σ (vₖ·uⱼ)/(uⱼ·uⱼ) uⱼ',
+  gsFirst:'u₁ = v₁ 로 시작해요.',
+  gsStep:(k,terms)=>'u'+sub(k)+' = v'+sub(k)+' 에서 앞선 u 방향 성분을 빼요: '+terms,
+  gsZero:k=>'u'+sub(k)+' = 0 이에요. v'+sub(k)+' 는 앞 벡터들의 일차결합이라 기저에서 빼요.',
+  gsNorm:'정규화하려면 각 uₖ를 길이 ‖uₖ‖ = √(uₖ·uₖ)로 나눠요. 아래에 길이의 제곱을 적어 두었어요.',
+  chipGs:n=>'직교 벡터 '+n+'개', chipGsDrop:n=>n+'개 제거(종속)',
+  luIntro:'LU 분해: 행 소거로 상삼각행렬 U를 만들고, 각 단계의 배수를 하삼각행렬 L에 적어요. 그러면 A = LU 예요.',
+  luPivot:(c,r)=>c+'열의 피벗이 0이라 '+r+'행과 바꿔요. 행 교환은 치환행렬 P에 기록해서 PA = LU 가 돼요.',
+  luElim:(c,mults)=>c+'열 아래를 0으로 만들어요. 배수 '+mults+' 는 L의 같은 자리에 들어가요.',
+  luDone:'L은 대각선이 1인 하삼각행렬, U는 상삼각행렬이에요.',
+  luCheck:'검산: LU = A (행 교환이 있으면 PA) 가 성립해요.',
+  luSing:'마지막 피벗이 0이에요. A는 특이행렬이지만 분해 자체는 가능해요.'
 },
 en:{
   swap:(c,r)=>'Move a nonzero entry of column '+c+' up to row '+r+' to use as the pivot.',
@@ -191,7 +218,34 @@ en:{
   sarrusR:'Sum of the down-right diagonals',sarrusL:'Sum of the down-left diagonals',sarrusDone:'The difference is the determinant.',
   adjIntro:'Use the adjugate formula A⁻¹ = adj(A) / det(A). First find the determinant.',
   adjDet:d=>'det(A) = '+d+(d==='0'?', so there is no inverse.':', which is nonzero, so the inverse exists.'),
-  adjFinal:'Divide the adjugate by the determinant to get the inverse.'
+  adjFinal:'Divide the adjugate by the determinant to get the inverse.',
+  dgIntro:'Diagonalization A = PDP⁻¹: find the eigenvalues, put the eigenvectors in the columns of P and the eigenvalues on the diagonal of D in the same order.',
+  dgEig:list=>'Eigenvalues: '+list,
+  dgVec:(l,g)=>'Eigenvectors for λ = '+l+' (geometric multiplicity '+g+')',
+  dgNo:'There are fewer than n independent eigenvectors, so A is not diagonalizable. (Sum of geometric multiplicities < n)',
+  dgIrr:'Some eigenvalues are not rational (irrational or complex), so this calculator cannot write P and D exactly. See the eigenvalue calculator for approximations.',
+  dgPD:'P has the eigenvectors as columns; D has the eigenvalues on its diagonal in the same order.',
+  dgPinv:'Compute P⁻¹.',
+  dgCheck:'Check: PDP⁻¹ = A holds.',
+  chipDiagOk:'Diagonalized', chipDiagNo:'Not diagonalizable',
+  axbIntro:'For AX = B, reduce the augmented matrix [A | B] to RREF; X appears on the right. This solves Ax = b for every column of B at once.',
+  axbDone:'The left side is the identity. The right side is X = A⁻¹B.',
+  axbNone:'A is singular and some column produces 0 = (nonzero), so there is no solution.',
+  axbInf:'A is singular but there is no contradiction, so there are infinitely many X. Columns with free variables show one particular solution.',
+  axbNoneHead:'<strong>No solution</strong><span>A is singular and a contradictory row appears.</span>',
+  axbInfHead:'<strong>Infinitely many X</strong><span>Shown below: the particular solution with free variables set to 0.</span>',
+  gsIntro:n=>'Apply Gram-Schmidt to the column vectors v₁ … v'+sub(n)+': uₖ = vₖ − Σ (vₖ·uⱼ)/(uⱼ·uⱼ) uⱼ',
+  gsFirst:'Start with u₁ = v₁.',
+  gsStep:(k,terms)=>'u'+sub(k)+' = v'+sub(k)+' minus its components along the previous u: '+terms,
+  gsZero:k=>'u'+sub(k)+' = 0: v'+sub(k)+' is a combination of the earlier vectors, so it is dropped from the basis.',
+  gsNorm:'To normalize, divide each uₖ by its length ‖uₖ‖ = √(uₖ·uₖ). The squared lengths are listed below.',
+  chipGs:n=>n+' orthogonal vector'+(n>1?'s':''), chipGsDrop:n=>n+' dropped (dependent)',
+  luIntro:'LU decomposition: row-reduce to an upper triangular U and record each multiplier in a lower triangular L, so that A = LU.',
+  luPivot:(c,r)=>'The pivot in column '+c+' is 0, so swap with row '+r+'. Row swaps are recorded in a permutation matrix P, giving PA = LU.',
+  luElim:(c,mults)=>'Clear column '+c+' below the pivot. The multipliers '+mults+' go into the same positions of L.',
+  luDone:'L is lower triangular with 1s on the diagonal; U is upper triangular.',
+  luCheck:'Check: LU = A (or PA when rows were swapped) holds.',
+  luSing:'The last pivot is 0. A is singular, but the factorization still exists.'
 }};
 const t=(k,...a)=>{const v=STR[LANG][k];return typeof v==='function'?v(...a):v};
 
@@ -494,6 +548,22 @@ function nullBasis(M){ // Mv=0 의 기저 (정확)
     let L=1n;v.forEach(x=>{L=L*x.d/gcd(L,x.d)});let G=0n;v.forEach(x=>{G=gcd(G,x.n*L/x.d)});const sc=new F(L,G||1n); // 분모를 없애고 최대공약수로 나눠 정수 벡터로
     return v.map(x=>x.mul(sc))})};
 }
+function rationalRoots(c){ // 유리수 근: 수치 근을 유리수로 맞춰 보고 정확히 검산. {q: 남은 다항식, found: [[근, 중복도]]}
+  const n=c.length-1;let q=c.slice(),found=[];
+  let L=1n;c.forEach(x=>{L=L*x.d/gcd(L,x.d)});const ds=divisorsOf(L);
+  for(let guard=0;guard<n&&q.length>1;guard++){
+    let hit=null;
+    if(q[0].isZero())hit=Z;
+    else{const num=dkRoots(q.map(x=>Number(x.n)/Number(x.d)));
+      outer:for(const z of num){if(Math.abs(z[1])>1e-3*(1+Math.abs(z[0])))continue;for(const d of ds){const r=new F(BigInt(Math.round(z[0]*Number(d))),d);if(peval(q,r).isZero()){hit=r;break outer}}}}
+    if(hit===null)break;
+    const f=found.find(x=>x[0].sub(hit).isZero());if(f)f[1]++;else found.push([hit,1]);
+    q=deflate(q,hit);
+  }
+  found.sort((x,y)=>{const d=x[0].sub(y[0]);return d.isNeg()?-1:d.isZero()?0:1});
+  return {q,found};
+}
+const dot=(u,v)=>u.reduce((s,x,i)=>s.add(x.mul(v[i])),Z);
 const OPS2={
   power:{square:true,k:true,kint:true,
     run({A,k}){
@@ -535,18 +605,7 @@ const OPS2={
       const data={poly:c.map(x=>x.n+'/'+x.d),rational:[],quad:null,numeric:[],vecs:[]};
       steps.push({t:t('eigPoly'),m:eq('p(λ) = '+polyStr(c))});
       if(n===2)steps.push({t:t('eigPoly2',txt(trace(A)),txt(detF(A)))});
-      // 유리수 근: 수치 근을 유리수로 맞춰 보고 정확히 검산
-      let q=c.slice(),found=[];
-      let L=1n;c.forEach(x=>{L=L*x.d/gcd(L,x.d)});const ds=divisorsOf(L);
-      for(let guard=0;guard<n&&q.length>1;guard++){
-        let hit=null;
-        if(q[0].isZero())hit=Z;
-        else{const num=dkRoots(q.map(x=>Number(x.n)/Number(x.d)));
-          outer:for(const z of num){if(Math.abs(z[1])>1e-3*(1+Math.abs(z[0])))continue;for(const d of ds){const r=new F(BigInt(Math.round(z[0]*Number(d))),d);if(peval(q,r).isZero()){hit=r;break outer}}}}
-        if(hit===null)break;
-        const f=found.find(x=>x[0].sub(hit).isZero());if(f)f[1]++;else found.push([hit,1]);
-        q=deflate(q,hit);
-      }
+      let {q,found}=rationalRoots(c);
       const vals=[];let complex=false,approx=false;
       if(q.length===3){ // 남은 이차식 λ²+bλ+c
         const b=q[1],cc=q[0],D=b.mul(b).sub(cc.mul(new F(4n))),re=b.neg().div(new F(2n));
@@ -595,10 +654,84 @@ const OPS2={
       else if(allExact)chips.push(geoSum===n?['ok',t('chipDiag')]:['bad',t('chipNotDiag')]);
       else if(!approx&&new Set(vals.map(v=>v.s)).size===n)chips.push(['ok',t('chipDiag')]);
       return {head,chips,latex:polyStr(c,true),steps,data};
+    }},
+  diag:{square:true,
+    run({A}){
+      const n=A.length,steps=[{t:t('dgIntro')}],c=charPoly(A);
+      steps.push({m:eq('p(λ) = '+polyStr(c))});
+      const {q,found}=rationalRoots(c);
+      const vals=[];found.forEach(([r,m])=>{for(let i=0;i<m;i++)vals.push(r)});
+      if(q.length>1){steps.push({t:t('dgIrr')});return {head:'<div class="none"><strong>'+t('chipDiagNo')+'</strong><span>'+esc(t('dgIrr'))+'</span></div>',chips:[['warn',t('chipDiagNo')]],steps,data:{ok:false,reason:'irrational'}};}
+      steps.push({t:t('dgEig',found.map(([r,m])=>'λ = '+txt(r)+(m>1?' ('+t('eigMult',m)+')':'')).join(', '))});
+      const cols=[],dvals=[];
+      for(const [r,m] of found){const Ml=A.map((row,i)=>row.map((x,j)=>i===j?x.sub(r):x));const nb=nullBasis(Ml);
+        steps.push({t:t('dgVec',txt(r),nb.vecs.length),m:eq('A − ('+txt(r)+')I =')+mx(Ml)+eq('→')+mx(nb.g.M)+nb.vecs.map((v,i)=>eq('v'+sub(cols.length+i+1)+' =')+col(v)).join('')});
+        nb.vecs.forEach(v=>{cols.push(v);dvals.push(r)});}
+      if(cols.length<n){steps.push({t:t('dgNo')});return {head:'<div class="none"><strong>'+t('chipDiagNo')+'</strong><span>'+esc(t('dgNo'))+'</span></div>',chips:[['bad',t('chipDiagNo')]],steps,data:{ok:false,reason:'defective'}};}
+      const P=A.map((_,i)=>cols.map(v=>v[i])),D=A.map((_,i)=>A.map((_,j)=>i===j?dvals[i]:Z));
+      steps.push({t:t('dgPD'),m:eq('P =')+mx(P)+eq('D =')+mx(D)});
+      const g=gj(P.map((r,i)=>[...r,...r.map((_,j)=>i===j?ONE:Z)]),n),Pi=g.M.map(r=>r.slice(n));
+      steps.push({t:t('dgPinv'),m:eq('P⁻¹ =')+mx(Pi)});
+      const chk=mmul(mmul(P,D),Pi);steps.push({t:t('dgCheck'),m:mx(P)+eq('·')+mx(D)+eq('·')+mx(Pi)+eq('=')+mx(chk)});
+      const head='<div class="eqline"><span class="lhs">P =</span>'+mx(P,{cls:'big'})+'</div><div class="eqline"><span class="lhs">D =</span>'+mx(D,{cls:'big'})+'</div><div class="eqline"><span class="lhs">P⁻¹ =</span>'+mx(Pi)+'</div>';
+      const f=x=>x.n+'/'+x.d;
+      return {head,chips:[['ok',t('chipDiagOk')],['','A = PDP⁻¹']],latex:'P = '+bm(P)+',\\; D = '+bm(D)+',\\; P^{-1} = '+bm(Pi),steps,data:{ok:true,P:P.map(r=>r.map(f)),D:dvals.map(f),Pi:Pi.map(r=>r.map(f))}};
+    }},
+  axb:{square:true,B:'mul',sym:'·',
+    run({A,B}){
+      const n=A.length,p=B[0].length,aug=A.map((r,i)=>[...r,...B[i]]),steps=[{t:t('axbIntro'),m:mx(aug,{sep:n})}];
+      const g=gj(aug,n);g.steps.forEach(s=>steps.push({t:s.t,ops:s.ops,m:mx(s.M,{sep:n})}));
+      const f=x=>x.n+'/'+x.d;
+      if(g.rank<n){
+        const bad=g.M.some(r=>r.slice(0,n).every(x=>x.isZero())&&r.slice(n).some(x=>!x.isZero()));
+        if(bad){steps.push({t:t('axbNone')});return {head:'<div class="none">'+t('axbNoneHead')+'</div>',chips:[['bad',t('chipNone')],['','rank = '+g.rank]],steps,data:{kind:'none',rank:g.rank}};}
+        const X=Array.from({length:n},()=>Array(p).fill(Z));g.piv.forEach((pc,r)=>{for(let j=0;j<p;j++)X[pc][j]=g.M[r][n+j]});
+        steps.push({t:t('axbInf'),m:eq('X =')+mx(X)});
+        return {head:'<div class="none">'+t('axbInfHead')+'</div><div class="eqline"><span class="lhs">X =</span>'+mx(X,{cls:'big'})+'</div>',chips:[['warn',t('chipFree',n-g.rank)],['','rank = '+g.rank]],latex:bm(X),steps,data:{kind:'inf',rank:g.rank,X:X.map(r=>r.map(f))}};
+      }
+      const X=g.M.map(r=>r.slice(n));steps.push({t:t('axbDone')});
+      return {head:'<div class="eqline"><span class="lhs">X =</span>'+mx(X,{cls:'big'})+'</div>',chips:[['ok',t('chipUnique')],['','X = A⁻¹B']],latex:bm(X),steps,data:{kind:'unique',X:X.map(r=>r.map(f))}};
+    }},
+  gs:{
+    run({A}){
+      const m=A.length,n=A[0].length,V=Array.from({length:n},(_,j)=>A.map(r=>r[j])),U=[],steps=[{t:t('gsIntro',n)}];
+      const f=x=>x.n+'/'+x.d;let dropped=0;const kept=[];
+      V.forEach((v,k)=>{
+        let u=v.slice();const terms=[];
+        U.forEach((uj,j)=>{const den=dot(uj,uj);if(den.isZero())return;const co=dot(v,uj).div(den);u=u.map((x,i)=>x.sub(co.mul(uj[i])));terms.push((co.isOne()?'':co.neg().isOne()?'−':coef(co))+'u'+sub(j+1))});
+        if(k===0)steps.push({t:t('gsFirst'),m:eq('u₁ =')+col(u)});
+        else steps.push({t:t('gsStep',k+1,terms.length?'v'+sub(k+1)+' − ('+terms.join(' + ')+')':'v'+sub(k+1)),m:eq('u'+sub(k+1)+' =')+col(u)});
+        if(u.every(x=>x.isZero())){dropped++;steps.push({t:t('gsZero',k+1)});return}
+        U.push(u);kept.push(k);
+      });
+      const Um=A.map((_,i)=>U.map(u=>u[i]));
+      steps.push({t:t('gsNorm'),m:U.map((u,i)=>eq('‖u'+sub(kept[i]+1)+'‖² = '+txt(dot(u,u)))).join('')});
+      const chips=[['ok',t('chipGs',U.length)]];if(dropped)chips.push(['warn',t('chipGsDrop',dropped)]);
+      return {head:'<div class="eqline"><span class="lhs">[u₁ … u'+sub(U.length)+'] =</span>'+mx(Um,{cls:'big'})+'</div>',chips,latex:bm(Um),steps,data:{U:U.map(u=>u.map(f)),kept}};
+    }},
+  lu:{square:true,
+    run({A}){
+      const n=A.length,Uc=A.map(r=>r.slice()),Lm=ident(n).map(r=>r.slice()),perm=Array.from({length:n},(_,i)=>i),steps=[{t:t('luIntro'),m:mx(A)}];let swaps=0;
+      for(let c=0;c<n-1;c++){
+        if(Uc[c][c].isZero()){let pr=-1;for(let i=c+1;i<n;i++)if(!Uc[i][c].isZero()){pr=i;break}
+          if(pr>=0){[Uc[pr],Uc[c]]=[Uc[c],Uc[pr]];[perm[pr],perm[c]]=[perm[c],perm[pr]];for(let j=0;j<c;j++){[Lm[pr][j],Lm[c][j]]=[Lm[c][j],Lm[pr][j]]}swaps++;steps.push({t:t('luPivot',c+1,pr+1),ops:['R'+sub(c+1)+' ↔ R'+sub(pr+1)],m:mx(Uc)});}
+          else continue;}
+        const ops=[],ms=[];
+        for(let i=c+1;i<n;i++){const mlt=Uc[i][c].div(Uc[c][c]);Lm[i][c]=mlt;if(mlt.isZero())continue;Uc[i]=Uc[i].map((x,j)=>x.sub(mlt.mul(Uc[c][j])));ops.push('R'+sub(i+1)+' ← R'+sub(i+1)+' '+(mlt.isNeg()?'+':'−')+' '+coefAbs(mlt)+'R'+sub(c+1));ms.push('l'+ij(i,c)+' = '+txt(mlt));}
+        if(ops.length)steps.push({t:t('luElim',c+1,ms.join(', ')),ops,m:mx(Uc)});
+      }
+      if(Uc[n-1][n-1].isZero())steps.push({t:t('luSing')});
+      const Pm=perm.map(pi=>Array.from({length:n},(_,j)=>j===pi?ONE:Z));
+      steps.push({t:t('luDone'),m:eq('L =')+mx(Lm)+eq('U =')+mx(Uc)+(swaps?eq('P =')+mx(Pm):'')});
+      steps.push({t:t('luCheck'),m:mx(Lm)+eq('·')+mx(Uc)+eq('=')+mx(mmul(Lm,Uc))});
+      const f=x=>x.n+'/'+x.d;
+      let head='<div class="eqline"><span class="lhs">L =</span>'+mx(Lm,{cls:'big'})+'</div><div class="eqline"><span class="lhs">U =</span>'+mx(Uc,{cls:'big'})+'</div>';
+      if(swaps)head+='<div class="eqline"><span class="lhs">P =</span>'+mx(Pm)+'</div>';
+      return {head,chips:[['',swaps?'PA = LU':'A = LU']],latex:'L = '+bm(Lm)+',\\; U = '+bm(Uc)+(swaps?',\\; P = '+bm(Pm):''),steps,data:{L:Lm.map(r=>r.map(f)),U:Uc.map(r=>r.map(f)),perm}};
     }}
 };
 Object.assign(OPS,OPS2);
-const ORDER=['inverse','det','mul','add','sub','scalar','transpose','rref','solve','rank','power','adj','eigen'];
+const ORDER=['inverse','det','mul','add','sub','scalar','transpose','rref','solve','rank','power','adj','eigen','diag','axb','gs','lu'];
 
 const EX={
   inverse:{A:[[2,1,1],[1,3,2],[1,0,0]]},
@@ -613,7 +746,11 @@ const EX={
   rank:{A:[[1,2,-1,3],[2,4,1,0],[-1,-2,2,1]]},
   power:{A:[[1,1],[1,0]],k:'5'},
   adj:{A:[[2,-1,0],[1,3,2],[0,1,4]]},
-  eigen:{A:[[4,1],[2,3]]}
+  eigen:{A:[[4,1],[2,3]]},
+  diag:{A:[[4,1],[2,3]]},
+  axb:{A:[[2,1],[1,3]],B:[[1,0,5],[2,1,0]]},
+  gs:{A:[[1,1,0],[1,0,1],[0,1,1]]},
+  lu:{A:[[2,1,1],[4,-6,0],[-2,7,2]]}
 };
 
 /* ---------- 상태 ---------- */

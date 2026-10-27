@@ -668,10 +668,6 @@ def about():
 <h2>제공하는 계산기 {ncal}종</h2><ul class="oplist">{ops_list}</ul>
 <h2>가이드 {ngd}편</h2>
 <p>계산기만으로는 부족한 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요. 역행렬과 행렬식 같은 기본부터 랭크, 영공간, 선형독립, 고윳값까지, 시험에서 자주 헷갈리는 순서로 정리했어요. 모든 글은 직접 손으로 따라 풀 수 있는 작은 예제로 시작하고, 마지막에는 계산기로 바로 확인할 수 있게 이어져요.</p>
-<h2>운영 원칙</h2><ul>
-<li>계산기 화면에는 계산기와 결과만 두고, 설명과 광고가 계산을 가리지 않게 해요.</li>
-<li>기능을 추가할 때는 "선형대수 수업에서 실제로 쓰는가"를 기준으로 골라요.</li>
-<li>사이트는 무료로 운영하고, 비용은 광고로 충당해요. 광고는 계산 결과 아래에만 배치해요.</li></ul>
 <h2 id="contact">문의</h2>
 <p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
@@ -692,10 +688,6 @@ def about():
 <h2>Calculators ({ncal})</h2><ul class="oplist">{ops_list}</ul>
 <h2>Guides ({ngd})</h2>
 <p>For the ideas behind the calculators, the <a href="/en/guide/">guides</a> explain inverses, determinants, rank and RREF, and the solution sets of linear systems with fully worked examples. Each one starts from a small example you can follow by hand and ends with a link to check it in the calculator. The Korean edition of the site has more guides, and they are being translated.</p>
-<h2>Principles</h2><ul>
-<li>The calculator and the result come first; explanations and ads never get in the way of the computation.</li>
-<li>A feature is added only if it is actually used in a linear algebra course.</li>
-<li>The site is free and supported by advertising, placed only below the result.</li></ul>
 <h2 id="contact">Contact</h2>
 <p>For bug reports, feature requests or partnership enquiries, email:</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''

@@ -318,7 +318,7 @@ const OPS={
       const C=A.map((r,i)=>B[0].map((_,j)=>r.reduce((s,a,k)=>s.add(a.mul(B[k][j])),Z)));
       const steps=[{t:t('mulOk',n,m,q)}].concat(
         entrySteps(m,q,(i,j)=>({ops:['c'+ij(i,j)],t:t('mulEntry',i+1,j+1),m:eq(A[i].map((a,k)=>p(a)+'·'+p(B[k][j])).join(' + ')+' = '+txt(C[i][j]))})));
-      return {head:'<div class="eqline"><span class="lhs">AB =</span>'+mx(C,{cls:'big'})+'</div>',chips:[['',m+'×'+n+' · '+n+'×'+q+' → '+m+'×'+q]],latex:bm(C),steps};
+      return {head:'<div class="eqline"><span class="lhs">AB =</span>'+mx(C,{cls:'big'})+'</div>',chips:[],latex:bm(C),steps};
     }},
   add:{B:'same',sym:'+',
     run({A,B}){
@@ -342,7 +342,7 @@ const OPS={
     run({A}){
       const T=A[0].map((_,j)=>A.map(r=>r[j]));
       const steps=A.map((r,i)=>({t:t('trRow',i+1),m:mx([r])+'<span class="eq">→</span>'+mx(r.map(x=>[x]))}));
-      return {head:'<div class="eqline"><span class="lhs">Aᵀ =</span>'+mx(T,{cls:'big'})+'</div>',chips:[['',A.length+'×'+A[0].length+' → '+A[0].length+'×'+A.length]],latex:bm(T),steps};
+      return {head:'<div class="eqline"><span class="lhs">Aᵀ =</span>'+mx(T,{cls:'big'})+'</div>',chips:[],latex:bm(T),steps};
     }},
   rref:{
     run({A}){
@@ -458,7 +458,7 @@ const OPS2={
       steps.push({t:t('rankNullity',n,r)});
       const sol='<div class="sol"><div>nullity(A) = '+(n-r)+'</div>'+(r?'<div>'+esc(t('rankPiv',pl))+'</div><div>'+esc(t('rankBasis',pl))+'</div>':'')+'</div>';
       const full=r===Math.min(m,n);
-      return {head:eqline('rank(A) =','<span class="scalar">'+r+'</span>')+sol,chips:[['',m+'×'+n],full?['ok',t('chipFull')]:['warn',t('chipDeficient')]],latex:String(r),steps,data:{rank:r,nullity:n-r,piv:g.piv}};
+      return {head:eqline('rank(A) =','<span class="scalar">'+r+'</span>')+sol,chips:[full?['ok',t('chipFull')]:['warn',t('chipDeficient')]],latex:String(r),steps,data:{rank:r,nullity:n-r,piv:g.piv}};
     }},
   adj:{square:true,
     run({A}){
@@ -583,29 +583,29 @@ function fitDims(){
 }
 
 /* ---------- 입력 화면 ---------- */
-function stepper(m,d,label,val){
-  return '<span class="stp"><span class="stp-l">'+label+'</span>'+
-    '<button type="button" data-act="dec" data-m="'+m+'" data-d="'+d+'" aria-label="'+esc(t('dec',label))+'"'+(val<=1?' disabled':'')+'>−</button>'+
-    '<output>'+val+'</output>'+
-    '<button type="button" data-act="inc" data-m="'+m+'" data-d="'+d+'" aria-label="'+esc(t('inc',label))+'"'+(val>=MAX?' disabled':'')+'>+</button></span>';
+function sizeSel(m,d,label,val){ // 크기 선택: 숫자를 누르면 1~6 목록이 열려요
+  let o='';for(let i=1;i<=MAX;i++)o+='<option value="'+i+'"'+(i===val?' selected':'')+'>'+i+'</option>';
+  return '<select class="sz" data-m="'+m+'" data-d="'+d+'" aria-label="'+esc(label)+'">'+o+'</select>';
 }
+const szFixed=v=>'<span class="szf">'+v+'</span>';
+const szX='<span class="szx" aria-hidden="true">×</span>';
 function editor(m,T,ctrl,label){
   let cells='';
   for(let i=0;i<T.r;i++)for(let j=0;j<T.c;j++)
     cells+='<input id="'+m+'-'+i+'-'+j+'" data-m="'+m+'" data-i="'+i+'" data-j="'+j+'" autocomplete="off" spellcheck="false" placeholder="0" value="'+esc(T.v[i][j])+'" aria-label="'+esc(t('cell',label,i+1,j+1))+'">';
-  return '<div class="ed"><div class="ed-head"><span class="ed-name">'+label+'<span class="dim">'+T.r+' × '+T.c+'</span></span><span class="ctrls">'+ctrl+'</span></div>'+
+  return '<div class="ed"><div class="ed-head"><span class="ed-name">'+label+'</span><span class="ctrls">'+(ctrl||szFixed(T.r)+szX+szFixed(T.c))+'</span></div>'+
     '<div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:repeat('+T.c+',var(--cell))">'+cells+'</div></div></div></div>';
 }
 function renderInputs(){
   const o=OPS[S.op];let h='<div class="eqrow">';
-  const aCtrl=o.square?stepper('A','n',t('size'),S.A.r):stepper('A','r',t('rows'),S.A.r)+stepper('A','c',t('cols'),S.A.c);
+  const aCtrl=o.square?sizeSel('A','n',t('size'),S.A.r)+szX+szFixed(S.A.r):sizeSel('A','r',t('rows'),S.A.r)+szX+sizeSel('A','c',t('cols'),S.A.c);
   if(o.k&&!o.kint) h+='<div class="ed"><div class="ed-head"><label class="ed-name" for="k">k</label></div><input id="k" class="kin" data-m="k" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div><span class="opsym" aria-hidden="true">·</span>';
   h+=editor('A',S.A,aCtrl,'A');
   if(o.kint) h+='<span class="opsym" aria-hidden="true">^</span><div class="ed"><div class="ed-head"><label class="ed-name" for="k">n</label></div><input id="k" class="kin" data-m="k" inputmode="numeric" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div>';
-  if(o.B){ h+='<span class="opsym" aria-hidden="true">'+o.sym+'</span>'+editor('B',S.B,o.B==='mul'?stepper('B','c',t('cols'),S.B.c):'','B'); }
+  if(o.B){ h+='<span class="opsym" aria-hidden="true">'+o.sym+'</span>'+editor('B',S.B,o.B==='mul'?szFixed(S.B.r)+szX+sizeSel('B','c',t('cols'),S.B.c):'','B'); }
   if(o.vec){
     let cells='';for(let i=0;i<S.A.r;i++) cells+='<input id="b-'+i+'" data-m="b" data-i="'+i+'" autocomplete="off" spellcheck="false" placeholder="0" value="'+esc(S.b[i])+'" aria-label="'+esc(t('bCell',i+1))+'">';
-    h+='<span class="opsym" aria-hidden="true">|</span><div class="ed"><div class="ed-head"><span class="ed-name">b<span class="dim">'+S.A.r+' × 1</span></span></div><div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:var(--cell)">'+cells+'</div></div></div></div>';
+    h+='<span class="opsym" aria-hidden="true">|</span><div class="ed"><div class="ed-head"><span class="ed-name">b</span><span class="ctrls">'+szFixed(S.A.r)+szX+szFixed(1)+'</span></div><div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:var(--cell)">'+cells+'</div></div></div></div>';
   }
   h+='</div>';
   if(o.vec) h+='<p class="sys">'+esc(t('sys',S.A.r,S.A.c))+'</p>';
@@ -663,7 +663,7 @@ function init(){
 /* ---------- 이벤트 ---------- */
 const inputs=$('#inputs');
 inputs.addEventListener('input',e=>{
-  const t=e.target,d=t.dataset;if(!d.m)return;
+  const t=e.target,d=t.dataset;if(!d.m||t.tagName==='SELECT')return;
   if(d.m==='k')S.k=t.value;else if(d.m==='b')S.b[+d.i]=t.value;else S[d.m].v[+d.i][+d.j]=t.value;
   S.touched=true;compute();
 });
@@ -677,13 +677,12 @@ inputs.addEventListener('keydown',e=>{
   }
 });
 inputs.addEventListener('focusin',e=>{if(e.target.tagName==='INPUT')e.target.select()});
-inputs.addEventListener('click',e=>{
-  const b=e.target.closest('[data-act]');if(!b)return;
-  const m=b.dataset.m,d=b.dataset.d,act=b.dataset.act,dl=act==='inc'?1:-1,T=S[m];
-  if(d==='n'){T.r=clamp(T.r+dl);T.c=T.r}else T[d]=clamp(T[d]+dl);
+inputs.addEventListener('change',e=>{
+  const b=e.target;if(!b.classList.contains('sz'))return;
+  const m=b.dataset.m,d=b.dataset.d,v=clamp(+b.value),T=S[m];
+  if(d==='n'){T.r=v;T.c=v}else T[d]=v;
   S.touched=true;fitDims();renderInputs();compute();
-  const again=inputs.querySelector('[data-act="'+act+'"][data-m="'+m+'"][data-d="'+d+'"]');
-  if(again&&!again.disabled)again.focus();
+  const again=inputs.querySelector('.sz[data-m="'+m+'"][data-d="'+d+'"]');if(again)again.focus();
 });
 $('#exBtn').addEventListener('click',()=>{loadExample(S.op);fitDims();renderInputs();compute()});
 $('#clrBtn').addEventListener('click',()=>{S.A.v=blank();S.B.v=blank();S.b=Array(MAX).fill('');S.touched=true;renderInputs();compute();const f=document.getElementById('A-0-0');if(f)f.focus()});

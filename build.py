@@ -372,7 +372,7 @@ HOWTO_EN = '''<ol class="howto">
 UI_KO = dict(
     nav=[("calc", "/calculators/", "계산기"), ("guide", "/guide/", "가이드"), ("about", "/about/", "소개")],
     nav_aria="사이트", switch="EN", switch_title="English",
-    foot_note="계산은 모두 브라우저 안에서 처리돼요.", foot_aria="사이트 정보",
+    foot_note="", foot_aria="사이트 정보",
     foot=[("/calculators/", "계산기"), ("/guide/", "가이드"), ("/about/", "소개"), ("/about/#contact", "문의"), ("/privacy/", "개인정보처리방침")],
     ops_aria="연산 선택", extras_aria="더 알아보기", calc=CALC_KO, howto=HOWTO_KO,
     fold_howto="사용 방법", fold_faq="자주 묻는 질문", fold_related="관련 가이드", fold_about="행렬 계산기 소개",
@@ -399,14 +399,14 @@ UI_KO = dict(
                ("소거법과 벡터 공간", ["rank-and-rref", "linear-system-solutions", "null-space-column-space", "linear-independence"]),
                ("고윳값과 대각화", ["eigenvalues-2x2", "diagonalization-matrix-power"])], gi_other="그 밖의 글",
     gi_meta="역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
-    g_meta="읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
+    g_meta="", cta_t="직접 계산해 보세요", cta_s="", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
     about_title="소개 및 문의", privacy_title="개인정보처리방침",
     nf_title="페이지를 찾을 수 없어요", nf_meta="요청한 페이지가 없어요.",
 )
 UI_EN = dict(
     nav=[("calc", "/calculators/", "Calculators"), ("guide", "/guide/", "Guides"), ("about", "/about/", "About")],
     nav_aria="Site", switch="한국어", switch_title="Korean",
-    foot_note="All calculations run in your browser.", foot_aria="Site links",
+    foot_note="", foot_aria="Site links",
     foot=[("/calculators/", "Calculators"), ("/guide/", "Guides"), ("/about/", "About"), ("/about/#contact", "Contact"), ("/privacy/", "Privacy")],
     ops_aria="Choose an operation", extras_aria="More", calc=CALC_EN, howto=HOWTO_EN,
     fold_howto="How to use", fold_faq="FAQ", fold_related="Related guides", fold_about="About MatrixStep",
@@ -430,7 +430,7 @@ UI_EN = dict(
     gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators. Every example can be checked in the calculator.",
     gi_groups=[("Inverse and determinant", ["inverse-gauss-jordan", "determinant-3x3"]), ("Elimination and linear systems", ["rank-and-rref", "linear-system-solutions"])], gi_other="More guides",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
-    g_meta="About {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
+    g_meta="", cta_t="Try it yourself", cta_s="", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
     about_title="About and Contact", privacy_title="Privacy Policy",
     nf_title="Page not found", nf_meta="The requested page does not exist.",
 )
@@ -502,7 +502,7 @@ def topbar(cur="", path="/", alt=True):
 
 def footer():
     nav = "".join(f'<a href="{P(h)}">{t}</a>' for h, t in U["foot"])
-    return f'''<footer class="wrap foot"><span>© 2026 {L["site"]}. {U["foot_note"]}</span>
+    return f'''<footer class="wrap foot"><span>© 2026 {L["site"]}</span>
 <nav aria-label="{U["foot_aria"]}">{nav}</nav></footer>
 '''
 
@@ -615,14 +615,14 @@ def guide_page(g):
     s = head(g["title"] + " | " + L["site"], g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n"
              + crumbs([(U["crumb_home"], "/"), (U["crumb_guide"], "/guide/"), (g["h1"], path)]), alt=alt)
     s += "<body>\n" + topbar("guide", path, alt) + '<main class="wrap guide-wrap"><article class="doc guide">'
-    s += f'<p class="crumb"><a href="{P("/guide/")}">{U["crumb_guide"]}</a></p><h1>{e(g["h1"])}</h1><p class="meta">{U["g_meta"].format(d=TODAY, m=g["min"])}</p>'
+    s += f'<p class="crumb"><a href="{P("/guide/")}">{U["crumb_guide"]}</a></p><h1>{e(g["h1"])}</h1>'
     s += body
-    s += f'<div class="cta-box"><div><b>{U["cta_t"]}</b><span>{U["cta_s"]}</span></div><a class="cta" href="{P(g["calc"][1])}">{e(U["cta_b"].format(c=g["calc"][0]))}</a></div>'
+    s += f'<div class="cta-box"><b>{U["cta_t"]}</b><a class="cta" href="{P(g["calc"][1])}">{e(U["cta_b"].format(c=g["calc"][0]))}</a></div>'
     G = L["guides"].BY_SLUG
     rel = [G[x] for x in g["related"] if x in G]
     if rel:
         s += f'<p class="lbl rel-h">{U["rel_h2"]}</p><ul class="rel">' + "".join(
-            f'<li><a href="{P("/guide/" + r["slug"] + "/")}">{e(r["h1"])}<span>{U["min"].format(m=r["min"])}</span></a></li>' for r in rel) + "</ul>"
+            f'<li><a href="{P("/guide/" + r["slug"] + "/")}">{e(r["h1"])}</a></li>' for r in rel) + "</ul>"
     s += "</article>" + toc + "</main>\n" + footer() + "</body>\n</html>\n"
     write(path, s)
 
@@ -639,7 +639,7 @@ def guide_index():
     body = f'<h1>{U["gi_h1"]}</h1><p class="meta">{U["gi_intro"]}</p>'
     for title, items in groups:
         body += f'<section class="glist-g"><h2 class="lbl">{title}</h2><ul class="glist">' + "".join(
-            f'<li><a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span><em>{U["min"].format(m=g["min"])}</em></a></li>' for g in items) + "</ul></section>"
+            f'<li><a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a></li>' for g in items) + "</ul></section>"
     s = head(U["gi_title"] + " | " + L["site"], U["gi_meta"], "/guide/") + "<body>\n" + topbar("guide", "/guide/")
     s += f'<main class="wrap"><article class="doc index">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write("/guide/", s)
@@ -665,9 +665,8 @@ def about():
 <li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
 <h2>정확성은 어떻게 확인하나요</h2>
 <p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 2,400여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
-<h2>제공하는 계산기 {ncal}종</h2><ul class="oplist">{ops_list}</ul>
-<h2>가이드 {ngd}편</h2>
-<p>계산기만으로는 부족한 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요. 역행렬과 행렬식 같은 기본부터 랭크, 영공간, 선형독립, 고윳값까지, 시험에서 자주 헷갈리는 순서로 정리했어요. 모든 글은 직접 손으로 따라 풀 수 있는 작은 예제로 시작하고, 마지막에는 계산기로 바로 확인할 수 있게 이어져요.</p>
+<h2>무엇이 있나요</h2>
+<p>역행렬, 행렬식, 곱셈, RREF, 연립방정식, 랭크, 거듭제곱, 수반행렬, 고윳값까지 <a href="/calculators/">계산기 {ncal}종</a>이 있고, 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요.</p>
 <h2 id="contact">문의</h2>
 <p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
@@ -685,9 +684,8 @@ def about():
 <li><strong>LaTeX export</strong>: copy any result matrix as LaTeX and paste it straight into your notes or homework.</li></ul>
 <h2>How accuracy is checked</h2>
 <p>Every deployment runs an automated check. About 2,400 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
-<h2>Calculators ({ncal})</h2><ul class="oplist">{ops_list}</ul>
-<h2>Guides ({ngd})</h2>
-<p>For the ideas behind the calculators, the <a href="/en/guide/">guides</a> explain inverses, determinants, rank and RREF, and the solution sets of linear systems with fully worked examples. Each one starts from a small example you can follow by hand and ends with a link to check it in the calculator. The Korean edition of the site has more guides, and they are being translated.</p>
+<h2>What is here</h2>
+<p>There are <a href="/en/calculators/">{ncal} calculators</a>, from inverses, determinants and multiplication to RREF, linear systems, rank, powers, adjugates and eigenvalues, and the <a href="/en/guide/">guides</a> explain the ideas behind them with worked examples.</p>
 <h2 id="contact">Contact</h2>
 <p>For bug reports, feature requests or partnership enquiries, email:</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''

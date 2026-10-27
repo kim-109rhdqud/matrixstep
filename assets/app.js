@@ -583,29 +583,34 @@ function fitDims(){
 }
 
 /* ---------- 입력 화면 ---------- */
-function sizeSel(m,d,label,val){ // 크기 선택: 숫자를 누르면 1~6 목록이 열려요
-  let o='';for(let i=1;i<=MAX;i++)o+='<option value="'+i+'"'+(i===val?' selected':'')+'>'+i+'</option>';
-  return '<select class="sz" data-m="'+m+'" data-d="'+d+'" aria-label="'+esc(label)+'">'+o+'</select>';
+/* 크기 선택: "3 × 3"을 누르면 점 격자가 열리고, 원하는 칸을 고르면 크기가 바뀌어요 */
+function sizePick(m,kind,r,c,label){ // kind: 'n' 정사각, 'rc' 행·열, 'c' 열만(행 고정)
+  const rows=kind==='c'?1:MAX;let cells='';
+  for(let i=1;i<=rows;i++)for(let j=1;j<=MAX;j++){
+    const rr=kind==='c'?r:i,on=(rr<=r&&j<=c)?' on':'';
+    cells+='<button type="button" class="szc'+on+'" data-r="'+rr+'" data-c="'+j+'" aria-label="'+rr+' × '+j+'" tabindex="-1"></button>';
+  }
+  return '<span class="szp" data-m="'+m+'" data-kind="'+kind+'"><button type="button" class="szb" aria-haspopup="true" aria-expanded="false" aria-label="'+esc(label)+'">'+r+' <i>×</i> '+c+'</button>'+
+    '<span class="szg" hidden><span class="szgrid" style="grid-template-columns:repeat('+MAX+',1fr)">'+cells+'</span><span class="szl">'+r+' × '+c+'</span></span></span>';
 }
-const szFixed=v=>'<span class="szf">'+v+'</span>';
-const szX='<span class="szx" aria-hidden="true">×</span>';
+const szFixed=(r,c)=>'<span class="szf">'+r+' <i>×</i> '+c+'</span>';
 function editor(m,T,ctrl,label){
   let cells='';
   for(let i=0;i<T.r;i++)for(let j=0;j<T.c;j++)
     cells+='<input id="'+m+'-'+i+'-'+j+'" data-m="'+m+'" data-i="'+i+'" data-j="'+j+'" autocomplete="off" spellcheck="false" placeholder="0" value="'+esc(T.v[i][j])+'" aria-label="'+esc(t('cell',label,i+1,j+1))+'">';
-  return '<div class="ed"><div class="ed-head"><span class="ed-name">'+label+'</span><span class="ctrls">'+(ctrl||szFixed(T.r)+szX+szFixed(T.c))+'</span></div>'+
+  return '<div class="ed"><div class="ed-head"><span class="ed-name">'+label+'</span><span class="ctrls">'+(ctrl||szFixed(T.r,T.c))+'</span></div>'+
     '<div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:repeat('+T.c+',var(--cell))">'+cells+'</div></div></div></div>';
 }
 function renderInputs(){
   const o=OPS[S.op];let h='<div class="eqrow">';
-  const aCtrl=o.square?sizeSel('A','n',t('size'),S.A.r)+szX+szFixed(S.A.r):sizeSel('A','r',t('rows'),S.A.r)+szX+sizeSel('A','c',t('cols'),S.A.c);
+  const aCtrl=o.square?sizePick('A','n',S.A.r,S.A.r,t('size')):sizePick('A','rc',S.A.r,S.A.c,t('size'));
   if(o.k&&!o.kint) h+='<div class="ed"><div class="ed-head"><label class="ed-name" for="k">k</label></div><input id="k" class="kin" data-m="k" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div><span class="opsym" aria-hidden="true">·</span>';
   h+=editor('A',S.A,aCtrl,'A');
   if(o.kint) h+='<span class="opsym" aria-hidden="true">^</span><div class="ed"><div class="ed-head"><label class="ed-name" for="k">n</label></div><input id="k" class="kin" data-m="k" inputmode="numeric" autocomplete="off" spellcheck="false" value="'+esc(S.k)+'"></div>';
-  if(o.B){ h+='<span class="opsym" aria-hidden="true">'+o.sym+'</span>'+editor('B',S.B,o.B==='mul'?szFixed(S.B.r)+szX+sizeSel('B','c',t('cols'),S.B.c):'','B'); }
+  if(o.B){ h+='<span class="opsym" aria-hidden="true">'+o.sym+'</span>'+editor('B',S.B,o.B==='mul'?sizePick('B','c',S.B.r,S.B.c,t('cols')):'','B'); }
   if(o.vec){
     let cells='';for(let i=0;i<S.A.r;i++) cells+='<input id="b-'+i+'" data-m="b" data-i="'+i+'" autocomplete="off" spellcheck="false" placeholder="0" value="'+esc(S.b[i])+'" aria-label="'+esc(t('bCell',i+1))+'">';
-    h+='<span class="opsym" aria-hidden="true">|</span><div class="ed"><div class="ed-head"><span class="ed-name">b</span><span class="ctrls">'+szFixed(S.A.r)+szX+szFixed(1)+'</span></div><div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:var(--cell)">'+cells+'</div></div></div></div>';
+    h+='<span class="opsym" aria-hidden="true">|</span><div class="ed"><div class="ed-head"><span class="ed-name">b</span><span class="ctrls">'+szFixed(S.A.r,1)+'</span></div><div class="ed-scroll"><div class="brk"><div class="cells" style="grid-template-columns:var(--cell)">'+cells+'</div></div></div></div>';
   }
   h+='</div>';
   if(o.vec) h+='<p class="sys">'+esc(t('sys',S.A.r,S.A.c))+'</p>';
@@ -663,7 +668,7 @@ function init(){
 /* ---------- 이벤트 ---------- */
 const inputs=$('#inputs');
 inputs.addEventListener('input',e=>{
-  const t=e.target,d=t.dataset;if(!d.m||t.tagName==='SELECT')return;
+  const t=e.target,d=t.dataset;if(!d.m)return;
   if(d.m==='k')S.k=t.value;else if(d.m==='b')S.b[+d.i]=t.value;else S[d.m].v[+d.i][+d.j]=t.value;
   S.touched=true;compute();
 });
@@ -677,13 +682,22 @@ inputs.addEventListener('keydown',e=>{
   }
 });
 inputs.addEventListener('focusin',e=>{if(e.target.tagName==='INPUT')e.target.select()});
-inputs.addEventListener('change',e=>{
-  const b=e.target;if(!b.classList.contains('sz'))return;
-  const m=b.dataset.m,d=b.dataset.d,v=clamp(+b.value),T=S[m];
-  if(d==='n'){T.r=v;T.c=v}else T[d]=v;
+function szClose(){inputs.querySelectorAll('.szp').forEach(p=>{p.querySelector('.szg').hidden=true;p.querySelector('.szb').setAttribute('aria-expanded','false')})}
+function szPaint(p,r,c){const k=p.dataset.kind;if(k==='n'){r=c=Math.max(r,c)}
+  p.querySelectorAll('.szc').forEach(x=>x.classList.toggle('on',+x.dataset.r<=r&&+x.dataset.c<=c));p.querySelector('.szl').textContent=r+' × '+c}
+inputs.addEventListener('click',e=>{
+  const bt=e.target.closest('.szb');
+  if(bt){const p=bt.closest('.szp'),g=p.querySelector('.szg'),open=g.hidden;szClose();if(open){g.hidden=false;bt.setAttribute('aria-expanded','true')}return}
+  const cell=e.target.closest('.szc');if(!cell)return;
+  const p=cell.closest('.szp'),m=p.dataset.m,k=p.dataset.kind,T=S[m];let r=+cell.dataset.r,c=+cell.dataset.c;
+  if(k==='n'){T.r=T.c=clamp(Math.max(r,c))}else if(k==='c'){T.c=clamp(c)}else{T.r=clamp(r);T.c=clamp(c)}
   S.touched=true;fitDims();renderInputs();compute();
-  const again=inputs.querySelector('.sz[data-m="'+m+'"][data-d="'+d+'"]');if(again)again.focus();
+  const again=inputs.querySelector('.szp[data-m="'+m+'"] .szb');if(again)again.focus();
 });
+inputs.addEventListener('mouseover',e=>{const cell=e.target.closest('.szc');if(cell)szPaint(cell.closest('.szp'),+cell.dataset.r,+cell.dataset.c)});
+inputs.addEventListener('mouseout',e=>{const g=e.target.closest('.szg');if(g&&!g.contains(e.relatedTarget)){const p=g.closest('.szp'),T=S[p.dataset.m];szPaint(p,T.r,T.c)}});
+document.addEventListener('click',e=>{if(!e.target.closest('.szp'))szClose()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')szClose()});
 $('#exBtn').addEventListener('click',()=>{loadExample(S.op);fitDims();renderInputs();compute()});
 $('#clrBtn').addEventListener('click',()=>{S.A.v=blank();S.B.v=blank();S.b=Array(MAX).fill('');S.touched=true;renderInputs();compute();const f=document.getElementById('A-0-0');if(f)f.focus()});
 document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{

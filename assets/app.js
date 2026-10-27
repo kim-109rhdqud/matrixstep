@@ -61,6 +61,7 @@ ko:{
   errFail:'계산하지 못했어요. 입력값을 확인해 주세요.',
   stepsEmpty:'값을 입력하면 풀이가 여기에 나와요.',
   stepsLess:'풀이 접기', stepsMore:n=>'나머지 '+n+'단계 보기', stepsCount:n=>n+'단계',
+  shared:'공유 링크를 복사했어요. 이 링크를 열면 지금 행렬이 그대로 나와요.', pasted:n=>n+'개 값을 붙여넣어 행렬을 채웠어요.',
   copied:'LaTeX를 복사했어요. Overleaf, 노션 수식 블록, 워드 수식 편집기에 붙여넣으세요.', copyFail:'복사하지 못했어요. 브라우저 설정을 확인해 주세요',
   pow0:'어떤 정사각행렬이든 0제곱은 단위행렬 I로 정해요.',
   pow1:'A¹ = A 에서 시작해요.',
@@ -141,6 +142,7 @@ en:{
   errFail:'The calculation failed. Please check the input.',
   stepsEmpty:'Enter values and the steps will appear here.',
   stepsLess:'Show fewer steps', stepsMore:n=>'Show '+n+' more step'+(n>1?'s':''), stepsCount:n=>n+' step'+(n>1?'s':''),
+  shared:'Share link copied. Opening it restores this exact matrix.', pasted:n=>'Filled the matrix with '+n+' pasted values.',
   copied:'LaTeX copied. Paste it into Overleaf, a Notion equation block or Word\'s equation editor.', copyFail:'Could not copy. Check your browser settings.',
   pow0:'Any square matrix to the power 0 is defined as the identity matrix I.',
   pow1:'Start with A¹ = A.',
@@ -653,12 +655,35 @@ function renderResult(res){
 
 /* ---------- 페이지 시작 ---------- */
 function save(){try{sessionStorage.setItem('mx-state',JSON.stringify({A:S.A,B:S.B,b:S.b,k:S.k,touched:S.touched}))}catch(e){}}
+/* 공유 링크: #A=2,1;3,4&B=...&b=...&k=... (값은 입력한 글자 그대로) */
+const encM=T=>Array.from({length:T.r},(_,i)=>Array.from({length:T.c},(_,j)=>T.v[i][j]||'0').join(',')).join(';');
+function shareUrl(){const o=OPS[S.op],q=['A='+encM(S.A)];if(o.B)q.push('B='+encM(S.B));if(o.vec)q.push('b='+S.b.slice(0,S.A.r).map(x=>x||'0').join(','));if(o.k)q.push('k='+S.k);
+  return location.origin+location.pathname+'#'+q.map(x=>x.replace(/#|&/g,'')).join('&')}
+function loadHash(){
+  const h=location.hash.slice(1);if(!h||!/^A=/.test(h))return false;
+  const o=OPS[S.op],P={};h.split('&').forEach(kv=>{const i=kv.indexOf('=');if(i>0)P[kv.slice(0,i)]=decodeURIComponent(kv.slice(i+1))});
+  const parse=(str,T)=>{const rows=str.split(';').map(r=>r.split(',')).filter(r=>r.length);if(!rows.length)return false;
+    const R=clamp(rows.length),C=clamp(Math.max(...rows.map(r=>r.length)));T.r=R;T.c=C;T.v=blank();
+    for(let i=0;i<R;i++)for(let j=0;j<C;j++)T.v[i][j]=(rows[i][j]||'0').trim().slice(0,20);return true};
+  if(!parse(P.A||'',S.A))return false;
+  if(o.B&&P.B)parse(P.B,S.B);
+  if(o.vec&&P.b){S.b=Array(MAX).fill('');P.b.split(',').slice(0,MAX).forEach((x,i)=>{S.b[i]=x.trim().slice(0,20)})}
+  if(o.k&&P.k!=null)S.k=P.k.slice(0,20);
+  S.touched=true;return true;
+}
+/* 붙여넣기: 여러 값을 한 번에 넣으면 행렬 전체를 채워요 */
+function parsePaste(text){
+  const t=text.replace(/[\[\]()]/g,' ').trim();if(!t)return null;
+  const rows=t.split(/\r?\n|;/).map(r=>r.trim()).filter(Boolean).map(r=>r.split(/[\t,]+|\s+/).map(x=>x.trim()).filter(Boolean));
+  const n=rows.reduce((a,r)=>a+r.length,0);if(n<2)return null;return rows;
+}
 function init(){
   const op=document.body.dataset.op;S.op=OPS[op]?op:'inverse';
   let st=null;try{st=JSON.parse(sessionStorage.getItem('mx-state')||'null')}catch(e){}
   if(st&&st.touched&&st.A&&st.B){S.A=st.A;S.B=st.B;S.b=st.b||S.b;S.k=st.k||S.k;S.touched=true}else loadExample(S.op);
   if(OPS[S.op].kint&&!/^\s*\d{1,2}\s*$/.test(String(S.k)))S.k=EX[S.op].k;
   try{const m=localStorage.getItem('mx-mode');if(m==='dec'||m==='frac'){MODE=m;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===m)))}}catch(e){}
+  try{loadHash()}catch(e){}
   fitDims();renderInputs();compute();
   try{if(sessionStorage.getItem('mx-steps')==='1')$('#stepsD').open=true}catch(e){}
   const cur=document.querySelector('.ops [aria-current],.ops .on');
@@ -690,6 +715,15 @@ inputs.addEventListener('keydown',e=>{
   }
 });
 inputs.addEventListener('focusin',e=>{if(e.target.tagName==='INPUT')e.target.select()});
+inputs.addEventListener('paste',e=>{
+  const el=e.target,d=el.dataset;if(el.tagName!=='INPUT'||!d.m||d.m==='k')return;
+  const text=(e.clipboardData||window.clipboardData).getData('text'),rows=parsePaste(text);if(!rows)return;
+  e.preventDefault();
+  if(d.m==='b'){const vals=rows.flat();S.b=Array(MAX).fill('');vals.slice(0,MAX).forEach((x,i)=>{S.b[i]=x});S.A.r=clamp(Math.max(S.A.r,Math.min(MAX,vals.length)));}
+  else{const T=S[d.m],o=OPS[S.op];T.r=clamp(rows.length);T.c=clamp(Math.max(...rows.map(r=>r.length)));if(o.square&&d.m==='A')T.c=T.r=clamp(Math.max(T.r,T.c));
+    T.v=blank();for(let i=0;i<T.r;i++)for(let j=0;j<T.c;j++)T.v[i][j]=rows[i]&&rows[i][j]!=null?rows[i][j].slice(0,20):'';}
+  S.touched=true;fitDims();renderInputs();compute();toast(t('pasted',rows.flat().length));
+});
 function szClose(){inputs.querySelectorAll('.szp').forEach(p=>{p.querySelector('.szg').hidden=true;p.querySelector('.szb').setAttribute('aria-expanded','false')})}
 function szPaint(p,r,c){const k=p.dataset.kind;if(k==='n'){r=c=Math.max(r,c)}
   p.querySelectorAll('.szc').forEach(x=>x.classList.toggle('on',+x.dataset.r<=r&&+x.dataset.c<=c));p.querySelector('.szl').textContent=r+' × '+c}
@@ -715,6 +749,11 @@ $('#moreBtn').addEventListener('click',()=>{S.showAll=!S.showAll;compute()});
 $('#stepsD').addEventListener('toggle',e=>{try{sessionStorage.setItem('mx-steps',e.target.open?'1':'0')}catch(x){}});
 let toastT;
 function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},1800)}
+function copyText(v,okMsg){
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=v;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(ok?okMsg:t('copyFail'))};
+  try{navigator.clipboard.writeText(v).then(()=>toast(okMsg),fallback)}catch(e){fallback()}
+}
+const shareBtn=$('#shareBtn');if(shareBtn)shareBtn.addEventListener('click',()=>{const u=shareUrl();history.replaceState(null,'',u);copyText(u,t('shared'))});
 $('#copyTex').addEventListener('click',()=>{
   if(!S.latex)return;const v=S.latex;
   const fallback=()=>{const ta=document.createElement('textarea');ta.value=v;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(ok?t('copied'):t('copyFail'))};

@@ -337,12 +337,12 @@ CALC_KO = '''<div class="work">
 <section class="panel in" aria-labelledby="inH">
 <div class="panel-head"><h2 id="inH">INPUT · 입력</h2><div class="acts"><button type="button" class="ghost" id="exBtn">예제 넣기</button><button type="button" class="ghost" id="clrBtn">모두 지우기</button></div></div>
 <div id="inputs"><noscript><p class="err">계산기를 쓰려면 브라우저에서 자바스크립트를 켜 주세요.</p></noscript></div>
-<p class="hint">정수, 분수(<code>1/3</code>), 소수(<code>0.25</code>)를 쓸 수 있어요. 빈칸은 0이에요.</p>
+<p class="hint">정수, 분수(<code>1/3</code>), 소수(<code>0.25</code>)를 쓸 수 있어요. 빈칸은 0이에요. 엑셀이나 교재에서 복사한 숫자를 첫 칸에 붙여넣으면 행렬이 한 번에 채워져요.</p>
 </section>
 <section class="panel out" aria-labelledby="outH">
 <div class="panel-head"><h2 id="outH">RESULT · 결과</h2><div class="seg" role="group" aria-label="숫자 표시 방식"><button type="button" data-mode="frac" aria-pressed="true">분수</button><button type="button" data-mode="dec" aria-pressed="false">소수</button></div></div>
 <div class="res-main" id="resMain" aria-live="polite"></div>
-<div class="res-actions"><button type="button" class="ghost" id="copyTex">LaTeX 복사</button><p class="texnote">LaTeX는 과제·논문(Overleaf), 노션 수식 블록, 워드 수식 편집기에 붙여넣는 수식 코드예요.</p></div>
+<div class="res-actions"><button type="button" class="ghost" id="shareBtn">공유 링크</button><button type="button" class="ghost" id="copyTex">LaTeX 복사</button><p class="texnote">LaTeX는 과제·논문(Overleaf), 노션 수식 블록, 워드 수식 편집기에 붙여넣는 수식 코드예요.</p></div>
 </section>
 </div>
 <details class="fold steps-fold" id="stepsD" hidden><summary><h2>단계별 풀이</h2><span class="cnt" id="stepCount"></span></summary>
@@ -352,12 +352,12 @@ CALC_EN = '''<div class="work">
 <section class="panel in" aria-labelledby="inH">
 <div class="panel-head"><h2 id="inH">INPUT</h2><div class="acts"><button type="button" class="ghost" id="exBtn">Load example</button><button type="button" class="ghost" id="clrBtn">Clear all</button></div></div>
 <div id="inputs"><noscript><p class="err">Please enable JavaScript in your browser to use the calculator.</p></noscript></div>
-<p class="hint">Integers, fractions (<code>1/3</code>) and decimals (<code>0.25</code>) are accepted. Empty cells count as 0.</p>
+<p class="hint">Integers, fractions (<code>1/3</code>) and decimals (<code>0.25</code>) are accepted. Empty cells count as 0. Paste a block of numbers from a spreadsheet or textbook into the first cell to fill the whole matrix.</p>
 </section>
 <section class="panel out" aria-labelledby="outH">
 <div class="panel-head"><h2 id="outH">RESULT</h2><div class="seg" role="group" aria-label="Number format"><button type="button" data-mode="frac" aria-pressed="true">Fraction</button><button type="button" data-mode="dec" aria-pressed="false">Decimal</button></div></div>
 <div class="res-main" id="resMain" aria-live="polite"></div>
-<div class="res-actions"><button type="button" class="ghost" id="copyTex">Copy LaTeX</button><p class="texnote">LaTeX is the math code you can paste into Overleaf, Notion equation blocks or Word's equation editor.</p></div>
+<div class="res-actions"><button type="button" class="ghost" id="shareBtn">Share link</button><button type="button" class="ghost" id="copyTex">Copy LaTeX</button><p class="texnote">LaTeX is the math code you can paste into Overleaf, Notion equation blocks or Word's equation editor.</p></div>
 </section>
 </div>
 <details class="fold steps-fold" id="stepsD" hidden><summary><h2>Steps</h2><span class="cnt" id="stepCount"></span></summary>
@@ -379,7 +379,7 @@ HOWTO_EN = '''<ol class="howto">
 
 UI_KO = dict(
     nav=[("calc", "/calculators/", "계산기"), ("guide", "/guide/", "가이드"), ("about", "/about/", "소개")],
-    nav_aria="사이트", switch="EN", switch_title="English",
+    nav_aria="사이트", switch="EN", switch_title="English", theme="라이트/다크 전환",
     foot_note="", foot_aria="사이트 정보",
     foot=[("/calculators/", "계산기"), ("/guide/", "가이드"), ("/about/", "소개"), ("/about/#contact", "문의"), ("/privacy/", "개인정보처리방침")],
     ops_aria="연산 선택", extras_aria="더 알아보기", calc=CALC_KO, howto=HOWTO_KO,
@@ -413,7 +413,7 @@ UI_KO = dict(
 )
 UI_EN = dict(
     nav=[("calc", "/calculators/", "Calculators"), ("guide", "/guide/", "Guides"), ("about", "/about/", "About")],
-    nav_aria="Site", switch="한국어", switch_title="Korean",
+    nav_aria="Site", switch="한국어", switch_title="Korean", theme="Toggle light/dark",
     foot_note="", foot_aria="Site links",
     foot=[("/calculators/", "Calculators"), ("/guide/", "Guides"), ("/about/", "About"), ("/about/#contact", "Contact"), ("/privacy/", "Privacy")],
     ops_aria="Choose an operation", extras_aria="More", calc=CALC_EN, howto=HOWTO_EN,
@@ -468,6 +468,7 @@ def head(title, meta, path, extra="", alt=True):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>try{{var t=localStorage.getItem("mx-theme");if(t==="dark"||t==="light")document.documentElement.dataset.theme=t}}catch(e){{}}</script>
 <title>{e(title)}</title>
 <meta name="description" content="{e(meta)}">
 <link rel="canonical" href="{url}">
@@ -502,6 +503,10 @@ def topbar(cur="", path="/", alt=True):
     other = "en" if L["code"] == "ko" else "ko"
     target = (LANGS[other]["prefix"] + path) if alt else (LANGS[other]["prefix"] + "/")
     links += f'<a class="lang" href="{target}" lang="{other}" hreflang="{other}" title="{U["switch_title"]}">{U["switch"]}</a>'
+    links += (f'<button type="button" class="theme" id="themeBtn" aria-label="{U["theme"]}" title="{U["theme"]}">'
+              '<svg class="sun" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+              '<svg class="moon" aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button>'
+              '<script>(function(){var b=document.getElementById("themeBtn");b.addEventListener("click",function(){var r=document.documentElement,dark=r.dataset.theme==="dark"||(!r.dataset.theme&&matchMedia("(prefers-color-scheme: dark)").matches);r.dataset.theme=dark?"light":"dark";try{localStorage.setItem("mx-theme",r.dataset.theme)}catch(e){}})})();</script>')
     return f'''<header class="top"><div class="wrap top-in">
 <a class="brand" href="{P("/")}"><span class="mark" aria-hidden="true">[ ]</span>{L["site"]}</a>
 <nav class="top-nav" aria-label="{U["nav_aria"]}">{links}</nav>

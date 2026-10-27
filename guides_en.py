@@ -401,4 +401,12 @@ def art_system():
 ARTICLES = [art_inverse(), art_det(), art_rank(), art_system()]
 for _a in ARTICLES:
     _a["published"] = "2026-10-26"
+
+# The remaining guides live in separate modules (imported after NOTES_EN exists).
+import guides_en_a  # noqa: E402
+import guides_en_b  # noqa: E402
+import guides_en_c  # noqa: E402
+for _a in guides_en_a.ARTICLES + guides_en_b.ARTICLES + guides_en_c.ARTICLES:
+    _a["published"] = "2026-10-27"
+ARTICLES += guides_en_a.ARTICLES + guides_en_b.ARTICLES + guides_en_c.ARTICLES
 BY_SLUG = {a["slug"]: a for a in ARTICLES}

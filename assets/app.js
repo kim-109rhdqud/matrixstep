@@ -680,6 +680,14 @@ inputs.addEventListener('keydown',e=>{
     if(d.m==='A'||d.m==='B')id=d.m+'-'+(+d.i+di)+'-'+d.j;else if(d.m==='b')id='b-'+(+d.i+di);
     const el=id&&document.getElementById(id);if(el){e.preventDefault();el.focus();el.select()}
   }
+  if((e.key==='ArrowLeft'||e.key==='ArrowRight')&&(d.m==='A'||d.m==='B')){
+    // 커서가 칸의 끝(또는 전체 선택)일 때만 옆 칸으로 옮겨요. 줄 끝에서는 다음 줄 처음으로 이어져요.
+    const dj=e.key==='ArrowRight'?1:-1,len=t.value.length,all=t.selectionStart===0&&t.selectionEnd===len;
+    const atEdge=all||(dj<0?t.selectionStart===0:t.selectionEnd===len);if(!atEdge)return;
+    const T=S[d.m];let i=+d.i,j=+d.j+dj;
+    if(j>=T.c){j=0;i++}else if(j<0){j=T.c-1;i--}
+    const el=document.getElementById(d.m+'-'+i+'-'+j);if(el){e.preventDefault();el.focus();el.select()}
+  }
 });
 inputs.addEventListener('focusin',e=>{if(e.target.tagName==='INPUT')e.target.select()});
 function szClose(){inputs.querySelectorAll('.szp').forEach(p=>{p.querySelector('.szg').hidden=true;p.querySelector('.szb').setAttribute('aria-expanded','false')})}

@@ -359,13 +359,13 @@ CALC_EN = '''<div class="work">
 HOWTO_KO = '''<ol class="howto">
 <li>행·열 버튼으로 행렬 크기를 정해요. 최대 6×6까지 입력할 수 있어요.</li>
 <li>칸에 숫자를 입력하면 바로 계산돼요. 분수는 <code>1/3</code>, 음수는 <code>-2</code>처럼 입력해요.</li>
-<li><kbd>Enter</kbd>는 다음 칸, <kbd>↑</kbd> <kbd>↓</kbd>는 위아래 칸으로 이동해요.</li>
+<li><kbd>Enter</kbd>는 다음 칸, <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> 방향키로 칸 사이를 이동해요.</li>
 <li>‘단계별 풀이’를 누르면 계산 과정이 펼쳐져요. ‘LaTeX 복사’는 Overleaf, 노션 수식 블록, 워드 수식 편집기에 붙여넣을 수 있는 수식 코드를 복사해요.</li>
 </ol>'''
 HOWTO_EN = '''<ol class="howto">
 <li>Set the matrix size with the row and column buttons. Up to 6×6 is supported.</li>
 <li>Type numbers into the cells and the result updates instantly. Enter fractions as <code>1/3</code> and negatives as <code>-2</code>.</li>
-<li><kbd>Enter</kbd> moves to the next cell; <kbd>↑</kbd> <kbd>↓</kbd> move up and down.</li>
+<li><kbd>Enter</kbd> moves to the next cell; the <kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd> arrow keys move between cells.</li>
 <li>Open ‘Steps’ to see the full working. ‘Copy LaTeX’ copies the result as math code you can paste into Overleaf, a Notion equation block or Word's equation editor.</li>
 </ol>'''
 

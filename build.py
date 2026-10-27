@@ -399,7 +399,7 @@ UI_KO = dict(
                ("소거법과 벡터 공간", ["rank-and-rref", "linear-system-solutions", "null-space-column-space", "linear-independence"]),
                ("고윳값과 대각화", ["eigenvalues-2x2", "diagonalization-matrix-power"])], gi_other="그 밖의 글",
     gi_meta="역행렬, 행렬식, 랭크와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
-    g_meta="{d} 업데이트 · 읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
+    g_meta="읽는 시간 약 {m}분", cta_t="직접 계산해 보세요", cta_s="값을 바꾸면 결과와 단계별 풀이가 바로 나와요.", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
     about_title="소개 및 문의", privacy_title="개인정보처리방침",
     nf_title="페이지를 찾을 수 없어요", nf_meta="요청한 페이지가 없어요.",
 )
@@ -430,7 +430,7 @@ UI_EN = dict(
     gi_title="Linear Algebra Guides", gi_h1="Guides", gi_intro="Short, example-driven explanations of the ideas behind the calculators. Every example can be checked in the calculator.",
     gi_groups=[("Inverse and determinant", ["inverse-gauss-jordan", "determinant-3x3"]), ("Elimination and linear systems", ["rank-and-rref", "linear-system-solutions"])], gi_other="More guides",
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
-    g_meta="Updated {d} · about {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
+    g_meta="About {m} min read", cta_t="Try it yourself", cta_s="Change the values and the result and steps update instantly.", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
     about_title="About and Contact", privacy_title="Privacy Policy",
     nf_title="Page not found", nf_meta="The requested page does not exist.",
 )
@@ -653,7 +653,7 @@ def about():
     ncal, ngd = len(L["ops"]), len(L["guides"].ARTICLES)
     ops_list = "".join(f'<li><a href="{P("/" + o["slug"] + "/")}"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in L["ops"])
     if L["code"] == "ko":
-        body = f'''<h1>{SITE} 소개</h1><p class="meta">마지막 업데이트 {TODAY}</p>
+        body = f'''<h1>{SITE} 소개</h1>
 <p>{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
 <h2>왜 만들었나요</h2>
 <p>행렬 문제는 답보다 과정이 중요한데, 기존 계산기는 답만 보여주거나 소수로 반올림해 손으로 푼 풀이와 비교하기 어려웠어요. 또 광고와 메뉴가 많아 정작 계산기를 찾기 힘든 경우도 많았고요. 그래서 계산기와 결과만 먼저 보이고, 설명은 필요할 때 펼쳐 보는 단순한 페이지로 만들었어요.</p>
@@ -673,7 +673,7 @@ def about():
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
         meta = f"{SITE}가 행렬을 분수로 정확하게 계산하는 방법, 결과를 검증하는 방식, 제공하는 계산기 {ncal}종과 가이드 {ngd}편, 문의 방법을 안내해요."
     else:
-        body = f'''<h1>About {SITE_EN}</h1><p class="meta">Last updated {TODAY}</p>
+        body = f'''<h1>About {SITE_EN}</h1>
 <p>{SITE_EN} (matrixstep.net) is a free matrix calculator built for the computations that come up in linear algebra and engineering math courses. Rather than piling on features, it focuses on one thing: giving an exact answer and a working you can actually read. There is nothing to install and no account to create.</p>
 <h2>Why it exists</h2>
 <p>In matrix problems the method matters more than the answer, yet most calculators either show only the answer or round everything to decimals, which makes it hard to compare with work done by hand. Many are also crowded with ads and menus that bury the calculator itself. {SITE_EN} shows the calculator and the result first; explanations unfold only when you ask for them.</p>

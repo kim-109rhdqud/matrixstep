@@ -24,6 +24,14 @@ FIRST_PUBLISHED = "2026-10-13"                     # 가이드 최초 게시일
 # ================================================
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+
+def _ver(name):
+    """파일 내용 해시로 캐시를 깨요. 배포 직후에도 브라우저가 옛 파일을 쓰지 않게."""
+    import hashlib
+    with open(os.path.join(HERE, "assets", name), "rb") as f:
+        return hashlib.sha1(f.read()).hexdigest()[:8]
+CSS_URL = "/assets/app.css?v=" + _ver("app.css")
+JS_URL = "/assets/app.js?v=" + _ver("app.js")
 OUT = os.path.join(HERE, "dist")
 e = html.escape
 
@@ -481,7 +489,7 @@ def head(title, meta, path, extra="", alt=True):
 {rss}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {FONTS}
-<link rel="stylesheet" href="/assets/app.css">
+<link rel="stylesheet" href="{CSS_URL}">
 '''
     if GOOGLE_VERIFY: s += f'<meta name="google-site-verification" content="{e(GOOGLE_VERIFY)}">\n'
     if NAVER_VERIFY: s += f'<meta name="naver-site-verification" content="{e(NAVER_VERIFY)}">\n'
@@ -556,7 +564,7 @@ def write(path, text):
     os.makedirs(os.path.dirname(full), exist_ok=True)
     open(full, "w", encoding="utf-8").write(text)
 
-PAGE_END = '<div class="toast" id="toast" role="status" hidden></div>\n<script src="/assets/app.js" defer></script>\n</body>\n</html>\n'
+PAGE_END = f'<div class="toast" id="toast" role="status" hidden></div>\n<script src="{JS_URL}" defer></script>\n</body>\n</html>\n'
 
 def op_page(o):
     """계산기 페이지: 제목 → 연산 선택 → 계산기·결과. 나머지는 접이식."""

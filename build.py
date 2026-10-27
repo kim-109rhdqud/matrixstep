@@ -32,6 +32,16 @@ def _ver(name):
         return hashlib.sha1(f.read()).hexdigest()[:8]
 CSS_URL = "/assets/app.css?v=" + _ver("app.css")
 JS_URL = "/assets/app.js?v=" + _ver("app.js")
+
+def practice_js():
+    """app.js의 계산 핵심부(const ORDER= 앞까지) + practice.src.js 를 합쳐 하나의 스크립트로 만들어요."""
+    src = open(os.path.join(HERE, "assets", "app.js"), encoding="utf-8").read()
+    cut = src.index("const ORDER=")
+    core = src[:cut]
+    extra = open(os.path.join(HERE, "assets", "practice.src.js"), encoding="utf-8").read()
+    return core + extra + "\n})();\n"
+PRACTICE_JS = practice_js()
+PRACTICE_URL = "/assets/practice.js?v=" + __import__("hashlib").sha1(PRACTICE_JS.encode()).hexdigest()[:8]
 OUT = os.path.join(HERE, "dist")
 e = html.escape
 
@@ -479,10 +489,10 @@ HOWTO_EN = '''<ol class="howto">
 </ol>'''
 
 UI_KO = dict(
-    nav=[("calc", "/calculators/", "계산기"), ("guide", "/guide/", "가이드"), ("about", "/about/", "소개")],
+    nav=[("calc", "/calculators/", "계산기"), ("practice", "/practice/", "연습 문제"), ("guide", "/guide/", "가이드"), ("about", "/about/", "소개")],
     nav_aria="사이트", switch="EN", switch_title="English", theme="라이트/다크 전환",
     foot_note="", foot_aria="사이트 정보",
-    foot=[("/calculators/", "계산기"), ("/guide/", "가이드"), ("/about/", "소개"), ("/about/#contact", "문의"), ("/privacy/", "개인정보처리방침")],
+    foot=[("/calculators/", "계산기"), ("/practice/", "연습 문제"), ("/guide/", "가이드"), ("/about/", "소개"), ("/about/#contact", "문의"), ("/privacy/", "개인정보처리방침")],
     ops_aria="연산 선택", extras_aria="더 알아보기", calc=CALC_KO, howto=HOWTO_KO,
     fold_howto="사용 방법", fold_faq="자주 묻는 질문", fold_related="관련 가이드", fold_about="행렬 계산기 소개",
     more_guide="자세한 설명과 예제: {t}", tip="시험 팁",
@@ -510,13 +520,21 @@ UI_KO = dict(
     gi_meta="역행렬, 행렬식, 계수와 RREF, 연립방정식의 해를 예제와 함께 단계별로 설명한 선형대수 가이드 모음이에요.",
     g_meta="", cta_t="직접 계산해 보세요", cta_s="", cta_b="{c} 열기", rel_h2="함께 보면 좋은 글", toc="목차", min="{m}분",
     about_title="소개 및 문의", privacy_title="개인정보처리방침",
+    pr_title="행렬 연습 문제 생성기 - 채점·인쇄·워드 다운로드", pr_h1="연습 문제", pr_ld="행렬 연습 문제 생성기",
+    pr_meta="행렬식, 역행렬, 곱셈, RREF, 연립방정식, 계수, 고윳값 연습 문제를 무작위로 만들어요. 웹에서 바로 채점하고, 문제지와 정답지를 PDF로 인쇄하거나 워드(.docx) 파일로 내려받을 수 있어요.",
+    pr_intro="주제와 크기를 고르면 문제가 만들어져요. 답을 입력해 채점하고, 틀린 문제는 계산기에서 단계별 풀이를 볼 수 있어요. 수업용으로는 인쇄하거나 워드 파일로 내려받으세요.",
+    pr_topic="주제", pr_size="크기", pr_count="문제 수", pr_tools="문제지 만들기", pr_name="이름: ____________    날짜: ____________",
+    pr_note="같은 링크를 열면 같은 문제가 나와요. 학생에게 링크를 보내면 같은 문제 세트를 풀 수 있어요. 워드 파일의 행렬은 수식 개체라 워드에서 바로 편집할 수 있어요.",
+    pr_faq=[("문제는 어떻게 만들어지나요?", "정수 행렬을 무작위로 만들되, 역행렬 문제는 답이 대부분 정수가 되도록, 연립방정식은 해가 유일하고 정수가 되도록, 고윳값 문제는 고윳값이 정수가 되도록 설계했어요."),
+            ("답은 어떤 형식으로 입력하나요?", "정수, 분수(1/3), 소수(0.25) 모두 돼요. 고윳값은 쉼표로 구분해 입력하고 순서는 상관없어요."),
+            ("PDF는 어떻게 저장하나요?", "인쇄 버튼을 누른 뒤 프린터 대신 'PDF로 저장'을 고르면 돼요. '정답지 포함'을 켜면 마지막 장에 정답이 붙어요.")],
     nf_title="페이지를 찾을 수 없어요", nf_meta="요청한 페이지가 없어요.",
 )
 UI_EN = dict(
-    nav=[("calc", "/calculators/", "Calculators"), ("guide", "/guide/", "Guides"), ("about", "/about/", "About")],
+    nav=[("calc", "/calculators/", "Calculators"), ("practice", "/practice/", "Practice"), ("guide", "/guide/", "Guides"), ("about", "/about/", "About")],
     nav_aria="Site", switch="한국어", switch_title="Korean", theme="Toggle light/dark",
     foot_note="", foot_aria="Site links",
-    foot=[("/calculators/", "Calculators"), ("/guide/", "Guides"), ("/about/", "About"), ("/about/#contact", "Contact"), ("/privacy/", "Privacy")],
+    foot=[("/calculators/", "Calculators"), ("/practice/", "Practice"), ("/guide/", "Guides"), ("/about/", "About"), ("/about/#contact", "Contact"), ("/privacy/", "Privacy")],
     ops_aria="Choose an operation", extras_aria="More", calc=CALC_EN, howto=HOWTO_EN,
     fold_howto="How to use", fold_faq="FAQ", fold_related="Related guides", fold_about="About MatrixStep",
     more_guide="Full explanation with examples: {t}", tip="Exam tip",
@@ -541,6 +559,14 @@ UI_EN = dict(
     gi_meta="Step-by-step explanations of inverses, determinants, rank and RREF, and solving linear systems, each with fully worked examples.",
     g_meta="", cta_t="Try it yourself", cta_s="", cta_b="Open the {c}", rel_h2="Related guides", toc="Contents", min="{m} min",
     about_title="About and Contact", privacy_title="Privacy Policy",
+    pr_title="Matrix Practice Problems - Graded Online, Print or Word", pr_h1="Practice problems", pr_ld="Matrix practice problem generator",
+    pr_meta="Generate random practice problems on determinants, inverses, multiplication, RREF, linear systems, rank and eigenvalues. Grade them online, print a worksheet with an answer key as PDF, or download a Word (.docx) file.",
+    pr_intro="Pick a topic and size to generate a set. Enter your answers to grade them, and open any problem in the calculator for step-by-step working. For class, print the sheet or download it as Word.",
+    pr_topic="Topic", pr_size="Size", pr_count="Problems", pr_tools="Worksheet", pr_name="Name: ____________    Date: ____________",
+    pr_note="The same link always gives the same problems, so you can send a set to students. Matrices in the Word file are equation objects and can be edited in Word.",
+    pr_faq=[("How are the problems generated?", "Random integer matrices, designed so that inverse problems mostly have integer answers, linear systems have a unique integer solution, and eigenvalue problems have integer eigenvalues."),
+            ("How do I enter answers?", "Integers, fractions (1/3) and decimals (0.25) all work. Enter eigenvalues separated by commas, in any order."),
+            ("How do I save a PDF?", "Click Print and choose 'Save as PDF' instead of a printer. Turn on 'Include answer key' to append the answers as the last page.")],
     nf_title="Page not found", nf_meta="The requested page does not exist.",
 )
 
@@ -758,6 +784,43 @@ def guide_index():
     s += f'<main class="wrap"><article class="doc index">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write("/guide/", s)
 
+def practice():
+    path = "/practice/"
+    T = {"ko": dict(topics=[("mix", "종합"), ("det", "행렬식"), ("inverse", "역행렬"), ("mul", "곱셈"), ("addsub", "덧셈·뺄셈"), ("power", "거듭제곱"), ("rref", "RREF"), ("solve", "연립방정식"), ("rank", "계수(rank)"), ("eigen", "고윳값")],
+                     sizes=[("mix", "섞어서"), ("2", "2×2"), ("3", "3×3")], new="새 문제", grade="전체 채점", show="정답 보기", print="인쇄 · PDF 저장", docx="워드(.docx) 내려받기", key="정답지 포함", share="문제 링크 복사", answers="정답"),
+         "en": dict(topics=[("mix", "Mixed"), ("det", "Determinant"), ("inverse", "Inverse"), ("mul", "Multiplication"), ("addsub", "Add & subtract"), ("power", "Powers"), ("rref", "RREF"), ("solve", "Linear systems"), ("rank", "Rank"), ("eigen", "Eigenvalues")],
+                     sizes=[("mix", "Mixed"), ("2", "2×2"), ("3", "3×3")], new="New set", grade="Grade all", show="Show answers", print="Print · Save as PDF", docx="Download Word (.docx)", key="Include answer key", share="Copy link", answers="Answers")}[L["code"]]
+    opts = lambda xs: "".join(f'<option value="{v}">{e(t)}</option>' for v, t in xs)
+    ld_ = ld(dict(h1=U["pr_ld"], meta=U["pr_meta"]), path) + crumbs([(U["crumb_home"], "/"), (U["pr_h1"], path)])
+    qa = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in U["pr_faq"])
+    s = head(U["pr_title"] + " | " + L["site"], U["pr_meta"], path, ld_) + "<body>\n" + topbar("practice", path) + '<main class="wrap">\n'
+    s += f'<div class="intro"><h1>{e(U["pr_h1"])}</h1><p>{e(U["pr_intro"])}</p></div>\n'
+    s += f'''<section class="panel pr-cfg" aria-label="{e(U["pr_tools"])}">
+<div class="pr-row">
+<label><span class="lbl">{e(U["pr_topic"])}</span><select id="topic" class="method">{opts(T["topics"])}</select></label>
+<label><span class="lbl">{e(U["pr_size"])}</span><select id="size" class="method">{opts(T["sizes"])}</select></label>
+<label><span class="lbl">{e(U["pr_count"])}</span><select id="count" class="method"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select></label>
+<button type="button" class="ghost" id="newBtn">{e(T["new"])}</button>
+</div>
+<div class="pr-row pr-tools">
+<button type="button" class="ghost" id="printBtn">{e(T["print"])}</button>
+<button type="button" class="ghost" id="docxBtn">{e(T["docx"])}</button>
+<label class="pr-chk"><input type="checkbox" id="withAns"> {e(T["key"])}</label>
+<button type="button" class="ghost" id="shareBtn">{e(T["share"])}</button>
+</div>
+<p class="hint">{e(U["pr_note"])}</p>
+</section>
+<div class="sheet">
+<div class="sheet-h"><h2 id="sheetT"></h2><p class="sheet-name">{e(U["pr_name"])}</p></div>
+<div class="pr-bar"><button type="button" class="ghost" id="gradeBtn">{e(T["grade"])}</button><button type="button" class="ghost" id="showAns">{e(T["show"])}</button><span class="score" id="score" aria-live="polite"></span></div>
+<div id="plist"><noscript><p class="err">JavaScript</p></noscript></div>
+<section class="keysheet" aria-label="{e(T["answers"])}"><h2>{e(T["answers"])}</h2><div id="keylist"></div></section>
+</div>
+{ad()}<section class="extras" aria-label="{U["extras_aria"]}">{fold(U["fold_faq"], f'<dl class="qa">{qa}</dl>')}</section>
+</main>
+''' + footer() + f'<div class="toast" id="toast" role="status" hidden></div>\n<script src="{PRACTICE_URL}" defer></script>\n</body>\n</html>\n'
+    write(path, s)
+
 def doc_page(path, title, meta, body, cur=""):
     s = head(title + " | " + L["site"], meta, path) + "<body>\n" + topbar(cur, path)
     s += f'<main class="wrap"><article class="doc">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
@@ -870,7 +933,7 @@ def notfound():
 def seo_files():
     def urls_for(code):
         Lx = LANGS[code]; p = Lx["prefix"]
-        return ([p + "/", p + "/calculators/"] + [f'{p}/{o["slug"]}/' for o in Lx["ops"]] + [p + "/guide/"]
+        return ([p + "/", p + "/calculators/", p + "/practice/"] + [f'{p}/{o["slug"]}/' for o in Lx["ops"]] + [p + "/guide/"]
                 + [f'{p}/guide/{g["slug"]}/' for g in Lx["guides"].ARTICLES] + [p + "/about/", p + "/privacy/"])
     urls = urls_for("ko") + urls_for("en")
     sm = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
@@ -896,7 +959,7 @@ def seo_files():
 
 def build_lang(code):
     use(code)
-    home(); calc_hub()
+    home(); calc_hub(); practice()
     for o in L["ops"]: op_page(o)
     guide_index()
     for g in L["guides"].ARTICLES: guide_page(g)
@@ -905,7 +968,8 @@ def build_lang(code):
 def main():
     if os.path.exists(OUT): shutil.rmtree(OUT)
     os.makedirs(OUT)
-    shutil.copytree(os.path.join(HERE, "assets"), os.path.join(OUT, "assets"))
+    shutil.copytree(os.path.join(HERE, "assets"), os.path.join(OUT, "assets"), ignore=shutil.ignore_patterns("*.src.js"))
+    open(os.path.join(OUT, "assets", "practice.js"), "w", encoding="utf-8").write(PRACTICE_JS)
     for f in os.listdir(os.path.join(HERE, "static")):
         shutil.copy(os.path.join(HERE, "static", f), OUT)
     build_lang("ko")

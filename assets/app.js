@@ -261,6 +261,7 @@ class F{
   abs(){return new F(this.n<0n?-this.n:this.n,this.d)}
   isZero(){return this.n===0n}
   isOne(){return this.n===1n&&this.d===1n}
+  eq(o){return this.n===o.n&&this.d===o.d}
   isNeg(){return this.n<0n}
 }
 const Z=new F(0n), ONE=new F(1n);

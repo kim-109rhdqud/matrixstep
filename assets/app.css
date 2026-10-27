@@ -316,4 +316,66 @@ button,input{font:inherit;color:inherit}
   .scalar{font-size:32px}.mx.big .mx-c{font-size:22px}.lhs{font-size:19px}
   .steps-fold .fold-b{padding:0 18px 12px}
   .top-in{min-height:56px}
+  .top-nav{gap:4px 11px;font-size:13px}.top-nav .lang{padding:3px 7px;font-size:11px}.theme{width:28px;height:28px}
+}
+
+/* ---------- 연습 문제 ---------- */
+.pr-cfg{margin-bottom:22px}
+.pr-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 16px}
+.pr-row label{display:flex;flex-direction:column;gap:6px}
+.pr-row>.ghost{align-self:flex-end}
+.pr-tools{margin-top:16px;padding-top:16px;border-top:1px solid var(--line);align-items:center}
+.pr-chk{flex-direction:row!important;align-items:center;gap:7px!important;font-size:13px;color:var(--muted);cursor:pointer}
+.pr-chk input{accent-color:var(--accent);width:15px;height:15px}
+.sheet{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:26px 28px 10px}
+.sheet-h{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 20px;margin-bottom:14px}
+.sheet-h h2{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em}
+.sheet-name{display:none;margin:0;font-family:var(--mono);font-size:13px;color:var(--muted)}
+.pr-bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.score{margin-left:auto;font-family:var(--mono);font-size:14px;font-weight:600;color:var(--fg)}
+.prob{padding:22px 0 20px;border-bottom:1px solid var(--line)}
+.prob:last-child{border-bottom:0}
+.prob-h{display:flex;align-items:baseline;gap:12px;margin-bottom:10px}
+.prob-h p{margin:0;font-size:15px;font-weight:500}
+.pno{flex:none;font-family:var(--mono);font-size:12.5px;font-weight:600;color:var(--muted);min-width:1.6em}
+.prob .eqline{justify-content:flex-start;padding-left:calc(1.6em + 12px)}
+.prob .lhs{font-size:17px}
+.prob .eqline+.eqline{margin-top:8px}
+.psys{padding-left:calc(1.6em + 12px);font-family:var(--mono);font-size:15px;line-height:1.9}
+.pans{margin-top:14px;padding-left:calc(1.6em + 12px)}
+.pans-in{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px}
+.pin{width:68px;height:2.5rem;border:1px solid var(--line);border-radius:6px;background:var(--surface);text-align:center;font-family:var(--mono);font-size:15px;padding:0 4px}
+.pin.wide{width:220px;text-align:left;padding:0 10px}
+.pin:hover{border-color:var(--line-strong)}.pin:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.pin.bad{border-color:var(--bad);background:var(--bad-soft)}
+.pin-m{display:grid;gap:6px}
+.pin-v{display:flex;flex-wrap:wrap;gap:8px 14px}
+.pin-v label{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:14px}
+.verdict{margin-top:10px;font-size:13px;font-weight:500}
+.verdict.ok{color:var(--ok)}.verdict.bad{color:var(--bad)}.verdict.warn{color:var(--muted)}
+.key{margin-top:12px;padding:12px 14px;border-radius:var(--r-s);background:var(--sunk);display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:14px}
+.key .lbl{margin-right:2px}.key a{margin-left:auto;font-size:13px}
+.ansv{font-family:var(--mono);font-size:15px}
+.keysheet{display:none}
+.krow{display:flex;align-items:center;gap:12px;padding:6px 0}
+@media (max-width:720px){.sheet{padding:20px 16px 6px}.prob .eqline,.psys,.pans{padding-left:0}.key a{margin-left:0}}
+
+@media print{
+  @page{margin:16mm}
+  body{background:#fff;color:#000}
+  .top,.foot,.pr-cfg,.pr-bar,.pans,.extras,.ad,.toast,.verdict{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .intro{display:none}
+  .sheet{border:0;padding:0;border-radius:0}
+  .sheet-name{display:block;margin-top:4px}
+  .sheet-h{margin-bottom:18px;padding-bottom:10px;border-bottom:1px solid #000}
+  .prob{break-inside:avoid;padding:14px 0 18px;border-bottom:0}
+  .prob-h p{font-size:13.5pt}
+  .mx-c{font-size:12.5pt}
+  .keysheet{display:none}
+  body.print-key .keysheet{display:block;break-before:page}
+  .keysheet h2{font-size:14pt;margin:0 0 10px}
+  .krow{break-inside:avoid}
+  .krow .mx-c{font-size:11.5pt}
+  .mx::before,.mx::after{border-color:#000}
 }

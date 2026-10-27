@@ -468,6 +468,7 @@ def head(title, meta, path, extra="", alt=True):
         s += (f'<link rel="alternate" hreflang="ko" href="{DOMAIN}{path}">\n'
               f'<link rel="alternate" hreflang="en" href="{DOMAIN}/en{path}">\n'
               f'<link rel="alternate" hreflang="x-default" href="{DOMAIN}/en{path}">\n')
+    rss = f'<link rel="alternate" type="application/rss+xml" title="{e(SITE)} 가이드" href="{DOMAIN}/rss.xml">\n' if L["code"] == "ko" else ""
     s += f'''<meta property="og:type" content="website">
 <meta property="og:site_name" content="{L["site"]}">
 <meta property="og:title" content="{e(title)}">
@@ -477,7 +478,7 @@ def head(title, meta, path, extra="", alt=True):
 <meta property="og:locale" content="{L["locale"]}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#1F4FD8">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+{rss}<link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 {FONTS}
 <link rel="stylesheet" href="/assets/app.css">
@@ -772,6 +773,19 @@ def seo_files():
     sm += "".join(f"  <url><loc>{DOMAIN}{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n"
     open(os.path.join(OUT, "sitemap.xml"), "w").write(sm)
     open(os.path.join(OUT, "robots.txt"), "w").write(f"User-agent: *\nAllow: /\n\nSitemap: {DOMAIN}/sitemap.xml\n")
+    # 가이드 RSS (네이버 서치어드바이저 RSS 제출용). 최근 게시 순.
+    def rfc822(d):
+        return datetime.datetime.strptime(d, "%Y-%m-%d").strftime("%a, %d %b %Y 00:00:00 +0900")
+    items = sorted(guides.ARTICLES, key=lambda g: g.get("published", FIRST_PUBLISHED), reverse=True)
+    rss = ('<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n<channel>\n'
+           f"<title>{e(SITE)} 가이드</title>\n<link>{DOMAIN}/guide/</link>\n"
+           f"<description>역행렬, 행렬식, RREF, 연립방정식, 고윳값 등 선형대수 개념을 예제와 함께 설명하는 가이드예요.</description>\n"
+           f'<language>ko</language>\n<lastBuildDate>{rfc822(TODAY)}</lastBuildDate>\n<atom:link href="{DOMAIN}/rss.xml" rel="self" type="application/rss+xml"/>\n')
+    for g in items:
+        rss += (f"<item>\n<title>{e(g['h1'])}</title>\n<link>{DOMAIN}/guide/{g['slug']}/</link>\n<guid isPermaLink=\"true\">{DOMAIN}/guide/{g['slug']}/</guid>\n"
+                f"<description>{e(g['meta'])}</description>\n<pubDate>{rfc822(g.get('published', FIRST_PUBLISHED))}</pubDate>\n</item>\n")
+    rss += "</channel>\n</rss>\n"
+    open(os.path.join(OUT, "rss.xml"), "w", encoding="utf-8").write(rss)
     if ADSENSE_CLIENT:
         pub = ADSENSE_CLIENT.replace("ca-", "")
         open(os.path.join(OUT, "ads.txt"), "w").write(f"google.com, {pub}, DIRECT, f08c47fec0942fa0\n")

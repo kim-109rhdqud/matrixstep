@@ -19,7 +19,7 @@ assert data["lang"] == lang
 CH = {
     "ko": dict(singular="비가역 행렬", noinv="역행렬 없음", none="해 없음", unique="유일한 해",
                free=lambda n: f"자유변수 {n}개", piv=lambda s: f"피벗 열 {s}",
-               full="최대 랭크", deficient="랭크 부족", diag="대각화 가능", notdiag="대각화 불가능"),
+               full="최대 계수", deficient="계수 부족", diag="대각화 가능", notdiag="대각화 불가능"),
     "en": dict(singular="Singular matrix", noinv="Not invertible", none="No solution", unique="Unique solution",
                free=lambda n: f"{n} free variable" + ("s" if n > 1 else ""), piv=lambda s: f"Pivot columns {s}",
                full="Full rank", deficient="Rank deficient", diag="Diagonalizable", notdiag="Not diagonalizable"),

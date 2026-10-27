@@ -90,7 +90,17 @@ ko:{
   eigVec:l=>'λ = '+l+' 에 대해 (A − λI)v = 0 을 풀어요. 영공간의 기저가 고유벡터예요.',
   eigVecRes:(l,g)=>'λ = '+l+' 의 고유벡터예요. 자유변수가 '+g+'개라서 기하적 중복도는 '+g+'이에요.',
   eigMult:m=>'중복 '+m, chipDiag:'대각화 가능', chipNotDiag:'대각화 불가능', chipComplex:'복소 고윳값',
-  eigLabelExact:'고윳값', eigLabelApprox:'근사 고윳값'
+  eigLabelExact:'고윳값', eigLabelApprox:'근사 고윳값',
+  mAuto:'자동', mGj:'가우스-조던 소거법', mAdj:'수반행렬 공식', mCof:'여인수 전개', mSarrus:'사러스 법칙', mElim:'행 소거', method:'풀이 방법',
+  cofLine:(kind,i,zeros)=>(kind==='row'?i+'행':i+'열')+'을 따라 여인수 전개를 해요.'+(zeros?' 0이 '+zeros+'개 있어서 계산이 가장 적어요.':'')+' 부호는 (−1)ⁱ⁺ʲ 로 번갈아 붙어요.',
+  cofMinor:(i,j)=>i+'행과 '+j+'열을 지운 소행렬식 M'+ij(i-1,j-1)+'을 구해요.',
+  cofZero:(i,j)=>'성분이 0이라 M'+ij(i-1,j-1)+'은 계산할 필요가 없어요.',
+  cofSum:'각 성분에 소행렬식과 부호를 곱해 더해요.',
+  sarrusIntro:'사러스 법칙: 오른쪽 아래 대각선 세 개의 곱을 더하고, 왼쪽 아래 대각선 세 개의 곱을 빼요. 3×3에서만 쓸 수 있어요.',
+  sarrusR:'오른쪽 아래 대각선 곱의 합',sarrusL:'왼쪽 아래 대각선 곱의 합',sarrusDone:'두 합의 차가 행렬식이에요.',
+  adjIntro:'수반행렬 공식 A⁻¹ = adj(A) / det(A)를 써요. 먼저 행렬식을 구해요.',
+  adjDet:d=>'det(A) = '+d+(d==='0'?' 이라서 역행렬이 없어요.':' 이에요. 0이 아니므로 역행렬이 있어요.'),
+  adjFinal:'수반행렬을 행렬식으로 나누면 역행렬이에요.'
 },
 en:{
   swap:(c,r)=>'Move a nonzero entry of column '+c+' up to row '+r+' to use as the pivot.',
@@ -171,7 +181,17 @@ en:{
   eigVec:l=>'For λ = '+l+', solve (A − λI)v = 0. A basis of the null space gives the eigenvectors.',
   eigVecRes:(l,g)=>'Eigenvectors for λ = '+l+'. There '+(g>1?'are '+g+' free variables':'is 1 free variable')+', so the geometric multiplicity is '+g+'.',
   eigMult:m=>'multiplicity '+m, chipDiag:'Diagonalizable', chipNotDiag:'Not diagonalizable', chipComplex:'Complex eigenvalues',
-  eigLabelExact:'Eigenvalues', eigLabelApprox:'Approximate eigenvalues'
+  eigLabelExact:'Eigenvalues', eigLabelApprox:'Approximate eigenvalues',
+  mAuto:'Auto', mGj:'Gauss-Jordan elimination', mAdj:'Adjugate formula', mCof:'Cofactor expansion', mSarrus:'Rule of Sarrus', mElim:'Row reduction', method:'Method',
+  cofLine:(kind,i,zeros)=>'Expand by cofactors along '+(kind==='row'?'row ':'column ')+i+'.'+(zeros?' It has '+zeros+' zero'+(zeros>1?'s':'')+', so it needs the least work.':'')+' The signs alternate as (−1)ⁱ⁺ʲ.',
+  cofMinor:(i,j)=>'Delete row '+i+' and column '+j+' to get the minor M'+ij(i-1,j-1)+'.',
+  cofZero:(i,j)=>'The entry is 0, so M'+ij(i-1,j-1)+' is not needed.',
+  cofSum:'Multiply each entry by its minor and sign, then add.',
+  sarrusIntro:'Rule of Sarrus: add the three down-right diagonal products and subtract the three down-left ones. Only works for 3×3.',
+  sarrusR:'Sum of the down-right diagonals',sarrusL:'Sum of the down-left diagonals',sarrusDone:'The difference is the determinant.',
+  adjIntro:'Use the adjugate formula A⁻¹ = adj(A) / det(A). First find the determinant.',
+  adjDet:d=>'det(A) = '+d+(d==='0'?', so there is no inverse.':', which is nonzero, so the inverse exists.'),
+  adjFinal:'Divide the adjugate by the determinant to get the inverse.'
 }};
 const t=(k,...a)=>{const v=STR[LANG][k];return typeof v==='function'?v(...a):v};
 
@@ -280,9 +300,18 @@ function entrySteps(R,C,fn){const out=[];for(let i=0;i<R;i++)for(let j=0;j<C;j++
 
 /* ---------- 연산 ---------- */
 const OPS={
-  inverse:{square:true,
-    run({A}){
+  inverse:{square:true,methods:['auto','gj','adj'],
+    run({A,method}){
       const n=A.length,steps=[];
+      if(method==='adj'&&n>=2){
+        steps.push({t:t('adjIntro')});const d=detF(A);steps.push({t:t('adjDet',txt(d)),m:eq('det(A) = '+txt(d))});
+        if(d.isZero()){steps.push({t:t('invSingular')});return {head:'<div class="none">'+t('invNoneHead')+'</div>',chips:[['bad',t('chipSingular')]],steps};}
+        const C=A.map((r,i)=>r.map((_,j)=>{const mn=detF(minorOf(A,i,j));return (i+j)%2?mn.neg():mn}));
+        A.forEach((r,i)=>r.forEach((_,j)=>{const mn=minorOf(A,i,j),md=detF(mn),sg=(i+j)%2?'−':'+';steps.push({ops:['C'+ij(i,j)],t:t('adjMinor',i+1,j+1,sg),m:mx(mn)+eq('M'+ij(i,j)+' = '+txt(md)+',  C'+ij(i,j)+' = '+sg+p(md)+' = '+txt(C[i][j]))});}));
+        steps.push({t:t('adjCof'),m:mx(C)});const adj=C[0].map((_,j)=>C.map(r=>r[j]));steps.push({t:t('adjT'),m:mx(adj)});
+        const inv=adj.map(r=>r.map(x=>x.div(d)));steps.push({t:t('adjFinal'),m:eq('A⁻¹ = '+html(ONE.div(d))+' ·')+mx(adj)+eq('=')+mx(inv)});
+        return {head:'<div class="eqline"><span class="lhs">A⁻¹ =</span>'+mx(inv,{cls:'big'})+'</div>',chips:[['','det(A) = '+txt(d)],['ok',t('chipInv')]],latex:bm(inv),steps};
+      }
       const aug=A.map((r,i)=>[...r,...r.map((_,j)=>i===j?ONE:Z)]);
       if(n===2){const d=det2(A); if(!d.isZero()){const adj=[[A[1][1],A[0][1].neg()],[A[1][0].neg(),A[0][0]]];
         steps.push({t:t('invFormula'),m:eq('ad − bc = '+p(A[0][0])+'·'+p(A[1][1])+' − '+p(A[0][1])+'·'+p(A[1][0])+' = '+txt(d))+'<span class="eq">A⁻¹ = '+html(ONE.div(d))+' ·</span>'+mx(adj)});}}
@@ -297,12 +326,35 @@ const OPS={
       steps.push({t:t('invDone')});
       return {head:'<div class="eqline"><span class="lhs">A⁻¹ =</span>'+mx(inv,{cls:'big'})+'</div>',chips:[['','det(A) = '+txt(upper(A).det)],['ok',t('chipInv')]],latex:bm(inv),steps};
     }},
-  det:{square:true,
-    run({A}){
+  det:{square:true,methods:['auto','cof','sarrus','elim'],
+    run({A,method}){
       const n=A.length;let steps=[],d;
+      if(n>=3&&method==='sarrus'&&n!==3)method='cof';
       if(n===1){d=A[0][0];steps.push({t:t('det1')});}
       else if(n===2){d=det2(A);steps.push({t:t('det2'),m:eq('det(A) = ad − bc = '+p(A[0][0])+'·'+p(A[1][1])+' − '+p(A[0][1])+'·'+p(A[1][0])+' = '+txt(d))});}
-      else if(n===3){
+      else if(method==='sarrus'){
+        const a=A,pr=[a[0][0].mul(a[1][1]).mul(a[2][2]),a[0][1].mul(a[1][2]).mul(a[2][0]),a[0][2].mul(a[1][0]).mul(a[2][1])],pl=[a[0][2].mul(a[1][1]).mul(a[2][0]),a[0][0].mul(a[1][2]).mul(a[2][1]),a[0][1].mul(a[1][0]).mul(a[2][2])];
+        const sr=pr.reduce((x,y)=>x.add(y)),sl=pl.reduce((x,y)=>x.add(y));d=sr.sub(sl);
+        steps.push({t:t('sarrusIntro'),m:mx(A.map(r=>[...r,r[0],r[1]]))});
+        steps.push({t:t('sarrusR'),m:eq(p(a[0][0])+'·'+p(a[1][1])+'·'+p(a[2][2])+' + '+p(a[0][1])+'·'+p(a[1][2])+'·'+p(a[2][0])+' + '+p(a[0][2])+'·'+p(a[1][0])+'·'+p(a[2][1])+' = '+txt(sr))});
+        steps.push({t:t('sarrusL'),m:eq(p(a[0][2])+'·'+p(a[1][1])+'·'+p(a[2][0])+' + '+p(a[0][0])+'·'+p(a[1][2])+'·'+p(a[2][1])+' + '+p(a[0][1])+'·'+p(a[1][0])+'·'+p(a[2][2])+' = '+txt(sl))});
+        steps.push({t:t('sarrusDone'),m:eq('det(A) = '+txt(sr)+' − '+txt(sl)+' = '+txt(d))});
+      }
+      else if(method==='cof'){
+        // 0이 가장 많은 행/열을 골라 전개
+        let best={kind:'row',i:0,z:-1};
+        for(let i=0;i<n;i++){const z=A[i].filter(x=>x.isZero()).length;if(z>best.z)best={kind:'row',i,z}}
+        for(let j=0;j<n;j++){const z=A.map(r=>r[j]).filter(x=>x.isZero()).length;if(z>best.z)best={kind:'col',i:j,z}}
+        steps.push({t:t('cofLine',best.kind,best.i+1,best.z),m:mx(A)});
+        d=Z;const terms=[];
+        for(let k=0;k<n;k++){const i=best.kind==='row'?best.i:k,j=best.kind==='row'?k:best.i,a=A[i][j],sg=(i+j)%2?-1:1;
+          if(a.isZero()){steps.push({t:t('cofZero',i+1,j+1)});terms.push('0');continue}
+          const mn=minorOf(A,i,j),md=n===3?det2(mn):detF(mn);
+          steps.push({t:t('cofMinor',i+1,j+1),m:mx(mn)+eq('M'+ij(i,j)+' = '+(n===3?p(mn[0][0])+'·'+p(mn[1][1])+' − '+p(mn[0][1])+'·'+p(mn[1][0])+' = ':'')+txt(md))});
+          const term=a.mul(md);d=sg>0?d.add(term):d.sub(term);terms.push((sg>0?'+ ':'− ')+p(a)+'·'+p(md));}
+        steps.push({t:t('cofSum'),m:eq('det(A) = '+terms.join(' ').replace(/^\+ /,'')+' = '+txt(d))});
+      }
+      else if(n===3&&method!=='elim'){
         const a=A[0],mins=[0,1,2].map(j=>A.slice(1).map(r=>r.filter((_,k)=>k!==j))),mv=mins.map(det2);
         steps.push({t:t('det3Intro'),m:eq('det(A) = a₁₁M₁₁ − a₁₂M₁₂ + a₁₃M₁₃')});
         mins.forEach((m,j)=>steps.push({t:t('det3Minor',j+1),m:mx(m)+eq('M₁'+sub(j+1)+' = '+p(m[0][0])+'·'+p(m[1][1])+' − '+p(m[0][1])+'·'+p(m[1][0])+' = '+txt(mv[j]))}));
@@ -566,7 +618,7 @@ const EX={
 
 /* ---------- 상태 ---------- */
 const blank=()=>Array.from({length:MAX},()=>Array(MAX).fill(''));
-const S={op:'inverse',A:{r:3,c:3,v:blank()},B:{r:3,c:3,v:blank()},b:Array(MAX).fill(''),k:'2',touched:false,showAll:false,latex:null};
+const S={method:'auto',op:'inverse',A:{r:3,c:3,v:blank()},B:{r:3,c:3,v:blank()},b:Array(MAX).fill(''),k:'2',touched:false,showAll:false,latex:null};
 
 function loadExample(op){
   const e=EX[op];
@@ -632,6 +684,7 @@ function compute(){
   const a=readM('A',S.A);args.A=a.M;ok=ok&&a.ok;
   if(o.B){const b=readM('B',S.B);args.B=b.M;ok=ok&&b.ok;}
   if(o.vec){args.b=[];for(let i=0;i<S.A.r;i++){const f=parseF(S.b[i]);const el=document.getElementById('b-'+i);if(el)el.classList.toggle('bad',!f);if(!f)ok=false;args.b.push(f||Z)}}
+  if(o.methods)args.method=S.method||'auto';
   let kbad=false;
   if(o.k){const f=parseF(S.k);let good=!!f&&String(S.k).trim()!=='';if(good&&o.kint&&!(f.d===1n&&f.n>=0n&&f.n<=12n))good=false;const el=$('#k');if(el)el.classList.toggle('bad',!good);if(!good){ok=false;kbad=true}args.k=f||Z}
   let res;
@@ -684,6 +737,15 @@ function init(){
   if(OPS[S.op].kint&&!/^\s*\d{1,2}\s*$/.test(String(S.k)))S.k=EX[S.op].k;
   try{const m=localStorage.getItem('mx-mode');if(m==='dec'||m==='frac'){MODE=m;document.querySelectorAll('.seg button').forEach(x=>x.setAttribute('aria-pressed',String(x.dataset.mode===m)))}}catch(e){}
   try{loadHash()}catch(e){}
+  const o=OPS[S.op];
+  if(o.methods){
+    try{const m=sessionStorage.getItem('mx-method-'+S.op);if(m&&o.methods.includes(m))S.method=m}catch(e){}
+    const names={auto:'mAuto',gj:'mGj',adj:'mAdj',cof:'mCof',sarrus:'mSarrus',elim:'mElim'};
+    const sel=document.createElement('select');sel.className='method';sel.setAttribute('aria-label',t('method'));
+    o.methods.forEach(m=>{const op=document.createElement('option');op.value=m;op.textContent=t(names[m]);if(m===S.method)op.selected=true;sel.appendChild(op)});
+    sel.addEventListener('change',()=>{S.method=sel.value;try{sessionStorage.setItem('mx-method-'+S.op,S.method)}catch(e){}compute()});
+    const acts=document.querySelector('.panel.in .acts');if(acts)acts.insertBefore(sel,acts.firstChild);
+  }
   fitDims();renderInputs();compute();
   try{if(sessionStorage.getItem('mx-steps')==='1')$('#stepsD').open=true}catch(e){}
   const cur=document.querySelector('.ops [aria-current],.ops .on');

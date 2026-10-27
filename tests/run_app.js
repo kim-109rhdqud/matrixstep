@@ -37,6 +37,8 @@ for (let n = 1; n <= 6; n++) for (let k = 0; k < 40; k++) {
   const fA = toF(A);
   push('inverse', { A }, lib.OPS.inverse.run({ A: fA }));
   push('det', { A }, lib.OPS.det.run({ A: fA }));
+  if (n <= 4) { push('inverse', { A, method: 'adj' }, lib.OPS.inverse.run({ A: fA, method: 'adj' })); }
+  for (const method of ['cof', 'sarrus', 'elim']) push('det', { A, method }, lib.OPS.det.run({ A: fA, method }));
   push('transpose', { A }, lib.OPS.transpose.run({ A: fA }));
   const kv = entry();
   push('scalar', { A, k: kv }, lib.OPS.scalar.run({ A: fA, k: F(kv) }));

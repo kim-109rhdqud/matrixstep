@@ -36,18 +36,22 @@ button,input{font:inherit;color:inherit}
 .lbl{font-size:12px;font-weight:600;letter-spacing:.05em;color:var(--muted)}
 
 /* ---------- 상단바 ---------- */
-.top{margin-inline:-16px;padding-inline:16px;background:var(--bg);border-bottom:1px solid var(--line)}
-.top-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;min-height:60px}
+.top{position:sticky;top:0;z-index:50;margin-inline:-16px;padding-inline:16px;background:var(--bg);background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px) saturate(1.2);-webkit-backdrop-filter:blur(12px) saturate(1.2);border-bottom:1px solid var(--line)}
+.top::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:linear-gradient(90deg,transparent,var(--accent) 50%,transparent);opacity:.35;pointer-events:none}
+.top-in{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 16px;min-height:62px}
 .brand{display:flex;align-items:center;gap:10px;color:var(--fg);text-decoration:none;font-weight:600;font-size:15px;letter-spacing:-.01em}
-.mark{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--fg);display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;font-weight:600}
-.top-nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px 24px;font-size:14px}
-.top-nav a{color:var(--muted);text-decoration:none}
-.top-nav a:hover{color:var(--fg)}
-.top-nav a[aria-current="page"]{color:var(--fg);font-weight:600}
-.top-nav .lang{font-family:var(--mono);font-size:12px;letter-spacing:.04em;padding:4px 9px;border:1px solid var(--line);border-radius:999px;line-height:1.3}
-.top-nav .lang:hover{border-color:var(--line-strong)}
-.theme{width:30px;height:30px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
-.theme:hover{color:var(--fg);border-color:var(--line-strong)}
+.mark{position:relative;width:28px;height:28px;border-radius:8px;border:1.5px solid var(--fg);display:grid;place-items:center;font-family:var(--mono);font-size:11.5px;font-weight:600;transition:transform .2s,border-color .2s,color .2s}
+.brand:hover .mark{transform:rotate(-6deg);border-color:var(--accent);color:var(--accent)}
+.top-nav{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-size:14px}
+.top-nav a{position:relative;color:var(--muted);text-decoration:none;padding:7px 11px;border-radius:999px;transition:color .15s,background .15s}
+.top-nav a:hover{color:var(--fg);background:var(--sunk)}
+.top-nav a[aria-current="page"]{color:var(--fg);font-weight:600;background:var(--sunk)}
+.top-nav a[aria-current="page"]::after{content:"";position:absolute;left:50%;bottom:1px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--accent)}
+.top-nav .lang{margin-left:10px;font-family:var(--mono);font-size:12px;letter-spacing:.04em;padding:5px 10px;border:1px solid var(--line);border-radius:999px;line-height:1.3}
+.top-nav .lang:hover{border-color:var(--line-strong);background:transparent}
+.top-nav .lang::after{display:none}
+.theme{width:32px;height:32px;margin-left:2px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:color .15s,border-color .15s,transform .3s}
+.theme:hover{color:var(--fg);border-color:var(--line-strong);transform:rotate(20deg)}
 .theme .sun{display:none}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .theme .sun{display:inline}:root:not([data-theme="light"]) .theme .moon{display:none}}
 :root[data-theme="dark"] .theme .sun{display:inline}:root[data-theme="dark"] .theme .moon{display:none}
@@ -316,7 +320,7 @@ button,input{font:inherit;color:inherit}
   .scalar{font-size:32px}.mx.big .mx-c{font-size:22px}.lhs{font-size:19px}
   .steps-fold .fold-b{padding:0 18px 12px}
   .top-in{min-height:56px}
-  .top-nav{gap:4px 11px;font-size:13px}.top-nav .lang{padding:3px 7px;font-size:11px}.theme{width:28px;height:28px}
+  .top-nav{gap:0;font-size:13px}.top-nav a{padding:5px 6px}.top-nav .lang{margin-left:3px;padding:3px 6px;font-size:10.5px}.theme{width:26px;height:26px;margin-left:3px}
 }
 
 /* ---------- 연습 문제 ---------- */
@@ -411,7 +415,7 @@ button,input{font:inherit;color:inherit}
 
 /* ---------- 소개 쇼케이스 ---------- */
 .showcase{--bg:#0B0C10;--surface:#141519;--sunk:#17181D;--line:rgba(255,255,255,.1);--line-strong:rgba(255,255,255,.28);--fg:#ECECE8;--muted:#A9A9A4;--faint:#6F6F6B;--bracket:#ECECE8;--accent:#8FB0FF;--accent-soft:rgba(143,176,255,.22);background:#0B0C10;color:#ECECE8}
-.showcase .top{background:rgba(11,12,16,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom-color:rgba(255,255,255,.08)}
+.showcase .top{background:rgba(11,12,16,.7);border-bottom-color:rgba(255,255,255,.08)}
 .showcase .theme{display:none}
 .sc-hero{position:relative;overflow:hidden;min-height:640px;display:flex;flex-direction:column;justify-content:center;padding:56px 0 76px}
 .sc-mesh{position:absolute;inset:0;background:radial-gradient(700px 500px at 20% 20%,rgba(31,79,216,.45),transparent 60%),radial-gradient(600px 500px at 85% 30%,rgba(124,58,237,.35),transparent 60%),radial-gradient(800px 400px at 60% 110%,rgba(14,165,164,.25),transparent 60%);filter:saturate(1.1);animation:sc-drift 14s ease-in-out infinite alternate;pointer-events:none}

@@ -644,10 +644,7 @@ def topbar(cur="", path="/", alt=True):
 '''
 
 def footer():
-    nav = "".join(f'<a href="{P(h)}">{t}</a>' for h, t in U["foot"])
-    return f'''<footer class="wrap foot"><span>© 2026 {L["site"]}</span>
-<nav aria-label="{U["foot_aria"]}">{nav}</nav></footer>
-'''
+    return sc_footer(SC[L["code"]])
 
 def ad():
     if not (ADSENSE_CLIENT and AD_SLOT): return ""

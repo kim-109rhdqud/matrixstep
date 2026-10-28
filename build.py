@@ -723,6 +723,9 @@ def home():
     s += opsnav("inverse", home=True) + "\n" + U["calc"] + ad() + home_extras() + "</main>\n" + footer() + PAGE_END
     write("/", s)
 
+OP_SYM = {"inverse": "A⁻¹", "det": "|A|", "mul": "A·B", "add": "A + B", "sub": "A − B", "scalar": "kA", "transpose": "Aᵀ", "rref": "[I|·]", "solve": "Ax = b",
+          "rank": "rank", "power": "Aⁿ", "adj": "adj(A)", "eigen": "λ", "diag": "PDP⁻¹", "axb": "AX = B", "gs": "u⊥v", "lu": "LU"}
+
 def calc_hub():
     by = {o["key"]: o for o in L["ops"]}
     ldj = {"@context": "https://schema.org", "@type": "ItemList", "name": U["hub_ld"],
@@ -732,7 +735,7 @@ def calc_hub():
     s += f'<div class="intro"><h1>{U["hub_h1"]}</h1><p>{U["hub_intro"].format(p=L["prefix"])}</p></div>\n'
     for title, keys in U["groups"]:
         s += f'<section class="hub-g"><h2>{title}</h2><div class="grid-ops">'
-        s += "".join(f'<a href="{P("/" + by[k]["slug"] + "/")}"><b>{by[k]["h1"]}</b><span>{e(by[k]["card"])}</span></a>' for k in keys)
+        s += "".join(f'<a href="{P("/" + by[k]["slug"] + "/")}"><span class="sym">{OP_SYM[k]}</span><b>{by[k]["h1"]}</b><span>{e(by[k]["card"])}</span></a>' for k in keys)
         s += "</div></section>\n"
     s += "</main>\n" + footer() + "</body>\n</html>\n"
     write("/calculators/", s)
@@ -755,7 +758,7 @@ def guide_page(g):
     s = head(g["title"] + " | " + L["site"], g["meta"], path, '<script type="application/ld+json">' + json.dumps(ldj, ensure_ascii=False) + "</script>\n"
              + crumbs([(U["crumb_home"], "/"), (U["crumb_guide"], "/guide/"), (g["h1"], path)]), alt=alt)
     s += "<body>\n" + topbar("guide", path, alt) + '<main class="wrap guide-wrap"><article class="doc guide">'
-    s += f'<p class="crumb"><a href="{P("/guide/")}">{U["crumb_guide"]}</a></p><h1>{e(g["h1"])}</h1>'
+    s += f'<p class="crumb"><a href="{P("/guide/")}">{U["crumb_guide"]}</a><span class="sep" aria-hidden="true">·</span><span class="rt">{U["min"].format(m=g["min"])}</span></p><h1>{e(g["h1"])}</h1>'
     s += body
     s += f'<div class="cta-box"><b>{U["cta_t"]}</b><a class="cta" href="{P(g["calc"][1])}">{e(U["cta_b"].format(c=g["calc"][0]))}</a></div>'
     G = L["guides"].BY_SLUG
@@ -779,7 +782,7 @@ def guide_index():
     body = f'<h1>{U["gi_h1"]}</h1><p class="meta">{U["gi_intro"]}</p>'
     for title, items in groups:
         body += f'<section class="glist-g"><h2 class="lbl">{title}</h2><ul class="glist">' + "".join(
-            f'<li><a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span></a></li>' for g in items) + "</ul></section>"
+            f'<li><a href="{P("/guide/" + g["slug"] + "/")}"><b>{e(g["h1"])}</b><span>{e(g["desc"])}</span><em>{U["min"].format(m=g["min"])}</em></a></li>' for g in items) + "</ul></section>"
     s = head(U["gi_title"] + " | " + L["site"], U["gi_meta"], "/guide/") + "<body>\n" + topbar("guide", "/guide/")
     s += f'<main class="wrap"><article class="doc index">{body}</article></main>\n' + footer() + "</body>\n</html>\n"
     write("/guide/", s)
@@ -1041,7 +1044,7 @@ def privacy():
 def notfound():
     """404는 한 파일로 모든 언어를 받아요. 한국어 안내 아래에 영어 안내를 함께 둬요."""
     ko_ops = "".join(f'<li><a href="/{o["slug"]}/"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in OPS_KO)
-    body = ('<h1>페이지를 찾을 수 없어요</h1><p>주소가 바뀌었거나 없는 페이지예요. 아래에서 원하는 계산기를 골라 주세요.</p><ul class="oplist">' + ko_ops + "</ul>"
+    body = ('<p class="big404" aria-hidden="true">404</p><h1>페이지를 찾을 수 없어요</h1><p>주소가 바뀌었거나 없는 페이지예요. 아래에서 원하는 계산기를 골라 주세요.</p><ul class="oplist">' + ko_ops + "</ul>"
             '<p lang="en"><strong>Page not found.</strong> The address may have changed. Go to the <a href="/en/">English matrix calculator</a> or <a href="/en/calculators/">all calculators</a>.</p>')
     s = head("페이지를 찾을 수 없어요 | " + SITE, "요청한 페이지가 없어요.", "/404.html", '<meta name="robots" content="noindex">\n', alt=False) + "<body>\n" + topbar("", "/", alt=False)
     s += f'<main class="wrap"><article class="doc">{body}</article></main>\n' + footer() + "</body>\n</html>\n"

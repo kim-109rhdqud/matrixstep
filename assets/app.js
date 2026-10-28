@@ -833,7 +833,7 @@ function compute(){
 function renderResult(res){
   let h=res.head;
   if(res.chips&&res.chips.length) h+='<div class="chips">'+res.chips.map(c=>'<span class="chip '+c[0]+'">'+esc(c[1])+'</span>').join('')+'</div>';
-  $('#resMain').innerHTML=h;
+  const rm=$('#resMain');rm.innerHTML=h;rm.classList.remove('in');void rm.offsetWidth;rm.classList.add('in');
   S.latex=res.latex||null; $('#copyTex').disabled=!S.latex;
   const steps=res.steps||[],LIM=8,show=S.showAll?steps:steps.slice(0,LIM);
   $('#steps').innerHTML=show.length?show.map((s,i)=>'<li class="step"><span class="no">'+String(i+1).padStart(2,'0')+'</span><div class="sb"><div class="st">'+esc(s.t||'')+'</div>'+

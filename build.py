@@ -843,8 +843,7 @@ def about():
     ncal, ngd = len(L["ops"]), len(L["guides"].ARTICLES)
     ops_list = "".join(f'<li><a href="{P("/" + o["slug"] + "/")}"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in L["ops"])
     if L["code"] == "ko":
-        body = f'''<h1>{SITE} 소개</h1>
-<p>{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
+        body = f'''<p class="sc-intro">{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
 <h2>왜 만들었나요</h2>
 <p>행렬 문제는 답보다 과정이 중요한데, 기존 계산기는 답만 보여주거나 소수로 반올림해 손으로 푼 풀이와 비교하기 어려웠어요. 또 광고와 메뉴가 많아 정작 계산기를 찾기 힘든 경우도 많았고요. 그래서 계산기와 결과만 먼저 보이고, 설명은 필요할 때 펼쳐 보는 단순한 페이지로 만들었어요.</p>
 <h2>어떻게 계산하나요</h2><ul>
@@ -854,7 +853,7 @@ def about():
 <li><strong>브라우저 안에서만 계산</strong>: 입력한 행렬은 서버로 전송되지 않아요. 계산은 모두 사용 중인 브라우저에서 이루어져요.</li>
 <li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
 <h2>정확성은 어떻게 확인하나요</h2>
-<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 2,400여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
+<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 4,000여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
 <h2>무엇이 있나요</h2>
 <p>역행렬, 행렬식, 곱셈, RREF, 연립방정식, 계수, 거듭제곱, 수반행렬, 고윳값, 대각화, LU 분해, 그람-슈미트까지 <a href="/calculators/">계산기 {ncal}종</a>이 있고, 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요.</p>
 <h2 id="contact">문의</h2>
@@ -862,8 +861,7 @@ def about():
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
         meta = f"{SITE}가 행렬을 분수로 정확하게 계산하는 방법, 결과를 검증하는 방식, 제공하는 계산기 {ncal}종과 가이드 {ngd}편, 문의 방법을 안내해요."
     else:
-        body = f'''<h1>About {SITE_EN}</h1>
-<p>{SITE_EN} (matrixstep.net) is a free matrix calculator built for the computations that come up in linear algebra and engineering math courses. Rather than piling on features, it focuses on one thing: giving an exact answer and a working you can actually read. There is nothing to install and no account to create.</p>
+        body = f'''<p class="sc-intro">{SITE_EN} (matrixstep.net) is a free matrix calculator built for the computations that come up in linear algebra and engineering math courses. Rather than piling on features, it focuses on one thing: giving an exact answer and a working you can actually read. There is nothing to install and no account to create.</p>
 <h2>Why it exists</h2>
 <p>In matrix problems the method matters more than the answer, yet most calculators either show only the answer or round everything to decimals, which makes it hard to compare with work done by hand. Many are also crowded with ads and menus that bury the calculator itself. {SITE_EN} shows the calculator and the result first; explanations unfold only when you ask for them.</p>
 <h2>How it calculates</h2><ul>
@@ -873,14 +871,108 @@ def about():
 <li><strong>Everything in your browser</strong>: the matrices you type are never sent to a server. All computation happens locally.</li>
 <li><strong>LaTeX export</strong>: copy any result matrix as LaTeX and paste it straight into your notes or homework.</li></ul>
 <h2>How accuracy is checked</h2>
-<p>Every deployment runs an automated check. About 2,400 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
+<p>Every deployment runs an automated check. About 4,000 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
 <h2>What is here</h2>
 <p>There are <a href="/en/calculators/">{ncal} calculators</a>, from inverses, determinants and multiplication to RREF, linear systems, rank, powers, adjugates, LU, eigenvalues, diagonalization and Gram-Schmidt, and the <a href="/en/guide/">guides</a> explain the ideas behind them with worked examples.</p>
 <h2 id="contact">Contact</h2>
 <p>For bug reports, feature requests or partnership enquiries, email:</p>
 <div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''
         meta = f"How {SITE_EN} computes matrices in exact fractions, how results are verified, the {ncal} calculators and {ngd} guides it offers, and how to get in touch."
-    doc_page("/about/", U["about_title"], meta, body, "about")
+    showcase_page(body, meta)
+
+SC = {
+ "ko": dict(eyebrow="17 CALCULATORS · EXACT FRACTIONS", h1a="행렬을", h1b="정확하게.",
+   lead="반올림 없는 분수 계산, 한 줄씩 보이는 행 연산. 역행렬·행렬식·고윳값·대각화·LU까지, 선형대수 수업에 필요한 전부.",
+   cta="지금 계산하기", cta2="연습 문제", cards_h="17가지 계산기", all="모두 보기 →",
+   fl1="A⁻¹ · 3×3", fl2="λ · 고윳값", fl2b="p(λ) = λ² − 7λ + 10", fl3="R₂ ← R₂ − 2R₁",
+   feats=[("1/3", "0.333…이 아니라 1/3", "모든 값을 분수로 들고 있어서 반올림 오차가 아예 생기지 않아요."),
+          ("08", "모든 단계를 한 줄씩", "어떤 행에 무엇을 곱해 뺐는지, 시험지에 옮겨 적을 수 있게 보여줘요."),
+          ("0 ms", "서버 없음, 전송 없음", "계산은 전부 브라우저 안에서. 입력한 행렬은 어디에도 가지 않아요.")],
+   desc={"inverse": "가우스-조던 · 수반행렬", "det": "여인수 · 사루스 · 소거", "rref": "기약 행사다리꼴", "eigen": "특성다항식 · 고유벡터",
+         "diag": "P, D, P⁻¹ 검산까지", "lu": "둘리틀 · PA = LU", "gs": "직교 기저"},
+   pr="연습 문제", pr_d="채점 · 인쇄 · 워드", more="더 알아보기",
+   f_tag="분수 그대로, 단계별로.", f_sub="계산은 전부 브라우저 안에서 끝나고 입력값은 어디에도 전송되지 않아요.",
+   f_cols=[("CALCULATORS", [("/inverse/", "역행렬"), ("/determinant/", "행렬식"), ("/rref/", "RREF · 연립방정식"), ("/eigenvalues/", "고윳값 · 대각화"), ("/calculators/", "17가지 모두 보기 →")]),
+           ("LEARN", [("/guide/", "가이드 16편"), ("/practice/", "연습 문제"), ("/practice/", "문제지 인쇄 · 워드")]),
+           ("ABOUT", [("/about/", "소개"), ("/about/#contact", "문의"), ("/privacy/", "개인정보처리방침")])],
+   f_badge="4,060 케이스 자동 검증 통과"),
+ "en": dict(eyebrow="17 CALCULATORS · EXACT FRACTIONS", h1a="Matrices,", h1b="exactly.",
+   lead="Exact fractions with no rounding, and every row operation shown one line at a time. Inverses, determinants, eigenvalues, diagonalization, LU: everything a linear algebra course needs.",
+   cta="Start calculating", cta2="Practice problems", cards_h="17 calculators", all="See all →",
+   fl1="A⁻¹ · 3×3", fl2="λ · eigenvalues", fl2b="p(λ) = λ² − 7λ + 10", fl3="R₂ ← R₂ − 2R₁",
+   feats=[("1/3", "1/3, not 0.333…", "Every value is kept as a fraction, so rounding error never appears."),
+          ("08", "Every step, one line each", "Which row, multiplied by what, subtracted from where: ready to copy onto your exam paper."),
+          ("0 ms", "No server, nothing sent", "All computation happens in your browser. The matrices you type never leave it.")],
+   desc={"inverse": "Gauss-Jordan · adjugate", "det": "Cofactors · Sarrus · elimination", "rref": "Reduced row echelon form", "eigen": "Characteristic polynomial · eigenvectors",
+         "diag": "P, D, P⁻¹ with a check", "lu": "Doolittle · PA = LU", "gs": "Orthogonal basis"},
+   pr="Practice", pr_d="Grade · print · Word", more="Learn more",
+   f_tag="Exact fractions, step by step.", f_sub="Everything is computed in your browser and nothing you type is sent anywhere.",
+   f_cols=[("CALCULATORS", [("/inverse/", "Inverse"), ("/determinant/", "Determinant"), ("/rref/", "RREF · linear systems"), ("/eigenvalues/", "Eigenvalues · diagonalization"), ("/calculators/", "All 17 →")]),
+           ("LEARN", [("/guide/", "16 guides"), ("/practice/", "Practice problems"), ("/practice/", "Print · Word worksheets")]),
+           ("ABOUT", [("/about/", "About"), ("/about/#contact", "Contact"), ("/privacy/", "Privacy")])],
+   f_badge="4,060 random cases verified on every deploy"),
+}
+SC_SYM = {"inverse": "A⁻¹", "det": "|A|", "rref": "[I|·]", "eigen": "λ", "diag": "PDP⁻¹", "lu": "LU", "gs": "u⊥v"}
+
+def mxh(rows, cls=""):
+    c = len(rows[0])
+    return (f'<span class="mx {cls}"><span class="mx-g" style="grid-template-columns:repeat({c},auto)">'
+            + "".join(f'<span class="mx-c">{v}</span>' for r in rows for v in r) + "</span></span>")
+
+def showcase_page(doc_body, meta):
+    """소개 페이지: 검정 쇼케이스(히어로·계산기 카드·특징) + 기존 소개 글 + 4열 푸터."""
+    T = SC[L["code"]]; path = "/about/"
+    byk = {o["key"]: o for o in L["ops"]}
+    force = '<script>document.documentElement.dataset.theme="dark"</script>\n'
+    s = head(U["about_title"] + " | " + L["site"], meta, path, force + crumbs([(U["crumb_home"], "/"), (U["about_title"], path)]))
+    s += '<body class="showcase">\n' + topbar("about", path)
+    ops_tick = "".join(f"<span>{e(o['label'])}</span>" for o in L["ops"]) * 2
+    cards = "".join(f'<a href="{P("/" + byk[k]["slug"] + "/")}" class="sc-card"><span class="sc-sym">{SC_SYM[k]}</span><b>{e(byk[k]["label"])}</b><span>{e(T["desc"][k])}</span></a>'
+                    for k in ["inverse", "det", "rref", "eigen", "diag", "lu", "gs"])
+    cards += f'<a href="{P("/practice/")}" class="sc-card sc-card-pr"><span class="sc-sym">∑</span><b>{e(T["pr"])}</b><span>{e(T["pr_d"])}</span></a>'
+    feats = "".join(f'<div class="sc-feat"><span class="sc-big">{e(a)}</span><b>{e(b)}</b><span>{e(c)}</span></div>' for a, b, c in T["feats"])
+    s += f'''<section class="sc-hero" aria-label="{e(U["about_title"])}">
+<div class="sc-mesh" aria-hidden="true"></div><div class="sc-grid" aria-hidden="true"></div><div class="sc-dots" aria-hidden="true"></div>
+<div class="wrap sc-hero-in">
+<div class="sc-copy">
+<span class="sc-eyebrow"><span aria-hidden="true"></span>{e(T["eyebrow"])}</span>
+<h1><span class="gtxt">{e(T["h1a"])}</span><br><span class="gtxt">{e(T["h1b"])}</span></h1>
+<p>{e(T["lead"])}</p>
+<div class="sc-ctas"><a href="{P("/inverse/")}" class="sc-cta">{e(T["cta"])} <span aria-hidden="true">→</span></a><a href="{P("/practice/")}" class="sc-ghost">{e(T["cta2"])}</a></div>
+</div>
+<div class="sc-stage" aria-hidden="true">
+<div class="sc-fl sc-fl1"><div class="sc-shine"></div><div class="sc-fl-l">{e(T["fl1"])}</div>{mxh([["0","0","1"],["−2","1","3"],["3","−1","−5"]])}</div>
+<div class="sc-fl sc-fl2"><div class="sc-fl-l c2">{e(T["fl2"])}</div><div class="sc-fl-v">λ = 2, 5</div><div class="sc-fl-s">{e(T["fl2b"])}</div></div>
+<div class="sc-fl sc-fl3"><div class="sc-fl-l c3">{e(T["fl3"])}</div>{mxh([["1","<i>½</i>"],["0","1"]])}</div>
+</div>
+</div>
+<div class="sc-tickwrap"><div class="sc-tick" aria-hidden="true">{ops_tick}</div></div>
+</section>
+<main class="wrap sc-main">
+<section class="sc-cards" aria-label="{e(T["cards_h"])}">
+<div class="sc-cards-h"><h2>{e(T["cards_h"])}</h2><a href="{P("/calculators/")}">{e(T["all"])}</a></div>
+<div class="sc-grid4">{cards}</div>
+</section>
+<section class="sc-feats" aria-label="{e(T["more"])}">{feats}</section>
+<article class="doc sc-doc">{doc_body}</article>
+</main>
+''' + sc_footer(T) + "</body>\n</html>\n"
+    write(path, s)
+
+def sc_footer(T):
+    cols = "".join(f'<nav aria-label="{c}"><span class="lbl">{c}</span>' + "".join(f'<a href="{P(h)}">{e(t)}</a>' for h, t in links) + "</nav>" for c, links in T["f_cols"])
+    other = "en" if L["code"] == "ko" else "ko"
+    langs = (f'<a class="on" href="{P("/about/")}">{"한국어" if L["code"] == "ko" else "English"}</a>'
+             f'<a href="{LANGS[other]["prefix"]}/about/" lang="{other}" hreflang="{other}">{"English" if L["code"] == "ko" else "한국어"}</a>')
+    return f'''<footer class="sc-foot">
+<div class="wrap sc-foot-in">
+<div class="sc-brand"><a class="brand" href="{P("/")}"><span class="mark" aria-hidden="true">[ ]</span>{L["site"]}</a><p>{e(T["f_tag"])}<br>{e(T["f_sub"])}</p><div class="sc-langs">{langs}</div></div>
+{cols}
+</div>
+<div class="wrap sc-foot-b"><span>© 2026 {L["site"]} · matrixstep.net</span><span class="sc-badge"><span aria-hidden="true"></span>{e(T["f_badge"])}</span></div>
+</footer>
+'''
+
 
 def privacy():
     if L["code"] == "ko":

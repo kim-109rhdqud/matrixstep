@@ -798,27 +798,37 @@ def practice():
     qa = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in U["pr_faq"])
     s = head(U["pr_title"] + " | " + L["site"], U["pr_meta"], path, ld_) + "<body>\n" + topbar("practice", path) + '<main class="wrap">\n'
     s += f'<div class="intro"><h1>{e(U["pr_h1"])}</h1><p>{e(U["pr_intro"])}</p></div>\n'
-    s += f'''<section class="panel pr-cfg" aria-label="{e(U["pr_tools"])}">
-<div class="pr-row">
-<label><span class="lbl">{e(U["pr_topic"])}</span><select id="topic" class="method">{opts(T["topics"])}</select></label>
-<label><span class="lbl">{e(U["pr_size"])}</span><select id="size" class="method">{opts(T["sizes"])}</select></label>
-<label><span class="lbl">{e(U["pr_count"])}</span><select id="count" class="method"><option value="5">5</option><option value="10">10</option><option value="20">20</option></select></label>
-<button type="button" class="ghost" id="newBtn">{e(T["new"])}</button>
+    seg = lambda id_, xs, aria: f'<div class="seg pr-seg" id="{id_}" role="group" aria-label="{e(aria)}">' + "".join(f'<button type="button" data-v="{v}" aria-pressed="false">{e(t)}</button>' for v, t in xs) + "</div>"
+    pills = "".join(f'<button type="button" data-v="{v}" aria-pressed="false">{e(t)}</button>' for v, t in T["topics"])
+    ico = dict(new='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 0 1 15.5-6.3L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.5 6.3L3 16M3 21v-5h5"/></svg>',
+               print='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>',
+               docx='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>',
+               share='<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1.5 1.5M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1.5-1.5"/></svg>')
+    s += f'''<section class="pr-top" aria-label="{e(U["pr_tools"])}">
+<nav class="pr-topics" id="topic" aria-label="{e(U["pr_topic"])}">{pills}</nav>
+<div class="pr-ctl">
+<div class="pr-ctl-l">
+<span class="pr-f"><span class="lbl">{e(U["pr_size"])}</span>{seg("size", T["sizes"], U["pr_size"])}</span>
+<span class="pr-f"><span class="lbl">{e(U["pr_count"])}</span>{seg("count", [("5", "5"), ("10", "10"), ("20", "20")], U["pr_count"])}</span>
+<button type="button" class="ghost" id="newBtn">{ico["new"]}{e(T["new"])}</button>
 </div>
-<div class="pr-row pr-tools">
-<button type="button" class="ghost" id="printBtn">{e(T["print"])}</button>
-<button type="button" class="ghost" id="docxBtn">{e(T["docx"])}</button>
+<div class="pr-ctl-r">
+<button type="button" class="ghost" id="printBtn">{ico["print"]}{e(T["print"])}</button>
+<button type="button" class="ghost" id="docxBtn">{ico["docx"]}{e(T["docx"])}</button>
 <label class="pr-chk"><input type="checkbox" id="withAns"> {e(T["key"])}</label>
-<button type="button" class="ghost" id="shareBtn">{e(T["share"])}</button>
+<button type="button" class="ghost" id="shareBtn">{ico["share"]}{e(T["share"])}</button>
 </div>
-<p class="hint">{e(U["pr_note"])}</p>
+</div>
 </section>
 <div class="sheet">
-<div class="sheet-h"><h2 id="sheetT"></h2><p class="sheet-name">{e(U["pr_name"])}</p></div>
-<div class="pr-bar"><button type="button" class="ghost" id="gradeBtn">{e(T["grade"])}</button><button type="button" class="ghost" id="showAns">{e(T["show"])}</button><span class="score" id="score" aria-live="polite"></span></div>
-<div id="plist"><noscript><p class="err">JavaScript</p></noscript></div>
+<header class="sheet-h">
+<div class="sheet-t"><span class="lbl" id="sheetL"></span><h2 id="sheetT"></h2><p class="sheet-name">{e(U["pr_name"])}</p></div>
+<div class="pr-bar"><span class="score" id="score" aria-live="polite"></span><button type="button" class="ghost" id="showAns">{e(T["show"])}</button><button type="button" class="ghost primary" id="gradeBtn">{e(T["grade"])}</button></div>
+</header>
+<div id="plist" class="pgrid"><noscript><p class="err">JavaScript</p></noscript></div>
 <section class="keysheet" aria-label="{e(T["answers"])}"><h2>{e(T["answers"])}</h2><div id="keylist"></div></section>
 </div>
+<p class="hint pr-note">{e(U["pr_note"])}</p>
 {ad()}<section class="extras" aria-label="{U["extras_aria"]}">{fold(U["fold_faq"], f'<dl class="qa">{qa}</dl>')}</section>
 </main>
 ''' + footer() + f'<div class="toast" id="toast" role="status" hidden></div>\n<script src="{PRACTICE_URL}" defer></script>\n</body>\n</html>\n'

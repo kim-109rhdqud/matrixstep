@@ -6,7 +6,7 @@ const PS={ko:{
      power:k=>'다음 행렬의 거듭제곱 A'+SUP[k]+'을 구하세요.',rref:'다음 행렬의 기약 행사다리꼴(RREF)을 구하세요.',solve:'다음 연립방정식을 푸세요.',rank:'다음 행렬의 계수(rank)를 구하세요.',eigen:'다음 행렬의 고윳값을 모두 구하세요.'},
   sheetTitle:(tp,n)=>'행렬 연습 문제 · '+tp+' '+n+'문제', nameLine:'이름: ____________    날짜: ____________',
   answers:'정답', check:'확인', checkAll:'전체 채점', score:(a,b)=>a+' / '+b+' 정답', correct:'정답이에요', wrong:'아쉬워요. 정답은 아래에 있어요.',
-  answerIs:'정답', seeSteps:'계산기에서 풀이 보기', eigenHint:'쉼표로 구분해 입력 (예: 2, 5)', solveHint:'x, y, z 순서로 입력',
+  answerIs:'정답', seeSteps:'계산기에서 풀이 보기', eigenHint:'쉼표로 구분 · 예: 2, 5', solveHint:'x, y, z 순서로 입력',
   newSet:'새 문제', print:'인쇄 · PDF 저장', docx:'워드(.docx) 내려받기', withAns:'정답지 포함', share:'문제 링크 복사', shared:'이 문제 세트의 링크를 복사했어요',
   showAns:'정답 보기', hideAns:'정답 숨기기', vars:['x','y','z','w'], docName:'행렬_연습문제', generating:'파일을 만들고 있어요…', made:'내려받기를 시작했어요',
   inputEmpty:'답을 입력해 주세요'
@@ -17,7 +17,7 @@ const PS={ko:{
      power:k=>'Compute A'+SUP[k]+'.',rref:'Find the reduced row echelon form (RREF).',solve:'Solve the linear system.',rank:'Find the rank.',eigen:'Find all eigenvalues.'},
   sheetTitle:(tp,n)=>'Matrix practice · '+tp+' · '+n+' problems', nameLine:'Name: ____________    Date: ____________',
   answers:'Answers', check:'Check', checkAll:'Grade all', score:(a,b)=>a+' / '+b+' correct', correct:'Correct', wrong:'Not quite. The answer is below.',
-  answerIs:'Answer', seeSteps:'See the steps in the calculator', eigenHint:'Comma-separated (e.g. 2, 5)', solveHint:'Enter x, y, z in order',
+  answerIs:'Answer', seeSteps:'See the steps in the calculator', eigenHint:'Comma-separated, e.g. 2, 5', solveHint:'Enter x, y, z in order',
   newSet:'New set', print:'Print · Save as PDF', docx:'Download Word (.docx)', withAns:'Include answer key', share:'Copy link to this set', shared:'Link to this problem set copied',
   showAns:'Show answers', hideAns:'Hide answers', vars:['x','y','z','w'], docName:'matrix_practice', generating:'Preparing the file…', made:'Download started',
   inputEmpty:'Enter an answer'
@@ -106,17 +106,18 @@ let SET=[],CFG={topic:'mix',size:'mix',count:10,seed:1},SHOW=false;
 function render(){
   const list=$('#plist');let h='';
   SET.forEach((p,i)=>{
-    h+='<article class="prob" data-i="'+i+'"><div class="prob-h"><span class="pno">'+(i+1)+'</span><p>'+esc(stmt(p))+'</p></div>'+given(p)
-      +'<div class="pans"><div class="pans-in">'+inputHtml(p,i)+'<button type="button" class="ghost chk">'+ps('check')+'</button></div>'
-      +'<div class="verdict" hidden></div><div class="key"'+(SHOW?'':' hidden')+'><span class="lbl">'+ps('answerIs')+'</span>'+ansHtml(p.ans)+' <a href="'+calcLink(p)+'">'+ps('seeSteps')+' →</a></div></div></article>';
+    h+='<article class="prob" data-i="'+i+'"><div class="prob-h"><span class="pno">'+String(i+1).padStart(2,'0')+'</span><p>'+esc(stmt(p))+'</p></div><div class="pgiven">'+given(p)+'</div>'
+      +'<div class="pans"><div class="pans-in">'+inputHtml(p,i)+'</div><button type="button" class="ghost chk">'+ps('check')+'</button></div>'
+      +'<div class="verdict" hidden></div><div class="key"'+(SHOW?'':' hidden')+'><span class="lbl">'+ps('answerIs')+'</span>'+ansHtml(p.ans)+' <a href="'+calcLink(p)+'">'+ps('seeSteps')+' →</a></div></article>';
   });
   list.innerHTML=h;$('#score').textContent='';
   $('#sheetT').textContent=ps('sheetTitle',ps('topics')[CFG.topic]+(CFG.size==='mix'?'':' '+ps('sizes')[CFG.size]),SET.length);
+  $('#sheetL').textContent='WORKSHEET · #'+CFG.seed;
   $('#showAns').textContent=SHOW?ps('hideAns'):ps('showAns');
   renderKey();
 }
 function renderKey(){ // 인쇄용 정답지
-  $('#keylist').innerHTML=SET.map((p,i)=>'<div class="krow"><span class="pno">'+(i+1)+'</span>'+ansHtml(p.ans)+'</div>').join('');
+  $('#keylist').innerHTML=SET.map((p,i)=>'<div class="krow"><span class="pno">'+String(i+1).padStart(2,'0')+'</span>'+ansHtml(p.ans)+'</div>').join('');
 }
 function parseAns(p,el){
   const a=p.ans,ins=[...el.querySelectorAll('.pin')];
@@ -126,10 +127,10 @@ function parseAns(p,el){
   if(a.kind==='vector')return v;
   const c=a.v[0].length;return a.v.map((_,i)=>v.slice(i*c,i*c+c));
 }
-function check(i){
+function check(i,quiet){
   const p=SET[i],el=$('.prob[data-i="'+i+'"]'),got=parseAns(p,el),vd=el.querySelector('.verdict'),a=p.ans;
   el.querySelectorAll('.pin').forEach(x=>x.classList.remove('bad'));
-  if(got===null){vd.hidden=false;vd.className='verdict warn';vd.textContent=ps('inputEmpty');return null}
+  if(got===null){if(quiet){vd.hidden=true;return null}vd.hidden=false;vd.className='verdict warn';vd.textContent=ps('inputEmpty');return null}
   let ok;
   if(a.kind==='scalar')ok=got.eq(a.v);
   else if(a.kind==='list'||a.kind==='vector'){ok=got.length===a.v.length&&got.every((x,j)=>x.eq(a.v[j]));if(a.kind==='vector')el.querySelectorAll('.pin').forEach((x,j)=>{if(!got[j].eq(a.v[j]))x.classList.add('bad')})}
@@ -138,7 +139,7 @@ function check(i){
   el.querySelector('.key').hidden=ok&&!SHOW;el.dataset.ok=ok?'1':'0';
   return ok;
 }
-function checkAll(){let n=0,c=0;SET.forEach((_,i)=>{const r=check(i);if(r!==null){n++;if(r)c++}});$('#score').textContent=ps('score',c,SET.length)}
+function checkAll(){let n=0,c=0;SET.forEach((_,i)=>{const r=check(i,true);if(r!==null){n++;if(r)c++}});$('#score').textContent=ps('score',c,SET.length)}
 
 /* 설정 ↔ 해시 */
 function readHash(){
@@ -152,7 +153,6 @@ function readHash(){
 function writeHash(){history.replaceState(null,'','#t='+CFG.topic+'&n='+CFG.size+'&c='+CFG.count+'&s='+CFG.seed)}
 function build(newSeed){
   if(newSeed)CFG.seed=Math.floor(Math.random()*1e9);
-  CFG.topic=$('#topic').value;CFG.size=$('#size').value;CFG.count=+$('#count').value;
   SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();
 }
 
@@ -223,9 +223,9 @@ function download(){
 function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>{el.hidden=true},1800)}
 function copyText(v,okMsg){const fb=()=>{const ta=document.createElement('textarea');ta.value=v;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(okMsg)};try{navigator.clipboard.writeText(v).then(()=>toast(okMsg),fb)}catch(e){fb()}}
 readHash();
-$('#topic').value=CFG.topic;$('#size').value=CFG.size;$('#count').value=String(CFG.count);
-SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();
-['#topic','#size','#count'].forEach(s=>$(s).addEventListener('change',()=>build(true)));
+function paintCfg(){[['#topic',CFG.topic],['#size',CFG.size],['#count',String(CFG.count)]].forEach(([id,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))))}
+paintCfg();SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();
+[['#topic','topic'],['#size','size'],['#count','count']].forEach(([id,k])=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;CFG[k]=k==='count'?+b.dataset.v:b.dataset.v;paintCfg();build(true)}));
 $('#newBtn').addEventListener('click',()=>build(true));
 $('#printBtn').addEventListener('click',()=>{document.body.classList.toggle('print-key',$('#withAns').checked);window.print()});
 $('#docxBtn').addEventListener('click',download);

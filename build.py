@@ -502,8 +502,8 @@ UI_KO = dict(
     home_h1="행렬 계산기", home_intro="역행렬부터 연립방정식까지, 분수로 정확하게 계산하고 풀이 과정을 보여드려요.",
     home_about=("<p>{site}는 대학 선형대수에서 자주 쓰는 행렬 계산을 분수로 정확하게 풀고, 풀이 과정을 단계별로 보여주는 무료 계산기예요. "
                 "반올림 오차 없이 1/3 같은 정확한 값으로 계산하고, 결과 행렬은 LaTeX로 복사할 수 있어요.</p>"
-                "<p>제공하는 계산기: {ops}</p>"
-                '<p><a href="{p}/calculators/">모든 계산기 보기</a> · <a href="{p}/guide/">개념 가이드 보기</a></p>'),
+                '<div class="tags">{ops}</div>'
+                '<div class="btnrow"><a class="ghost" href="{p}/calculators/">모든 계산기 보기</a><a class="ghost" href="{p}/guide/">개념 가이드</a><a class="ghost" href="{p}/practice/">연습 문제</a></div>'),
     home_faq=[("몇 × 몇 행렬까지 계산할 수 있나요?", "최대 6×6까지 입력할 수 있어요. 곱셈과 연립방정식은 계산기마다 가능한 크기가 조금씩 달라요."),
               ("계산 결과는 정확한가요?", "모든 값을 분수로 저장해 계산하기 때문에 반올림 오차가 생기지 않아요. 소수 버튼은 보여주는 방식만 바꿔요."),
               ("입력한 행렬이 서버로 전송되나요?", "아니요. 계산은 모두 브라우저 안에서 이루어지고 입력값은 어디에도 전송되지 않아요.")],
@@ -544,8 +544,8 @@ UI_EN = dict(
     home_h1="Matrix Calculator", home_intro="From inverses to linear systems: exact fractions, every step shown.",
     home_about=("<p>{site} is a free matrix calculator for the computations you meet in a linear algebra course. It works in exact fractions, so 1/3 stays 1/3 instead of 0.3333…, and it shows every step of the working. "
                 "Results can be copied as LaTeX.</p>"
-                "<p>Calculators: {ops}</p>"
-                '<p><a href="{p}/calculators/">All calculators</a> · <a href="{p}/guide/">Concept guides</a></p>'),
+                '<div class="tags">{ops}</div>'
+                '<div class="btnrow"><a class="ghost" href="{p}/calculators/">All calculators</a><a class="ghost" href="{p}/guide/">Concept guides</a><a class="ghost" href="{p}/practice/">Practice problems</a></div>'),
     home_faq=[("What is the largest matrix I can enter?", "Up to 6×6. For multiplication and linear systems the exact limits depend on the operation."),
               ("Are the results exact?", "Yes. Every value is stored as a fraction, so there is no rounding error. The Decimal button only changes how results are displayed."),
               ("Is my matrix sent to a server?", "No. Everything is computed in your browser and nothing you type is transmitted anywhere.")],
@@ -708,7 +708,7 @@ def op_page(o):
     write(path, s)
 
 def home_extras():
-    ops = " · ".join(f'<a href="{P("/" + o["slug"] + "/")}">{o["label"]}</a>' for o in L["ops"])
+    ops = "".join(f'<a href="{P("/" + o["slug"] + "/")}"><i>{OP_SYM[o["key"]]}</i>{o["label"]}</a>' for o in L["ops"])
     about = U["home_about"].format(site=L["site"], ops=ops, p=L["prefix"])
     dl = "".join(f"<dt>{e(q)}</dt><dd>{e(a)}</dd>" for q, a in U["home_faq"])
     return (f'<section class="extras" aria-label="{U["extras_aria"]}">\n' + fold(U["fold_about"], about) + fold(U["fold_howto"], U["howto"])

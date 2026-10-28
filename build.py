@@ -838,44 +838,59 @@ def doc_page(path, title, meta, body, cur=""):
 
 def about():
     ncal, ngd = len(L["ops"]), len(L["guides"].ARTICLES)
-    ops_list = "".join(f'<li><a href="{P("/" + o["slug"] + "/")}"><b>{o["h1"]}</b><span>{e(o["card"])}</span></a></li>' for o in L["ops"])
     if L["code"] == "ko":
-        body = f'''<p class="sc-intro">{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.</p>
-<h2>왜 만들었나요</h2>
-<p>행렬 문제는 답보다 과정이 중요한데, 기존 계산기는 답만 보여주거나 소수로 반올림해 손으로 푼 풀이와 비교하기 어려웠어요. 또 광고와 메뉴가 많아 정작 계산기를 찾기 힘든 경우도 많았고요. 그래서 계산기와 결과만 먼저 보이고, 설명은 필요할 때 펼쳐 보는 단순한 페이지로 만들었어요.</p>
-<h2>어떻게 계산하나요</h2><ul>
-<li><strong>분수로 정확한 계산</strong>: 모든 값을 정수 분자·분모로 저장해 계산해요. 0.3333… 같은 반올림 오차 없이 1/3처럼 정확한 값이 나오고, 소수 표시는 보여주는 방식만 바꿔요.</li>
-<li><strong>교과서와 같은 방법</strong>: 역행렬과 RREF는 가우스-조던 소거법, 행렬식은 2×2 공식·3×3 여인수 전개·4×4 이상은 행 소거로 계산해요. 수업에서 배우는 순서 그대로예요.</li>
-<li><strong>단계별 풀이</strong>: 행 연산 하나하나와 그때의 행렬을 순서대로 보여줘서, 어디서 계산이 틀렸는지 바로 찾을 수 있어요.</li>
-<li><strong>브라우저 안에서만 계산</strong>: 입력한 행렬은 서버로 전송되지 않아요. 계산은 모두 사용 중인 브라우저에서 이루어져요.</li>
-<li><strong>LaTeX 복사</strong>: 결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.</li></ul>
-<h2>정확성은 어떻게 확인하나요</h2>
-<p>계산기 코드는 배포할 때마다 자동 검사를 거쳐요. 무작위로 만든 행렬 4,000여 개를 계산기와 똑같이 풀게 한 뒤, 별도로 작성한 분수 계산 코드로 역행렬은 원래 행렬과 곱해 단위행렬이 되는지, 연립방정식의 해는 원래 식에 대입해 맞는지, 행렬식과 RREF는 독립 계산 결과와 같은지 확인해요. 검사를 통과하지 못하면 배포되지 않아요. 가이드에 실린 예제도 글을 쓸 때 같은 방식으로 다시 계산해 숫자를 맞춘 뒤 올려요. 그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.</p>
-<h2>무엇이 있나요</h2>
-<p>역행렬, 행렬식, 곱셈, RREF, 연립방정식, 계수, 거듭제곱, 수반행렬, 고윳값, 대각화, LU 분해, 그람-슈미트까지 <a href="/calculators/">계산기 {ncal}종</a>이 있고, 개념은 <a href="/guide/">가이드</a>에서 예제와 함께 설명해요.</p>
-<h2 id="contact">문의</h2>
-<p>오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.</p>
-<div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>운영자 {e(OPERATOR)} · <a href="/privacy/">개인정보처리방침</a></span></div>'''
+        story = dict(
+            intro=f"{SITE}(matrixstep.net)는 대학 선형대수와 공업수학 수업에서 자주 쓰는 행렬 계산을 깔끔한 화면에서 할 수 있도록 만든 무료 도구예요. 기능을 넓게 늘리기보다 행렬 계산 하나에 집중해, 정확한 답과 읽기 쉬운 풀이 과정을 보여주는 것을 목표로 해요. 가입이나 설치 없이 바로 쓸 수 있어요.",
+            why_h="왜 만들었나요", why_q="답보다 과정이 중요한데, 계산기들은 답만 보여줬어요.",
+            why_p="기존 계산기는 답만 보여주거나 소수로 반올림해 손으로 푼 풀이와 비교하기 어려웠어요. 광고와 메뉴가 많아 정작 계산기를 찾기 힘든 경우도 많았고요. 그래서 계산기와 결과만 먼저 보이고, 설명은 필요할 때 펼쳐 보는 단순한 페이지로 만들었어요.",
+            how_h="어떻게 계산하나요",
+            how=[("분수로 정확한 계산", "모든 값을 정수 분자·분모로 저장해 계산해요. 0.3333… 같은 반올림 오차 없이 1/3처럼 정확한 값이 나오고, 소수 표시는 보여주는 방식만 바꿔요."),
+                 ("교과서와 같은 방법", "역행렬과 RREF는 가우스-조던 소거법, 행렬식은 2×2 공식·3×3 여인수 전개·4×4 이상은 행 소거로 계산해요. 수업에서 배우는 순서 그대로예요."),
+                 ("단계별 풀이", "행 연산 하나하나와 그때의 행렬을 순서대로 보여줘서, 어디서 계산이 틀렸는지 바로 찾을 수 있어요."),
+                 ("브라우저 안에서만 계산", "입력한 행렬은 서버로 전송되지 않아요. 계산은 모두 사용 중인 브라우저에서 이루어져요."),
+                 ("LaTeX 복사", "결과 행렬을 LaTeX 코드로 복사해 과제나 노트에 바로 붙여넣을 수 있어요.")],
+            acc_h="정확성은 어떻게 확인하나요",
+            acc=[("4,060", "무작위 행렬", "배포할 때마다 무작위로 만든 행렬 4,000여 개를 계산기 코드로 풀어요."),
+                 ("×2", "독립 검산", "별도로 작성한 분수 계산 코드가 역행렬은 곱해서 단위행렬이 되는지, 해는 대입해 맞는지, 행렬식·RREF는 같은지 확인해요."),
+                 ("0", "허용 오류", "하나라도 틀리면 배포되지 않아요. 가이드의 예제도 글을 쓸 때 같은 방식으로 다시 계산해요.")],
+            acc_p="그래도 틀린 곳을 발견하면 아래 이메일로 알려 주세요. 입력한 행렬을 함께 적어 주시면 빠르게 확인하고 고칠 수 있어요.",
+            what=[(f"/calculators/", f"계산기 {ncal}종", "역행렬부터 LU 분해, 그람-슈미트까지"), ("/guide/", f"가이드 {ngd}편", "예제와 함께 개념 정리"), ("/practice/", "연습 문제", "채점 · 인쇄 · 워드 다운로드")],
+            contact_h="문의", contact_p="오류 제보, 기능 제안, 제휴 문의는 아래 이메일로 보내 주세요.", op=f"운영자 {OPERATOR}", privacy="개인정보처리방침")
         meta = f"{SITE}가 행렬을 분수로 정확하게 계산하는 방법, 결과를 검증하는 방식, 제공하는 계산기 {ncal}종과 가이드 {ngd}편, 문의 방법을 안내해요."
     else:
-        body = f'''<p class="sc-intro">{SITE_EN} (matrixstep.net) is a free matrix calculator built for the computations that come up in linear algebra and engineering math courses. Rather than piling on features, it focuses on one thing: giving an exact answer and a working you can actually read. There is nothing to install and no account to create.</p>
-<h2>Why it exists</h2>
-<p>In matrix problems the method matters more than the answer, yet most calculators either show only the answer or round everything to decimals, which makes it hard to compare with work done by hand. Many are also crowded with ads and menus that bury the calculator itself. {SITE_EN} shows the calculator and the result first; explanations unfold only when you ask for them.</p>
-<h2>How it calculates</h2><ul>
-<li><strong>Exact fractions</strong>: every value is stored as an integer numerator and denominator. You get 1/3, not 0.3333…, and the Decimal button only changes the display.</li>
-<li><strong>Textbook methods</strong>: Gauss-Jordan elimination for inverses and RREF; the 2×2 formula, 3×3 cofactor expansion and row reduction for larger determinants. The same order you learn in class.</li>
-<li><strong>Step-by-step working</strong>: each row operation is shown together with the matrix after it, so you can see exactly where a hand calculation went wrong.</li>
-<li><strong>Everything in your browser</strong>: the matrices you type are never sent to a server. All computation happens locally.</li>
-<li><strong>LaTeX export</strong>: copy any result matrix as LaTeX and paste it straight into your notes or homework.</li></ul>
-<h2>How accuracy is checked</h2>
-<p>Every deployment runs an automated check. About 4,000 randomly generated matrices are pushed through the calculator code, and an independent fraction-arithmetic implementation verifies the results: inverses are multiplied back to confirm they give the identity, solutions of linear systems are substituted into the original equations, and determinants and RREFs are compared against the independent computation. If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written. If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.</p>
-<h2>What is here</h2>
-<p>There are <a href="/en/calculators/">{ncal} calculators</a>, from inverses, determinants and multiplication to RREF, linear systems, rank, powers, adjugates, LU, eigenvalues, diagonalization and Gram-Schmidt, and the <a href="/en/guide/">guides</a> explain the ideas behind them with worked examples.</p>
-<h2 id="contact">Contact</h2>
-<p>For bug reports, feature requests or partnership enquiries, email:</p>
-<div class="contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>Operated by {e(OPERATOR_EN)} · <a href="/en/privacy/">Privacy policy</a></span></div>'''
+        story = dict(
+            intro=f"{SITE_EN} (matrixstep.net) is a free matrix calculator built for the computations that come up in linear algebra and engineering math courses. Rather than piling on features, it focuses on one thing: giving an exact answer and a working you can actually read. There is nothing to install and no account to create.",
+            why_h="Why it exists", why_q="The method matters more than the answer, yet calculators showed only the answer.",
+            why_p="Most calculators either show only the answer or round everything to decimals, which makes it hard to compare with work done by hand. Many are also crowded with ads and menus that bury the calculator itself. So this one shows the calculator and the result first; explanations unfold only when you ask for them.",
+            how_h="How it calculates",
+            how=[("Exact fractions", "Every value is stored as an integer numerator and denominator. You get 1/3, not 0.3333…, and the Decimal button only changes the display."),
+                 ("Textbook methods", "Gauss-Jordan elimination for inverses and RREF; the 2×2 formula, 3×3 cofactor expansion and row reduction for larger determinants. The same order you learn in class."),
+                 ("Step-by-step working", "Each row operation is shown together with the matrix after it, so you can see exactly where a hand calculation went wrong."),
+                 ("Everything in your browser", "The matrices you type are never sent to a server. All computation happens locally."),
+                 ("LaTeX export", "Copy any result matrix as LaTeX and paste it straight into your notes or homework.")],
+            acc_h="How accuracy is checked",
+            acc=[("4,060", "random matrices", "Every deployment pushes about 4,000 randomly generated matrices through the calculator code."),
+                 ("×2", "independent check", "A separate fraction-arithmetic implementation multiplies inverses back to the identity, substitutes solutions into the equations, and compares determinants and RREFs."),
+                 ("0", "errors allowed", "If any check fails, the site is not deployed. The examples in the guides are recomputed the same way when they are written.")],
+            acc_p="If you still find an error, please email the address below with the matrix you entered and it will be fixed promptly.",
+            what=[("/calculators/", f"{ncal} calculators", "From inverses to LU and Gram-Schmidt"), ("/guide/", f"{ngd} guides", "Concepts with worked examples"), ("/practice/", "Practice problems", "Grade · print · Word download")],
+            contact_h="Contact", contact_p="For bug reports, feature requests or partnership enquiries, email:", op=f"Operated by {OPERATOR_EN}", privacy="Privacy policy")
         meta = f"How {SITE_EN} computes matrices in exact fractions, how results are verified, the {ncal} calculators and {ngd} guides it offers, and how to get in touch."
-    showcase_page(body, meta)
+    showcase_page(story, meta)
+
+def story_html(st):
+    how = "".join(f'<div class="sc-how"><span class="sc-no">{i+1:02d}</span><b>{e(t)}</b><p>{e(d)}</p></div>' for i, (t, d) in enumerate(st["how"]))
+    acc = "".join(f'<div class="sc-step"><span class="sc-big">{e(n)}</span><b>{e(t)}</b><p>{e(d)}</p></div>' for n, t, d in st["acc"])
+    what = "".join(f'<a href="{P(h)}" class="sc-what"><b>{e(t)}</b><span>{e(d)}</span><i aria-hidden="true">→</i></a>' for h, t, d in st["what"])
+    return f'''<div class="sc-story">
+<p class="sc-intro">{e(st["intro"])}</p>
+<section class="sc-s sc-why"><div class="sc-s-h"><span class="lbl">01</span><h2>{e(st["why_h"])}</h2></div><div class="sc-split"><p class="sc-quote">{e(st["why_q"])}</p><p>{e(st["why_p"])}</p></div></section>
+<section class="sc-s"><div class="sc-s-h"><span class="lbl">02</span><h2>{e(st["how_h"])}</h2></div><div class="sc-hows">{how}</div></section>
+<section class="sc-s"><div class="sc-s-h"><span class="lbl">03</span><h2>{e(st["acc_h"])}</h2></div><div class="sc-steps">{acc}</div><p class="sc-note">{e(st["acc_p"])}</p></section>
+<section class="sc-s"><div class="sc-whats">{what}</div></section>
+<section class="sc-s" id="contact"><div class="sc-s-h"><span class="lbl">04</span><h2>{e(st["contact_h"])}</h2></div><p class="sc-note">{e(st["contact_p"])}</p>
+<div class="sc-contact"><a href="mailto:{e(EMAIL)}">{e(EMAIL)}</a><span>{e(st["op"])} · <a href="{P("/privacy/")}">{e(st["privacy"])}</a></span></div></section>
+</div>'''
 
 SC = {
  "ko": dict(eyebrow="17 CALCULATORS · EXACT FRACTIONS", h1a="행렬을", h1b="정확하게.",
@@ -951,7 +966,7 @@ def showcase_page(doc_body, meta):
 <div class="sc-grid4">{cards}</div>
 </section>
 <section class="sc-feats" aria-label="{e(T["more"])}">{feats}</section>
-<article class="doc sc-doc">{doc_body}</article>
+{story_html(doc_body)}
 </main>
 ''' + sc_footer(T) + "</body>\n</html>\n"
     write(path, s)

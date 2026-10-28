@@ -1,32 +1,36 @@
 /* 디자인: "정밀한 도구". 웜그레이 바탕 + 흰 패널, 가는 대괄호, 모노 숫자, 강조색 하나.
    구조: 제목 → 연산 탭 → 입력 / 결과 → 단계별 풀이 → 접이식 설명 */
 :root{
+  --glow:1;
+  --bg:#0E0F11; --surface:#17181B; --sunk:#1A1B1F; --sunk-2:#202125;
+  --fg:#F2F2EF; --muted:#9A9A96; --faint:#7C7C78;
+  --line:#26272B; --line-strong:#4A4B50; --bracket:#E6E6E2;
+  --accent:#7EA2FF; --accent-soft:#1B2440; --accent-fg:#0E0F11;
+  --bad:#FF8F78; --bad-soft:#3A1E19; --ok:#8FD9A8; --ok-soft:#16301F; --warn:#F2C46B; --warn-soft:#33270F;
+  --sans:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+  --cell:3.5rem; --r:14px; --r-s:8px;
+  color-scheme:dark;
+}
+/* 기본은 다크. 사용자가 라이트를 고르면(또는 인쇄할 때) 밝은 토큰 */
+:root[data-theme="light"]{
   --glow:0;
   --bg:#F6F6F4; --surface:#FFFFFF; --sunk:#F3F3F0; --sunk-2:#ECECE8;
   --fg:#141414; --muted:#6B6B68; --faint:#8E8E8A;
   --line:#E4E4E0; --line-strong:#C9C9C4; --bracket:#141414;
   --accent:#1F4FD8; --accent-soft:#EEF2FD; --accent-fg:#FFFFFF;
   --bad:#B4321A; --bad-soft:#FCEDEA; --ok:#1B6B3A; --ok-soft:#E9F6EE; --warn:#8A5A00; --warn-soft:#FBF1DC;
-  --sans:'IBM Plex Sans KR','Apple SD Gothic Neo','Malgun Gothic',system-ui,sans-serif;
-  --mono:'IBM Plex Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
-  --cell:3.5rem; --r:14px; --r-s:8px;
+  color-scheme:light;
 }
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0E0F11; --surface:#17181B; --sunk:#1A1B1F; --sunk-2:#202125;
-  --fg:#F2F2EF; --muted:#9A9A96; --faint:#7C7C78;
-  --line:#26272B; --line-strong:#4A4B50; --bracket:#E6E6E2;
-  --accent:#7EA2FF; --accent-soft:#1B2440; --accent-fg:#0E0F11;
-  --bad:#FF8F78; --bad-soft:#3A1E19; --ok:#8FD9A8; --ok-soft:#16301F; --warn:#F2C46B; --warn-soft:#33270F;
-  color-scheme:dark; --glow:1;
+@media print{:root{
+  --glow:0;
+  --bg:#FFFFFF; --surface:#FFFFFF; --sunk:#F3F3F0; --sunk-2:#ECECE8;
+  --fg:#000000; --muted:#444444; --faint:#777777;
+  --line:#D0D0CC; --line-strong:#999999; --bracket:#000000;
+  --accent:#1F4FD8; --accent-soft:#EEF2FD; --accent-fg:#FFFFFF;
+  --bad:#B4321A; --bad-soft:#FCEDEA; --ok:#1B6B3A; --ok-soft:#E9F6EE; --warn:#8A5A00; --warn-soft:#FBF1DC;
+  color-scheme:light;
 }}
-:root[data-theme="dark"]{
-  --bg:#0E0F11; --surface:#17181B; --sunk:#1A1B1F; --sunk-2:#202125;
-  --fg:#F2F2EF; --muted:#9A9A96; --faint:#7C7C78;
-  --line:#26272B; --line-strong:#4A4B50; --bracket:#E6E6E2;
-  --accent:#7EA2FF; --accent-soft:#1B2440; --accent-fg:#0E0F11;
-  --bad:#FF8F78; --bad-soft:#3A1E19; --ok:#8FD9A8; --ok-soft:#16301F; --warn:#F2C46B; --warn-soft:#33270F;
-  color-scheme:dark; --glow:1;
-}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}body{margin:0}img{max-width:100%}[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.6;padding-inline:16px;-webkit-font-smoothing:antialiased}
@@ -53,9 +57,7 @@ button,input{font:inherit;color:inherit}
 .top-nav .lang::after{display:none}
 .theme{width:32px;height:32px;margin-left:2px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:color .15s,border-color .15s,transform .3s}
 .theme:hover{color:var(--fg);border-color:var(--line-strong);transform:rotate(20deg)}
-.theme .sun{display:none}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .theme .sun{display:inline}:root:not([data-theme="light"]) .theme .moon{display:none}}
-:root[data-theme="dark"] .theme .sun{display:inline}:root[data-theme="dark"] .theme .moon{display:none}
+.theme .moon{display:none}
 :root[data-theme="light"] .theme .sun{display:none}:root[data-theme="light"] .theme .moon{display:inline}
 
 /* ---------- 제목 · 연산 탭 ---------- */

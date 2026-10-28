@@ -586,3 +586,27 @@ main.wrap>:nth-child(2){animation-delay:60ms}main.wrap>:nth-child(3){animation-d
 @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .work>.panel:nth-child(2){animation:rise .55s cubic-bezier(.2,.7,.2,1) 120ms both}
 @media (prefers-reduced-motion:reduce){main.wrap>*,.work>.panel,.live-glow,.live-g i,.live-ops b,.live-hl{animation:none}.live-g i:first-child{opacity:1}}
+
+/* ---------- 부드러운 전환 ---------- */
+@view-transition{navigation:auto}
+::view-transition-old(root){animation:vt-out .16s ease-in both}
+::view-transition-new(root){animation:vt-in .22s ease-out both}
+@keyframes vt-out{to{opacity:0}}
+@keyframes vt-in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+body,.top,.panel,.fold,.sheet,.prob,.sc-foot,.ghost,.method,.cells input,.pin,.chip,.szg,.key,.tags a,.grid-ops a,.mx-c,.step,.glist a{transition-property:background-color,border-color,color,box-shadow,transform,opacity;transition-duration:.22s;transition-timing-function:ease}
+html{transition:background-color .3s ease}
+.ghost:active,.seg button:active,.sc-cta:active,.sc-ghost:active,.szb:active,.pr-topics button:active,.top-nav a:active{transform:scale(.97)}
+.ghost,.seg button,.szb,.pr-topics button{transition:background-color .2s,border-color .2s,color .2s,transform .12s}
+.fold>summary::after{transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.fold[open]>.fold-b{animation:foldin .28s cubic-bezier(.2,.7,.2,1) both}
+.fold.closing>.fold-b{animation:foldout .2s ease both}
+@keyframes foldin{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+@keyframes foldout{from{opacity:1;transform:none}to{opacity:0;transform:translateY(-6px)}}
+.fold[open] .step{animation:foldin .32s cubic-bezier(.2,.7,.2,1) both}
+.fold[open] .step:nth-child(2){animation-delay:50ms}.fold[open] .step:nth-child(3){animation-delay:100ms}.fold[open] .step:nth-child(4){animation-delay:150ms}.fold[open] .step:nth-child(5){animation-delay:200ms}.fold[open] .step:nth-child(6){animation-delay:250ms}.fold[open] .step:nth-child(n+7){animation-delay:300ms}
+.szg:not([hidden]){animation:pop .18s cubic-bezier(.2,.7,.2,1) both}
+@keyframes pop{from{opacity:0;transform:translateX(-50%) translateY(-4px) scale(.96)}to{opacity:1;transform:translateX(-50%)}}
+.chips .chip{animation:foldin .3s cubic-bezier(.2,.7,.2,1) both}.chips .chip:nth-child(2){animation-delay:60ms}.chips .chip:nth-child(3){animation-delay:120ms}
+.verdict,.key{animation:foldin .25s ease both}
+.toast{transition:opacity .2s,transform .2s}
+@media (prefers-reduced-motion:reduce){::view-transition-old(root),::view-transition-new(root),.fold[open]>.fold-b,.fold.closing>.fold-b,.fold[open] .step,.szg:not([hidden]),.chips .chip,.verdict,.key{animation:none}}

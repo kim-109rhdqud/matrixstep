@@ -999,7 +999,7 @@ def sc_footer(T):
 </div>
 <div class="wrap sc-foot-b"><span>© 2026 {L["site"]} · matrixstep.net</span><span class="sc-badge"><span aria-hidden="true"></span>{e(T["f_badge"])}</span></div>
 </footer>
-<script>document.addEventListener("pointermove",function(e){{var c=e.target.closest&&e.target.closest(".grid-ops a,.sc-card,.sc-how,.sc-what,.sc-feat,.prob,.panel.out");if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}},{{passive:true}});</script>
+<script>document.addEventListener("pointermove",function(e){{var c=e.target.closest&&e.target.closest(".grid-ops a,.sc-card,.sc-how,.sc-what,.sc-feat,.prob,.panel.out");if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}},{{passive:true}});document.addEventListener("click",function(e){{var sm=e.target.closest("details.fold>summary");if(!sm)return;var d=sm.parentElement;if(!d.open||d.classList.contains("closing")||matchMedia("(prefers-reduced-motion: reduce)").matches)return;e.preventDefault();d.classList.add("closing");setTimeout(function(){{d.open=false;d.classList.remove("closing")}},190)}});</script>
 '''
 
 

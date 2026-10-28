@@ -714,12 +714,25 @@ def home_extras():
     return (f'<section class="extras" aria-label="{U["extras_aria"]}">\n' + fold(U["fold_about"], about) + fold(U["fold_howto"], U["howto"])
             + fold(U["fold_faq"], f'<dl class="qa">{dl}</dl>') + "</section>\n")
 
+LIVE_FRAMES = [[["2","1","1"],["1","3","2"],["1","0","0"]], [["1","3","2"],["0","−5","−3"],["0","−3","−2"]],
+               [["1","0","1/5"],["0","1","3/5"],["0","0","−1/5"]], [["1","0","0"],["0","1","0"],["0","0","1"]]]
+LIVE_OPS = ["[A | I]", "R₂ ← R₂ − 2R₁", "R₁ ← R₁ − 3R₂", "R₁ ← R₁ − ⅕R₃"]
+
+def live_matrix():
+    """홈 제목 옆: 가우스-조던 소거가 저절로 재생되는 행렬 (CSS 애니메이션)."""
+    cells = "".join("<span>" + "".join(f"<i>{LIVE_FRAMES[f][r][c]}</i>" for f in range(4)) + "</span>" for r in range(3) for c in range(3))
+    ops = "".join(f"<b>{o}</b>" for o in LIVE_OPS)
+    lab = "가우스-조던 소거 · 자동 재생" if L["code"] == "ko" else "Gauss-Jordan elimination · auto-play"
+    return (f'<div class="live-wrap" aria-hidden="true"><div class="live-glow"></div><div class="live-box"><div class="live-ops">{ops}</div>'
+            f'<span class="live-lhs">A</span><span class="mx live"><span class="mx-g live-g"><span class="live-hl"></span>{cells}</span></span></div>'
+            f'<span class="live-cap">{lab}</span></div>')
+
 def home():
     meta = U["home_meta"]
     title = U["home_title"] if L["code"] == "ko" else U["home_title"] + " | " + L["site"]
     s = head(title, meta, "/", website_ld() + ld(dict(h1=L["site"] if L["code"] == "ko" else "MatrixStep Matrix Calculator", meta=meta), "/"))
     s += '<body data-op="inverse">\n' + topbar("", "/") + '<main class="wrap">\n'
-    s += f'<div class="intro"><h1>{U["home_h1"]}</h1><p>{U["home_intro"]}</p></div>\n'
+    s += f'<div class="intro hero"><div><h1>{U["home_h1"]}</h1><p>{U["home_intro"]}</p></div>{live_matrix()}</div>\n'
     s += opsnav("inverse", home=True) + "\n" + U["calc"] + ad() + home_extras() + "</main>\n" + footer() + PAGE_END
     write("/", s)
 
@@ -986,6 +999,7 @@ def sc_footer(T):
 </div>
 <div class="wrap sc-foot-b"><span>© 2026 {L["site"]} · matrixstep.net</span><span class="sc-badge"><span aria-hidden="true"></span>{e(T["f_badge"])}</span></div>
 </footer>
+<script>document.addEventListener("pointermove",function(e){{var c=e.target.closest&&e.target.closest(".grid-ops a,.sc-card,.sc-how,.sc-what,.sc-feat,.prob,.panel.out");if(!c)return;var r=c.getBoundingClientRect();c.style.setProperty("--mx",(e.clientX-r.left)+"px");c.style.setProperty("--my",(e.clientY-r.top)+"px")}},{{passive:true}});</script>
 '''
 
 

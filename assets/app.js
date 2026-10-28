@@ -830,10 +830,25 @@ function compute(){
   else { try{res=o.run(args)}catch(e){res={head:'<p class="err">'+esc(t('errFail'))+'</p>',steps:[]}} }
   renderResult(res);
 }
+const REDUCE=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function countUp(root){ // 결과 숫자가 0에서 목표값으로 굴러가요
+  if(REDUCE)return;
+  const els=[...root.querySelectorAll('.mx-c,.scalar,.fr>span')].filter(el=>!el.querySelector('.fr')&&el.childNodes.length===1&&el.firstChild.nodeType===3);
+  if(!els.length||els.length>60)return;
+  const items=[];
+  els.forEach(el=>{const raw=el.textContent.trim();const m=/^([−-])?(\d+)(\.(\d+))?$/.exec(raw);if(!m)return;const neg=!!m[1],dec=m[4]?m[4].length:0,v=parseFloat(m[2]+(m[3]||''));if(v===0)return;items.push({el,neg,dec,v,raw})});
+  if(!items.length)return;
+  const t0=performance.now(),D=380;
+  const tick=now=>{const p=Math.min(1,(now-t0)/D),k=1-Math.pow(1-p,3);
+    items.forEach(it=>{if(p>=1){it.el.textContent=it.raw;return}const cur=it.v*k;it.el.textContent=(it.neg?'−':'')+(it.dec?cur.toFixed(it.dec):String(Math.round(cur)))});
+    if(p<1)requestAnimationFrame(tick)};
+  requestAnimationFrame(tick);
+}
 function renderResult(res){
   let h=res.head;
   if(res.chips&&res.chips.length) h+='<div class="chips">'+res.chips.map(c=>'<span class="chip '+c[0]+'">'+esc(c[1])+'</span>').join('')+'</div>';
   const rm=$('#resMain');rm.innerHTML=h;rm.classList.remove('in');void rm.offsetWidth;rm.classList.add('in');
+  countUp(rm);
   S.latex=res.latex||null; $('#copyTex').disabled=!S.latex;
   const steps=res.steps||[],LIM=8,show=S.showAll?steps:steps.slice(0,LIM);
   $('#steps').innerHTML=show.length?show.map((s,i)=>'<li class="step"><span class="no">'+String(i+1).padStart(2,'0')+'</span><div class="sb"><div class="st">'+esc(s.t||'')+'</div>'+

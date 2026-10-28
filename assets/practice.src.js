@@ -9,7 +9,7 @@ const PS={ko:{
   answerIs:'정답', seeSteps:'계산기에서 풀이 보기', eigenHint:'쉼표로 구분 · 예: 2, 5', solveHint:'x, y, z 순서로 입력',
   newSet:'새 문제', print:'인쇄 · PDF 저장', docx:'워드(.docx) 내려받기', withAns:'정답지 포함', share:'문제 링크 복사', shared:'이 문제 세트의 링크를 복사했어요',
   showAns:'정답 보기', hideAns:'정답 숨기기', vars:['x','y','z','w'], docName:'행렬_연습문제', generating:'파일을 만들고 있어요…', made:'내려받기를 시작했어요',
-  inputEmpty:'답을 입력해 주세요'
+  inputEmpty:'답을 입력해 주세요', generating2:'문제를 만드는 중…'
 },en:{
   topics:{mix:'Mixed',det:'Determinant',inverse:'Inverse',mul:'Multiplication',addsub:'Add & subtract',power:'Powers',rref:'RREF',solve:'Linear systems',rank:'Rank',eigen:'Eigenvalues'},
   sizes:{2:'2×2',3:'3×3',mix:'Mixed'},
@@ -20,7 +20,7 @@ const PS={ko:{
   answerIs:'Answer', seeSteps:'See the steps in the calculator', eigenHint:'Comma-separated, e.g. 2, 5', solveHint:'Enter x, y, z in order',
   newSet:'New set', print:'Print · Save as PDF', docx:'Download Word (.docx)', withAns:'Include answer key', share:'Copy link to this set', shared:'Link to this problem set copied',
   showAns:'Show answers', hideAns:'Hide answers', vars:['x','y','z','w'], docName:'matrix_practice', generating:'Preparing the file…', made:'Download started',
-  inputEmpty:'Enter an answer'
+  inputEmpty:'Enter an answer', generating2:'Generating…'
 }};
 const SUP={2:'²',3:'³'};
 const ps=(k,...a)=>{const v=PS[LANG][k];return typeof v==='function'?v(...a):v};
@@ -151,9 +151,21 @@ function readHash(){
   CFG.seed=sd&&/^\d+$/.test(sd)?+sd:Math.floor(Math.random()*1e9);
 }
 function writeHash(){history.replaceState(null,'','#t='+CFG.topic+'&n='+CFG.size+'&c='+CFG.count+'&s='+CFG.seed)}
-function build(newSeed){
+let genT=0;
+function skeleton(n){
+  const list=$('#plist');let h='';
+  for(let i=0;i<n;i++)h+='<div class="prob skel" style="animation-delay:'+(i*60)+'ms"><div class="sk sk-t"></div><div class="sk sk-m"></div><div class="sk sk-b"></div></div>';
+  list.innerHTML=h;$('#score').textContent='';
+  const sh=$('.sheet');sh.classList.add('busy');$('#sheetL').textContent=ps('generating2');
+}
+function build(newSeed,delay){
   if(newSeed)CFG.seed=Math.floor(Math.random()*1e9);
-  SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();
+  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const wait=reduce?0:(delay==null?650:delay);
+  clearTimeout(genT);skeleton(CFG.count);
+  const go=()=>{SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();$('.sheet').classList.remove('busy');
+    if(!reduce)document.querySelectorAll('#plist .prob').forEach((el,i)=>{el.style.animationDelay=(i*45)+'ms';el.classList.add('in')})};
+  if(wait)genT=setTimeout(go,wait);else go();
 }
 
 /* ---------- .docx 만들기 (압축 없는 zip + OMML 수식) ---------- */
@@ -224,7 +236,7 @@ function toast(msg){const el=$('#toast');el.textContent=msg;el.hidden=false;clea
 function copyText(v,okMsg){const fb=()=>{const ta=document.createElement('textarea');ta.value=v;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand('copy')}catch(e){}ta.remove();toast(okMsg)};try{navigator.clipboard.writeText(v).then(()=>toast(okMsg),fb)}catch(e){fb()}}
 readHash();
 function paintCfg(){[['#topic',CFG.topic],['#size',CFG.size],['#count',String(CFG.count)]].forEach(([id,v])=>$(id).querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===v))))}
-paintCfg();SET=makeSet(CFG.topic,CFG.size,CFG.count,CFG.seed);writeHash();render();
+paintCfg();build(false,350);
 [['#topic','topic'],['#size','size'],['#count','count']].forEach(([id,k])=>$(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;CFG[k]=k==='count'?+b.dataset.v:b.dataset.v;paintCfg();build(true)}));
 $('#newBtn').addEventListener('click',()=>build(true));
 $('#printBtn').addEventListener('click',()=>{document.body.classList.toggle('print-key',$('#withAns').checked);window.print()});
